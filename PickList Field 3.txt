@@ -1,0 +1,82 @@
+Salesforce mein Picklist ek tarah ka customized field hai jo user ko predefined list of options mein se select karne ki suvidha deta hai.
+
+Simple shabdon mein, yeh ek Dropdown Menu hai. Iska main kaam yeh ensure karna hai ki user wahi data enter kare jo system mein allow kiya gaya hai (Data Consistency), taaki spelling mistakes ya galat data enter na ho.
+
+Yahan Picklist ki detailed explanation hai:
+
+1. Picklist Kya Hai? (Definition)
+Picklist ek field type hai jo aap Salesforce ke kisi bhi Object (Account, Contact, etc.) par bana sakte hain.
+
+Example: Agar aapke paas "Customer Priority" naam ka field hai, toh aap chahenge ki user sirf High, Medium, ya Low hi select kare. Picklist yehi kaam karta hai.
+
+2. Picklist Ke Types (Types of Picklists)
+Salesforce mein mainly ye types hote hain:
+
+A. Standard Picklist
+Ye Salesforce mein pehle se maujood hote hain (built-in).
+
+Example: Lead Object par "Lead Source" (Web, Phone Inquiry, Partner Referral).
+
+Note: Aap Standard picklist se kuch values hata sakte hain ya nayi jod sakte hain, lekin field ko delete nahi kar sakte.
+
+B. Custom Picklist
+Ye wo picklists hain jo aap (Administrator) khud banate hain business ki zarurat ke hisaab se.
+
+Example: "Product Color" field jisme Red, Blue, Green options hon.
+
+C. Custom Multi-Select Picklist
+Isme user ek se zyada options select kar sakta hai.
+
+Example: "Skills" field jisme user Java, Salesforce, aur Python teeno select kar sake.
+
+Limit: User maximum 100 values select kar sakta hai.
+
+D. Global Picklist (Global Value Set)
+Agar aapke paas koi aisi list hai jo multiple objects par use honi hai (jaise "Countries" ya "States"), toh baar-baar list banane ke bajaye aap Global Value Set banate hain.
+
+Ek baar banaya, aur usse alag-alag objects par reuse kar liya. Isse maintenance aasaan ho jati hai.
+
+3. Field Dependency (Bahut Important Feature)
+Salesforce mein aap do picklists ko connect kar sakte hain. Isse Controlling aur Dependent picklist kehte hain.
+
+Scenario: Maan lijiye aapke paas do fields hain: "Country" aur "City".
+
+Agar user "India" select kare, toh City mein sirf Indian cities (Delhi, Mumbai) dikhni chahiye.
+
+Agar user "USA" select kare, toh City mein sirf US cities (New York, LA) dikhni chahiye.
+
+Controlling Field: Country (Jo control kar raha hai).
+
+Dependent Field: City (Jo filter ho raha hai).
+
+4. Restricted vs. Unrestricted Picklists
+Jab aap picklist banate hain, toh ek checkbox hota hai: "Restrict picklist to the values defined in the value set".
+
+Restricted (Checked): User sirf wahi value daal sakta hai jo list mein hai (API ya Data Loader ke through bhi). Ye data integrity ke liye best hai.
+
+Unrestricted (Unchecked): API ya Data Loader ke through user nayi values bhi insert kar sakta hai jo list mein nahi hain.
+
+5. Benefits of Using Picklist
+Faster Data Entry: User ko type nahi karna padta, bas select karna hota hai.
+
+Data Quality: Spelling mistakes (e.g., "High" vs "Hihg") nahi hoti.
+
+Better Reporting: Reports mein data filter karna aasaan hota hai kyunki values consistent hoti hain.
+
+6. Limitations (Dhyan rakhne wali baatein)
+Multi-Select Issues: Multi-select picklists ko Reports aur Formulas mein use karna thoda mushkil hota hai.
+
+Value Limit: Ek picklist mein maximum 1,000 values ho sakti hain.
+
+Kaise Banayein (How to Create)?
+Setup mein jayein.
+
+Object Manager > Select Object (e.g., Contact).
+
+Fields & Relationships > New.
+
+Data Type mein Picklist select karein.
+
+Values enter karein (har value nayi line mein).
+
+Save karein.
