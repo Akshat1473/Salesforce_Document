@@ -80,3 +80,32 @@ Data Type mein Picklist select karein.
 Values enter karein (har value nayi line mein).
 
 Save karein.
+
+NOTE:
+1. Single to Multi-Select (Safe ✅)
+Jab aap ek normal Picklist (jisme sirf ek value select ho sakti hai) ko Multi-Select Picklist mein convert karte hain, toh koi dikkat nahi hoti.
+
+Kyun? Kyunki Multi-Select field mein ek value bhi store ho sakti hai aur anek bhi.
+
+Example: Agar purane record mein "Red" select tha, toh convert hone ke baad bhi wo "Red" hi rahega. Data safe hai.
+
+2. Multi-Select to Single Picklist (Dangerous ⚠️)
+Yehi wo scenario hai jiske baare mein aapne poocha. Jab aap Multi-Select (jisme user ne 'A', 'B', 'C' teeno select kiya ho) ko wapas normal Picklist (sirf ek value allowed) mein convert karte hain, toh Salesforce us field ka data delete (clear) kar deta hai.
+
+Iske peeche do mukhya kaaran hain:
+
+A. Logical Conflict (Kaunsa choose karein?)
+Maan lijiye ek record mein user ne Skills field mein teen values select ki thin: Java; Python; Salesforce. Ab aapne field change kar diya ki "Sirf 1 value allow hai".
+
+Salesforce machine hai, wo khud decision nahi le sakta ki in teeno mein se kaunsa rakhna hai:
+
+Kya Java rakhu?
+
+Kya Python rakhu?
+
+Ya Salesforce?
+
+Kyunki system decide nahi kar sakta ki kaunsi value important hai, wo saari values hata deta hai taaki koi galat data na reh jaye.
+
+B. Storage Format
+Salesforce backend mein Multi-Select values ko semicolon se separate karke store karta hai (e.g., Value1;Value2). Normal Picklist sirf ek single value expect karta hai. Jab format match nahi hota, toh data corrupted maana jata hai aur system use clear kar deta hai.
