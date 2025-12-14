@@ -1,0 +1,146 @@
+//Formula
+Here is a summary of the Use Formula Fields unit from Trailhead.
+
+1. What are Formula Fields?
+Formula fields are read-only fields that automatically calculate and display a value based on other fields or expressions. They allow you to control how data is displayed without requiring users to do manual calculations.
+
+Common Use Cases: Calculating percentages, creating clickable hyperlinks, finding the number of days between two dates, or displaying data from a parent object (cross-object formulas).
+
+Availability: Values calculate dynamically and can be used in page layouts, list views, and reports.
+
+2. The Formula Editor
+To create a formula: Go to Object Manager → Select Object → Fields & Relationships → New → Formula.
+
+Advanced Editor: Salesforce recommends always using the Advanced Formula Editor (rather than Simple) because it provides more tools without being more difficult to use.
+
+Key Tools:
+
+Insert Field: Opens a menu to select fields (handles correct syntax automatically).
+
+Insert Operator: Dropdown for math (+, -) and logic (=, >, &&) operators.
+
+Functions Menu: Pre-built operations (e.g., TODAY(), LEN(), ROUND()).
+
+Check Syntax: A crucial button to validate your formula before saving.
+
+3. Practical Examples
+The unit provided specific examples of how to use formulas:
+
+Cross-Object Formula: Displaying an Account field (like Account Number) directly on a Contact record.
+
+Formula: Account.AccountNumber
+
+Date Calculation: Calculating how many days remain until an Opportunity closes.
+
+Formula: CloseDate - TODAY()
+
+Hyperlinks: Creating a link to an external site.
+
+Formula: HYPERLINK("http://website.com", "Link Name")
+
+Logic: Checking if an opportunity is "Big" (High value AND Large company).
+
+Formula: AND(Account.NumberOfEmployees > 1000, Amount > 10000)
+
+4. Debugging & Common Errors
+Using the Check Syntax button helps identify errors. Common issues include:
+
+Missing Parentheses/Commas: Often happens when nesting functions.
+
+Incorrect Parameter Type: Passing a Number into a function that expects Text (or vice versa).
+
+Parameter Count: Providing too few or too many arguments for a function.
+
+Return Type Mismatch: Creating a formula field defined as a "Number" but writing a formula that returns a "Date."
+
+Field Does Not Exist: Usually caused by typos or forgetting quotes around text literals (e.g., LEN(Hello) fails, LEN("Hello") works).
+
+
+
+
+Topic: Roll-Up Summary Fields
+
+1. Definition A Roll-Up Summary field calculates values from a set of related "Detail" records and automatically displays the result on the "Master" record. Unlike a Formula field (which looks at the current record), a Roll-Up Summary looks at related records.
+
+2. Critical Requirement You can only create a Roll-Up Summary field on the Master side of a Master-Detail Relationship. It does not work on Lookup relationships.
+
+3. Available Calculation Types There are four ways to aggregate the data:
+
+COUNT: Totals the number of related detail records. (No specific field needed).
+
+SUM: Adds up the total value of a specific field. (Only works with Number, Currency, and Percent fields).
+
+MIN: Displays the lowest value found among related records. (Works with Number, Currency, Percent, Date, and Date/Time).
+
+MAX: Displays the highest value found among related records. (Works with Number, Currency, Percent, Date, and Date/Time).
+
+4. How to Create One
+
+Open Object Manager and select the Master object (e.g., Account).
+
+Click Fields & Relationships > New.
+
+Select Roll-Up Summary as the data type.
+
+Select the Summarized Object (the Detail object).
+
+Choose the type of calculation (Count, Sum, Min, Max) and the field to aggregate.
+
+5. Common Examples
+
+Account Object: Calculating the total sum (SUM) of all related Opportunity amounts.
+
+Opportunity Object: Calculating the grand total (SUM) of all Product prices.
+
+Project Object: Finding the earliest start date (MIN) from a list of related Tasks.
+
+
+VALIDATION RULES
+1. What is a Validation Rule?
+A validation rule is a quality control checkpoint. It verifies that the data a user enters meets your specific standards before Salesforce allows the record to be saved.
+Goal: To ensure data quality (e.g., correct phone formats, discount limits, required fields).
+
+Where they apply: Objects, fields, campaign members, or case milestones.
+
+2. How the Logic Works (Crucial Concept)
+This is the most important part to remember:
+Formula returns TRUE: This means the data is Bad/Invalid. Salesforce stops the user and shows an error message.
+Formula returns FALSE: This means the data is Good/Valid. Salesforce saves the record.
+
+3. Key Elements of a Rule
+When you create a rule, you need three main things:
+Rule Name: A unique name for the system (e.g., Account_Number_8_Characters).
+Error Condition Formula: The logic that checks the data.
+Error Message: The text shown to the user if they make a mistake.
+
+4. Common Formula Examples
+The unit provided several scenarios using standard functions like AND, OR, NOT, ISBLANK, and ISNUMBER.
+
+Number Check: Error if the field is NOT blank AND NOT a number. Formula: AND( NOT(ISBLANK(Field)), NOT(ISNUMBER(Field)) )
+Date Check: Error if the Date is not in the current year. Formula: YEAR( My_Date__c ) <> YEAR ( TODAY() )
+Range Check: Error if the difference between Max and Min is > $20k. Formula: (Salary_Max__c - Salary_Min__c) > 20000
+
+5. Hands-on Challenge Help
+The Goal: Prevent a Contact from being saved if their MailingPostalCode is different from their associated Account's ShippingPostalCode.
+Conditions required:
+The Contact must actually be associated with an Account (Account ID is not blank).
+The Contact Zip does not equal (<>) the Account Zip.
+
+Steps to Complete:
+Go to Setup > Object Manager > Contact.
+Click Validation Rules > New.
+
+Rule Name: Contact_must_be_in_Account_ZIP_Code
+Error Condition Formula:
+
+SQL
+
+AND(
+   NOT(ISBLANK(AccountId)), 
+   MailingPostalCode <> Account.ShippingPostalCode
+)
+Error Message: Contact Zip Code must match Account Zip Code
+
+Click Save.
+
+
