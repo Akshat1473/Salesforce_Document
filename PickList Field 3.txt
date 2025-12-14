@@ -109,3 +109,21 @@ Kyunki system decide nahi kar sakta ki kaunsi value important hai, wo saari valu
 
 B. Storage Format
 Salesforce backend mein Multi-Select values ko semicolon se separate karke store karta hai (e.g., Value1;Value2). Normal Picklist sirf ek single value expect karta hai. Jab format match nahi hota, toh data corrupted maana jata hai aur system use clear kar deta hai.
+
+
+//codition table
+	
+Plaintext
+
+PROPERTY                                STANDARD      CUSTOM        MULTI-SELECT
+--------------------------------------------------------------------------------
+Add/Remove from Page Layouts           
+ Yes           Yes           Yes
+Delete from Your Org                    No            Yes           Yes
+Set a Default Value                     Yes           Yes           Yes
+Use a Formula for a Default Value       No            Yes           Yes
+Can Select Multiple Values              No            No            Yes
+Can Add Values via Apps or API          Yes           Yes           Yes
+Can Be Restricted                       No            Yes           Yes
+Can Be a Dependent Picklist             No            Yes           Yes
+
