@@ -1,0 +1,82 @@
+//SALESFORCE PLATFORM BASICS
+
+1. Salesforce Kya Hai? (CRM vs. Platform)
+Log sochte hain Salesforce sirf ek CRM (Customer Relationship Management) software hai jo data store karta hai.
+
+Reality: Salesforce ek Platform hai.
+
+Analogy (Jo text mein di gayi hai):
+
+CRM (Standard Features): Yeh ek "Model House" jaisa hai jo bana-banaya milta hai (features like Sales, Service, Marketing).
+
+Platform: Yeh wo suvidha hai jisse aap us ghar ko renovate karke apna "Unique Home" bana sakte hain (Custom apps aur features banana).
+
+2. Dreamhouse Scenario (Real World Example)
+Trailhead mein Dreamhouse Realty naam ki ek fictional company use ki gayi hai concepts samjhane ke liye.
+
+Problem: Dreamhouse real estate (ghar bechne) ka business karti hai. Unhe standard "Sales" process ke alawa kuch specific cheezein chahiye (jaise Properties manage karna).
+
+Solution: Unka Admin (D'Angelo) Salesforce Platform ka use karke Custom Objects aur apps banata hai taaki Brokers (Michelle) properties ko filter aur sell kar sakein.
+
+3. Key Terminology (Bahut Important)
+Salesforce ka data structure samajhne ke liye in 5 terms ko yaad rakhein. Sochiye ki Salesforce ek Excel Spreadsheet hai:
+
+Term	Definition	Spreadsheet Analogy	Example
+App	Tools aur Objects ka ek group jo kisi specific kaam ke liye hota hai.	Workbook (Collection of sheets)	Dreamhouse App
+Object	Data store karne ke liye ek table.	Tab/Sheet	Property, Contact, Account
+Record	Object ke andar ek specific entry (data).	Row (Horizontal line)	"House at 123 Main St"
+Field	Object ke andar data ki category/attribute.	Column (Vertical line)	Price, Address, Phone Number
+Org	Aapka specific Salesforce instance (Login environment).	Entire Excel File	Aapka Trailhead Playground
+
+Export to Sheets
+
+Standard Objects: Jo Salesforce pehle se deta hai (e.g., Account, Contact, Lead).
+
+Custom Objects: Jo aap apni business need ke hisaab se banate hain (e.g., Property).
+
+4. Development: No-Code vs. Programmatic
+Salesforce mein develop karne ke do tarike hain:
+
+No-Code (Declarative): Mouse click aur drag-and-drop se (Jo D'Angelo kar raha hai). Yeh Admin ka kaam hai.
+
+Programmatic: Code likh kar (Apex, LWC). Yeh Developer ka kaam hai (Jo aap future mein seekhenge).
+
+5. Is Unit Mein Aapko Kya Karna Hai? (Practical Steps)
+Is module ko complete karne ke liye aapko hands-on practice karni hogi:
+
+Create Trailhead Playground: Yeh ek practice environment hai (Developer Edition) jahan aap galti kar sakte hain bina real data kharab kiye.
+
+Install Dreamhouse App: Package ID (04tKY000000LOv6YAG) use karke Dreamhouse app install karna hai taaki aapke paas sample data aa jaye.
+
+Create a Custom Field (Tutorial): Text mein unhone dikhaya ki "Contact" object par "Prequalified?" naam ka Checkbox field kaise banayein.
+
+⚠️ Challenge Solution Hint (Exam ke liye)
+Text ke end mein likha hai: "Now, test out what you learned by making a completely new field... make a currency field."
+
+Tutorial mein unhone Checkbox sikhaya, lekin points lene ke liye aapko Currency Field banana hai.
+
+Steps to solve the Challenge:
+
+Setup mein jayein -> Object Manager -> Contact select karein.
+
+Fields & Relationships -> New pe click karein.
+
+Data Type select karein: Currency (Checkbox mat choose karna!).
+
+Label dalein: Loan Amount (ya jo challenge mein specific naam diya ho, usually yeh "Loan Amount" hota hai).
+
+Save karein.
+
+
+//instll externa app or package
+Here are the short steps to install the Dreamhouse App:
+
+Open Starter: Launch Playground -> Click App Launcher (9 dots) -> Select Playground Starter.
+
+Paste ID: Click Install a Package tab -> Paste ID: 04tKY000000LOv6YAG -> Click Install.
+
+Install: Select Install for All Users -> Click Install -> Approve Access -> Done.
+
+Import Data: Go to App Launcher -> Select Dreamhouse -> Click Settings tab -> Click Import Data.
+
+
