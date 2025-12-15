@@ -114,3 +114,81 @@ When you build on the Salesforce Platform, you don't need to install a database 
 
 The platform automatically handles the Database, Security, User Interface (UI), and Mobile compatibility. You just focus on the business logic.
 
+//submodule 2
+Akshat, yeh unit ("Discover Use Cases for the Platform") aapke **Salesforce Trainee interview** ke liye bahut crucial hai. Interviewer aapse zaroor puchega: *"Salesforce ko hum Sales team ke alawa aur kahan use kar sakte hain?"*
+
+Is unit ka main concept hai: **Salesforce sirf Sales ke liye nahi hai, yeh poori company ka Operating System ban sakta hai.**
+
+Niche maine is unit ko simple points mein break down kiya hai:
+
+---
+
+### 1. "High Impact, Low Effort" Strategy
+Jab aap Salesforce naya seekh rahe hain, toh aapko aise problems dhundne chahiye jo **bade (High Impact)** hon lekin solve karne mein **aasaan (Low Effort)** hon.
+
+**Kaise pehchanein ki kise Automate karna hai?**
+Agar kisi department mein yeh problems hain, toh wo Salesforce ke liye perfect candidate hai:
+* Bahut zyada **Emails** bheje ja rahe hain collaboration ke liye.
+* Log **Excel Spreadsheets** par dependent hain.
+* Documents local computer folders mein save ho rahe hain (Shared nahi hain).
+* Kaam **Manual aur Repetitive** hai (baar-baar wahi karna padta hai).
+
+---
+
+### 2. Dreamhouse Real World Scenarios (Department-wise)
+
+Is unit mein bataya gaya hai ki D'Angelo (Admin) ne kaise alag-alag departments ki help ki:
+
+#### A. Sales Department (Flows & AI)
+* **Problem:** Brokers alag-alag tarike se property data enter kar rahe the. Data missing tha aur format galat tha.
+* **Solution:**
+    * **Flow Builder:** D'Angelo ne ek "Screen Flow" banaya. Yeh ek wizard/form ki tarah hota hai jo user se step-by-step sahi data mangta hai. Isse data clean aur standard ho gaya.
+    * **Prompt Builder (AI):** Yeh naya feature hai. D'Angelo ne AI use kiya taaki jab koi property add ho, toh system automatically customer ke liye ek **Personalized Email** likh de.
+
+#### B. HR Department (Recruiting App)
+* **Problem:** Julian (HR) ke paas hundreds of resumes aa rahe the aur wo manage nahi kar pa raha tha.
+* **Solution:** D'Angelo ne ek **Custom App** banaya jisme:
+    * Job Openings ki list hai.
+    * Candidates ka data store hota hai.
+    * Interview reminders automatic jaate hain.
+* **Benefit:** Ab HR team **Salesforce Mobile App** se bhi hiring kar sakti hai.
+
+#### C. IT Department (Ticketing System)
+* **Problem:** Regina (IT) ke paas emails par IT requests aa rahi thi aur track karna mushkil tha.
+* **Solution:** Salesforce ke andar hi **IT Ticketing System** bana diya.
+* **Benefit:**
+    * Employees wahi login karte hain jahan CRM hai.
+    * Reports se pata chalta hai ki kitne tickets pending hain.
+    * Hardware (Laptops/Mobiles) ka inventory bhi manage hota hai.
+
+---
+
+### 3. Other Departments (Interview Cheat Sheet)
+Agar interview mein pucha jaye ki "Finance ya Supply chain mein Salesforce kaise use hoga?", toh yeh examples yaad rakhein:
+
+| Department | Use Case (Salesforce mein kya ban sakta hai) |
+| :--- | :--- |
+| **Finance** | Budget Management, Contract Management, Pricing control. |
+| **Product** | Warranty Management, New Product Ideas track karna. |
+| **Supply Chain** | Vendor (Supplier) Management, Procurement (Samaan kharidna). |
+| **Ops** | Asset Management (Office furniture/machines manage karna). |
+
+---
+
+### 4. Quiz Solutions (Logic ke saath)
+
+Aapne jo quiz questions share kiye hain, unke answers ye honge:
+
+**Q1: When identifying processes to bring into Salesforce, what are some things to look for?**
+* **Logic:** Hum wo kaam dhundte hain jo manual ho aur spreadsheets pe ho.
+* **Correct Answer:** Looks for: Heavy email collaboration, Reliance on spreadsheets, Time-intensive manual steps.
+
+**Q2: What are three use cases for Finance on the Salesforce platform?**
+* **Logic:** Upar table mein dekhein Finance section.
+* **Correct Answer:** **Budget management, Contract management, Pricing.**
+
+---
+
+**Next Step:**
+Is module ka next unit **"Data Modeling"** hoga (Objects aur Relationships).
+Kya main aapko **"Schema Builder"** ka concept samjhaun? Yeh tool data model ko visualize karne ke liye bahut important hai aur beginners ko confusing lagta hai.
