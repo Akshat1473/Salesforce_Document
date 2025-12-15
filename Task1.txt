@@ -361,8 +361,9 @@ Completed 12/9/2025
 
 1
 When you're getting started with AppExchange, what is a best practice?
+Develop a plan, including budget, timing, and key department use cases.
 
 2
 When you want to find an app after you install it, what should you type in the Quick Find box in Setup?
-
+Installed Packages
 
