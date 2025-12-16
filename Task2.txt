@@ -78,3 +78,94 @@ Yahan do options hain:
 **Next Step for You:**
 Kya tum chahte ho main tumhe **"Profile vs Permission Set"** ka difference samjhau? Ye agla logical step hai jo Salesforce Admin mein aana chahiye.
 
+//Security work or accessibilty to user
+Akshat, yeh unit **Data Security** ka sabse important part hai. Interviewer ka favourite sawaal hota hai: *"Salesforce mein Security kaise kaam karti hai?"*
+
+Chalo isse **"Office Building"** ki analogy se samajhte hain.
+
+
+
+### **1. Data Access ke 4 Levels (The Security Funnel)**
+Salesforce mein security 4 levels pe lagti hai. Socho tum ek building ke andar file dhoond rahe ho:
+
+1.  **Organization Level (Main Gate):**
+    * Kya user login kar sakta hai? (Password policies, Login hours, IP ranges).
+    * *Example:* Raat ke 12 baje login allowed hai ya nahi?
+2.  **Object Level (Kamra/Room):**
+    * Kya user us Table (Object) ko dekh sakta hai? (Create, Read, Edit, Delete).
+    * *Example:* Kya "Accounts" ka tab dikhna chahiye?
+3.  **Field Level (Almari ka Drawer):**
+    * User ko record toh dikh raha hai, par kya uske andar ki **specific details** dikhni chahiye?
+    * *Example:* HR Manager ko employee ka naam dikhega, par **"Salary"** field chupa sakte hain.
+4.  **Record Level (Specific File):**
+    * User ko Table (Object) dikh raha hai, par kya usse **doosre logon ka data** dikhna chahiye?
+    * *Example:* Sales Rep A ko sirf apne customers dikhne chahiye, Sales Rep B ke nahi.
+
+---
+
+### **2. Permission Sets vs. Permission Set Groups**
+Yahan confuse mat hona.
+* **Profile:** Ye **"Base"** hai (Minimum access jo sabko milega).
+* **Permission Set:** Ye **"Extra Keys"** hain. Agar kisi ko temporary access chahiye ya extra power chahiye bina profile change kiye, toh Permission Set use karte hain.
+* **Permission Set Group:** Ye **"Keys ka Guchha (Bundle)"** hai. Agar Sales Agent ko 5 alag-alag Permission Sets chahiye, toh hum unka ek Group bana dete hain.
+    * **Muting Permission:** Group ke andar agar hum chahte hain ki *"Baaki sab power mile, par Delete karne ki power hata do,"* toh hum **Mute** use karte hain.
+
+---
+
+### **3. OWD (Organization-Wide Defaults)**
+Ye Record Level Security ka **"Lock"** hai. Isse hum decide karte hain ki **by default** data kitna restricted hoga.
+
+| OWD Setting | Hindi Matlab | Example |
+| :--- | :--- | :--- |
+| **Private** | **Sabse Strict.** Sirf Owner aur uska Boss dekh sakta hai. | "Meri Personal Diary." |
+| **Public Read Only** | Sab dekh sakte hain, par edit sirf Owner karega. | "Office ka Notice Board." |
+| **Public Read/Write** | Sab dekh sakte hain aur sab edit kar sakte hain. | "Wikipedia Page." |
+
+> **Golden Rule:** OWD hamesha **Restrict (Lock)** karne ke liye use hota hai. Baad mein hum Sharing Rules se access **Open** kar sakte hain, par OWD se zyada strict nahi kar sakte.
+
+---
+
+### **Hands-on Challenge Guide (Step-by-Step)**
+Chalo ab tumhara challenge solve karte hain. Isme hum Permission Sets aur OWD set karenge.
+
+**Task 1: Create Permission Set**
+1.  **Setup** > **Permission Sets** > **New**.
+2.  Label: `Account Access`, API Name: `Account_Access`.
+3.  **Save**.
+4.  Ab **Object Settings** pe click karo > **Accounts** select karo > **Edit**.
+5.  **Object Permissions:** Check karo -> *Read, Create, Edit, Delete, View All Records, Modify All Records.*
+6.  **Field Permissions:** Sabhi fields ke aage *Read Access* aur *Edit Access* tick kar do (Header tick karne se sab select ho jayenge).
+7.  **Save**.
+
+**Task 2: Create Permission Set Group**
+1.  **Setup** > **Permission Set Groups** > **New Permission Set Group**.
+2.  Label: `Sales User`, API Name: `Sales_User`.
+3.  **Save**.
+4.  **Permission Sets in Group** pe click karo > **Add Permission Set**.
+5.  `Account Access` ko select karo aur **Add** > **Done** kar do.
+
+**Task 3: Muting Permission Set (Power kam karna)**
+1.  Group ke page par wapas jao. **Muting Permission Set in Group** pe click karo.
+2.  **New** button dabao. Name: `Sales User Muted`, API Name: `Sales_User_Muted`. **Save**.
+3.  Ab `Sales User Muted` link pe click karo.
+4.  **Object Settings** > **Accounts** > **Edit**.
+5.  **Muted Column** dhoondo (Right side mein hoga):
+    * **Object Permissions Mute:** *Delete, View All Records, Modify All Records* ko check karo.
+    * **Field Permissions Mute:** *Annual Revenue* aur *Customer Priority* ke aage **Edit Access** ko mute karo.
+6.  **Save**.
+
+**Task 4: Assign User**
+1.  Wapas **Permission Set Groups** > `Sales User` pe jao.
+2.  **Manage Assignments** > **Add Assignments**.
+3.  Apne user (jo pichle unit mein banaya tha ya apna khud ka user) select karo aur **Assign** kar do.
+
+**Task 5: OWD Settings (Defaults Set karna)**
+1.  **Setup** > **Sharing Settings** search karo.
+2.  **Organization-Wide Defaults** section mein **Edit** pe click karo.
+3.  Change karo:
+    * **Account and Contract:** `Public Read Only` (Visible but not editable).
+    * **Opportunity:** `Private` (Visible only to record owners).
+4.  **Save** pe click karo.
+
+Ab **Check Challenge** pe click karo aur +500 points lo! 🚀
+
