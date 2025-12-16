@@ -1,0 +1,80 @@
+//USER Management
+
+Akshat, yeh topic tumhare **Salesforce Trainee** role ke liye sabse important basics mein se ek hai. Interview mein aksar pucha jata hai ki "User kaise banate hain aur Freeze/Deactivate mein kya farak hai?"
+
+Chalo is pure module ko bilkul aasan shabdon mein, step-by-step samajhte hain.
+
+---
+
+### **1. User Kaun Hai? (What is a User?)**
+Salesforce mein **User** wo har insaan hai jiske paas login karne ka access hai.
+* **Internal:** Tumhare office ke log (Sales Rep, Manager, IT team).
+* **External:** Clients ya Partners jo community portal access karte hain.
+
+**Yaad rakhein:** Har user ka ek account hota hai jo batata hai ki wo **kaun hai** (Identity) aur wo **kya kar sakta hai** (Permissions).
+
+---
+
+### **2. User Banane ke liye Kya Chahiye? (Key Terms)**
+User create karte waqt ye terms samajhna zaroori hai:
+
+| Term | Aasan Matlab | Important Rule |
+| :--- | :--- | :--- |
+| **Username** | Login ID. | Ye **Email format** mein hona chahiye (e.g., `akshat@salesforce.com`) aur puri duniya mein **Unique** hona chahiye. |
+| **User License** | Office ka "Ticket". | Ye decide karta hai ki user ko Salesforce ke kaunse features milenge. (e.g., Salesforce License = Full Access). |
+| **Profile** | Power/Settings. | Ye batata hai user **"Kya Kar Sakta Hai"** (Create, Edit, Delete permissions). Har user ki 1 profile hoti hai. |
+| **Role** (Optional) | Hierarchy/Level. | Ye batata hai user **"Kya Dekh Sakta Hai"** (Data Visibility). Example: Manager apne team ka data dekh sakega. |
+| **Alias** | Short Name. | List mein dikhane ke liye chota naam. (e.g., `Akshat Jain` -> `ajain`). |
+
+
+
+---
+
+### **3. Naya User Kaise Add Karein? (Step-by-Step)**
+Salesforce mein user add karna ek form bharne jaisa hai.
+
+**Steps:**
+1.  **Setup** mein jao.
+2.  **Quick Find Box** mein "Users" type karo aur **Users** select karo.
+3.  **New User** button pe click karo. (Agar ek saath kayi log add karne hain toh "Add Multiple Users" click karo).
+4.  **Details Bharo:** First Name, Last Name, Email.
+5.  **Username Set Karo:** By default ye email jaisa hota hai, par tum change kar sakte ho (Unique hona chahiye).
+6.  **License Select Karo:** Pehle License choose karo (e.g., Salesforce), tabhi uske hisaab se Profiles dikhengi.
+7.  **Profile Select Karo:** (e.g., Standard User ya System Administrator).
+8.  **Password:** "Generate new password and notify user immediately" box ko tick karo. (Isse user ko email chala jayega apna password set karne ke liye).
+9.  **Save** pe click karo.
+
+
+
+---
+
+### **4. Security: Freeze vs. Deactivate (Bahut Important)**
+Jab koi employee chala jata hai ya account hack ho jata hai, tab tum kya karoge? Salesforce mein user **Delete kabhi nahi hota**.
+
+Yahan do options hain:
+
+#### **A. Freeze (Kab karein?)**
+* **Matlab:** User login nahi kar payega, par uska account "Pause" mode mein hai.
+* **License:** License abhi bhi use ho raha hai (Company ka paisa lag raha hai).
+* **Kab use karein:**
+    * Jab account hack ho jaye (turant rokne ke liye).
+    * Jab user chala gaya ho, par uska data clean karna baaki ho.
+* **Step:** User ke naam pe click karo -> **"Freeze"** button dabao.
+
+#### **B. Deactivate (Kab karein?)**
+* **Matlab:** User permanently login nahi kar payega.
+* **License:** License **Free** ho jata hai. (Ye license ab kisi naye employee ko de sakte ho).
+* **Kab use karein:** Jab employee company chhod kar chala jaye.
+* **Step:** User ke naam pe click karo -> **Edit** dabao -> **"Active"** checkbox ko **Uncheck** kardo -> Save.
+
+---
+
+### **Summary (Exam/Interview ke liye):**
+1.  **Username** global level pe unique hona chahiye.
+2.  **Profile** batata hai *kya kar sakte ho*, **Role** batata hai *kya dekh sakte ho*.
+3.  User kabhi **Delete** nahi karte, hamesha **Deactivate** karte hain taaki data safe rahe.
+4.  Account hack hone par pehle **Freeze** karte hain.
+
+**Next Step for You:**
+Kya tum chahte ho main tumhe **"Profile vs Permission Set"** ka difference samjhau? Ye agla logical step hai jo Salesforce Admin mein aana chahiye.
+
