@@ -53,3 +53,77 @@ Answer: Profiles or Permission Sets (Option mein jo bhi ho).
 Which of these is a method for controlling Record-level access?
 
 Answer: Organization-Wide Defaults (OWD).
+
+
+//Control access to Org
+Salesforce security ek Pyaaz (Onion) ki tarah hoti hai, jisme sabse pehli layer hoti hai "Organization Level Security"—yaani kaun andar aa sakta hai.
+
+1. Manage Users (User banana aur band karna)
+Jab bhi koi naya employee join karta hai, aap use "User" banate hain. Jab wo naukri chhodta hai, toh use "Deactivate" karte hain kyunki Salesforce mein user Delete nahi hota.
+
+Steps:
+
+Create: Setup > Users > New User. Yahan Profile chunna sabse zaroori hai kyunki wahi rules set karta hai.
+
+Deactivate: User ke naam ke aage Edit par click karein aur Active checkbox ko uncheck kar dein.
+
+Freeze: Agar kisi wajah se user deactivate nahi ho pa raha (jaise wo kisi process ka hissa hai), toh Freeze button dabayein. Isse wo login nahi kar payega.
+
+2. Password Policies (Mazboot Password ke Niyam)
+Aap ye tay karte hain ki company ke passwords kitne surakshit honge.
+
+Steps:
+
+Setup mein Password Policies search karein.
+
+Yahan aap ye badal sakte hain:
+
+Length: Password kitna lamba ho (e.g., 8 ya 10 characters).
+
+Complexity: Kya usme numbers aur special symbols (!@#) zaroori hain?
+
+Expiration: Password kitne din baad expire hoga (e.g., 90 days).
+
+Lockout: Kitni baar galat password daalne par account lock ho jaye.
+
+3. Network Access (Trusted IP Ranges)
+Iska matlab hai ki agar user office ke internet se login kar raha hai, toh use Verification Code (OTP) nahi maanga jayega.
+
+Steps:
+
+Setup mein Network Access par jayein.
+
+New par click karein aur apne office ka Start IP aur End IP daalein.
+
+Is range ke bahar se login karne par Salesforce email par code bhejega.
+
+4. Restrict Login by IP (Profile Level)
+Ye Network Access se zyada sakht (strict) hai. Agar aapne yahan IP daal di, toh user sirf aur sirf usi IP se login kar payega. Bahar se login karne ka option hi khatam ho jayega.
+
+Steps:
+
+Setup > Profiles > Kisi bhi Profile ko select karein.
+
+Niche scroll karke Login IP Ranges par jayein aur range set karein.
+
+5. Login Hours (Time ki pabandi)
+Aap tay kar sakte hain ki employee sirf duty ke hours mein hi kaam karein.
+
+Steps:
+
+Setup > Profiles > Profile select karein.
+
+Login Hours par click karke Edit karein.
+
+Jaise: Monday to Friday, 9:00 AM to 5:00 PM.
+
+Note: Agar koi 5:01 PM par kaam karne ki koshish karega, toh Salesforce use bahar nikal dega ya login nahi karne dega.
+
+Summary Table for Quick Revision:
+Control Type	Kya karta hai?	Kahan milta hai?
+Users	User ko entry dena ya nikalna	Setup > Users
+Password Policy	Password ki mazbooti	Setup > Password Policies
+Network Access	OTP se bachne ke liye safe IP	Setup > Network Access
+Login Hours	Kaam ka waqt fix karna	Setup > Profiles > Login Hours
+
+Kya aap chahte hain ki main aapko hands-on challenge ko ek baar phir step-by-step screen-by-screen guide karun?
