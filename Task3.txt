@@ -127,3 +127,111 @@ Network Access	OTP se bachne ke liye safe IP	Setup > Network Access
 Login Hours	Kaam ka waqt fix karna	Setup > Profiles > Login Hours
 
 Kya aap chahte hain ki main aapko hands-on challenge ko ek baar phir step-by-step screen-by-screen guide karun?
+
+Salesforce ke is challenge ko poora karne ke liye neeche diye gaye aasan steps follow karein:
+
+Step 1: User Create Karein
+Apne Salesforce Org ko Launch karein.
+
+Sabse upar right side mein Gear Icon (Settings) par click karke Setup mein jayein.
+
+Left side mein Quick Find box mein Users search karein aur Users par click karein.
+
+New User button par click karein.
+
+Form ko is tarah bharein:
+
+First Name: Kuch bhi (e.g., Test)
+
+Last Name: User
+
+Alias: testuser (Check karein ki ye sahi spelling ho)
+
+Email: Apna asli email id daalein.
+
+Username: testuser ke saath kuch unique daalein (e.g., testuser_12345@yourname.com). Dhyan rahe: Isme testuser hona zaroori hai.
+
+User License: Salesforce select karein.
+
+Profile: Minimum Access - Salesforce select karein.
+
+Step 2: User ko Deactivate Karein
+Form mein hi right side par Active naam ka ek checkbox hoga.
+
+Us Active checkbox ko uncheck (khali) kar dein.
+
+(Note: Agar aapne save kar diya hai, toh wapas Edit par click karke Active box ko uncheck karein).
+
+Ek pop-up message aayega, use OK karein.
+
+Save button par click karein.
+
+//control access to Object
+Yahan aapke notes ka summary hai, jo aapko Recruiting App setup karne aur Object Access control samajhne mein madad karega.
+
+**App Installation ID:** `04t0P000000N9rs`
+
+---
+
+## **1. Core Concepts: Access Control**
+
+Salesforce mein data access teen tarikon se manage hota hai:
+
+* **Profiles (The Foundation):** Har user ki ek hi profile hoti hai. Iska use default settings (Apps, Page Layouts, Login Hours) ke liye karein. **Best Practice:** "Minimum Access - Salesforce" profile clone karke use karein.
+* **Permission Sets (Task-Based):** Kisi specific task (e.g., Manage Leads) ke liye permissions dete hain. Ek user ko multiple sets mil sakte hain.
+* **Permission Set Groups (Persona-Based):** Multiple Permission Sets ko ek "Persona" (e.g., Recruiter) mein group karte hain taaki management aasaan ho.
+
+---
+
+## **2. Recruiting App Permissions Requirement**
+
+| Object | Recruiter | Hiring Manager | Interviewer | Standard Employee |
+| --- | --- | --- | --- | --- |
+| **Position** | Read, Create, Edit | Read, Create, Edit* | Read (No Bonus info) | Read (No Bonus info) |
+| **Candidate** | Read, Create, Edit | Read* (No SSN) | Read* (No SSN) | N/A |
+| **Job App** | Read, Create, Edit | Read, Edit (No Lookups) | Read* | N/A |
+| **Review** | Read, Create, Edit | Read, Create, Edit | Read**, Create, Edit** | N/A |
+
+**Sirf wahi records jo unse Jude ho.*
+***Sirf wahi records jo unhone khud banaye ho.*
+
+---
+
+## **3. Step-by-Step Implementation Guide**
+
+### **Step A: Profile Setup (Cloning)**
+
+1. **Setup** mein jayein -> **User Management Settings** -> **Enhanced Profile User Interface** ko Enable karein.
+2. **Profiles** search karein -> **Minimum Access - Salesforce** ke saath **Clone** par click karein.
+3. Naya Naam dein aur **Save** karein.
+4. **Users** mein jakar relevant user ko ye naya profile assign karein.
+
+### **Step B: Create Permission Set**
+
+1. **Permission Sets** search karein -> **New** par click karein.
+2. Label: `Access and Manage Reviews` -> **Save**.
+3. **Find Settings** box mein "Reviews" object search karein.
+4. **Edit** par click karke **Read, Create, Edit** permissions enable karein -> **Save**.
+
+### **Step C: Create Permission Set Group**
+
+1. **Permission Set Groups** search karein -> **New Permission Set Group**.
+2. Label: `Recruiters` -> **Save**.
+3. **Permission Sets in Group** par click karein -> **Add Permission Set**.
+4. `Access and Manage Reviews` select karein aur **Add** -> **Done**.
+
+### **Step D: Assign to Users**
+
+1. Group ke overview page par **Manage Assignments** par click karein.
+2. **Add Assignment** -> Users select karein -> **Assign**.
+
+---
+
+## **4. Reviewing Access (Verification)**
+
+* **Object Summary:** Object Manager mein kisi bhi object par click karke sidebar mein **Object Access** dekhein. Yahan dikhega ki kaunse Profile/Permission set se access mil raha hai.
+* **User Summary:** User record par **View Summary** button click karke uski saari permissions ek saath dekh sakte hain.
+
+---
+
+ **Field-Level Security (Control Access to Fields)** 
