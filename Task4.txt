@@ -37,3 +37,145 @@ Description Likhein: Taaki dusron ko pata chale ki ye field kis liye hai.
 
 Required Fields: Jo jaankari bahut zaroori ho, use 'Required' mark kar dein taaki koi use khali na chhod sake (Jaise: Ghar ki keemat yaani Price).
 
+//Relationship
+Salesforce mein Object Relationships ka matlab hai do alag-alag tables (objects) ko aapas mein jodna. Jaise ek school mein "Teacher" aur "Student" ka rishta hota hai, waise hi Salesforce mein hum data ko connect karte hain.
+
+Yahan aapke liye simple explanation aur steps diye gaye hain:
+
+1. Relationships Kya Hoti Hain? (Concept)
+Lookup Relationship: Yeh ek "loose" rishta hai. Agar ek object delete ho jaye, toh dusre par farak nahi padta.
+
+Example: Ek Customer (Account) aur uske Contacts.
+
+Master-Detail Relationship: Yeh ek "pakka" rishta hai. Ismein ek Master (Baap) hota hai aur ek Detail (Bachha). Agar Master record delete hua, toh usse jude saare Detail records bhi apne aap delete ho jayenge.
+
+Example: Ek Property aur us par aayi hui Offers.
+
+2. Custom Object Banana (Favorite)
+Sabse pehle hum ek naya object banayenge jisme hum "Favorite" gharon ki list rakhenge.
+
+Setup mein jayein aur Object Manager par click karein.
+
+Create button daba kar Custom Object chunein.
+
+Label: FavoriteCopy aur Plural Label: FavoritesCopy bharein.
+
+Niche Launch New Custom Tab Wizard wale box ko tick karein aur Save karein.
+
+Koi bhi ek icon (Tab Style) chunein, phir Next, Next aur Save kar dein.
+
+3. Lookup Relationship Banana (Favorite to Contact)
+Hum chahte hain ki har Favorite record kisi na kisi Contact (potential buyer) se juda ho.
+
+Object Manager mein apne naye object Favorite par jayein.
+
+Side mein Fields & Relationships par click karein.
+
+New button par click karein.
+
+Lookup Relationship chunein aur Next karein.
+
+Related To: Mein Contact select karein aur Next karein.
+
+Field Name: Mein Contact likhein aur Next, Next, Next karke Save kar dein.
+
+4. Master-Detail Relationship Banana (Favorite to Property)
+Ab hum Favorite ko Property se itna majboot jodenge ki agar Property delete ho, toh Favorite bhi delete ho jaye.
+
+Wapas Favorite object ke Fields & Relationships mein jayein.
+
+New par click karein.
+
+Is baar Master-Detail Relationship chunein aur Next karein.
+
+Related To: Mein Property select karein (kyunki Property hi main cheez hai).
+
+Field Name: Mein PropertyCopy likhein.
+
+Next, Next aur Save kar dein.
+
+5. Check Kaise Karein?
+App Launcher (9 dots wala icon) mein jayein aur Sales app kholein.
+
+Properties tab par click karein aur koi bhi ek ghar (Property) chunein.
+
+Related tab par click karein. Wahan aapko Favorites (0) dikhega.
+
+New button daba kar aap us property ko favorite bana sakte hain!
+
+
+Chahe Master-Detail ho ya Lookup, relationship field hamesha Child (Detail) object par hi banayi jati hai.
+
+Rule: Field hamesha "Child" par banegi
+Salesforce mein rishta jodte waqt, bacha (Child) apne baap (Parent/Master) ka pata batata hai. Isliye field hamesha Child object par banti hai.
+
+1. Master-Detail Relationship
+Kahan banayein? Child (Detail) object par.
+
+Kyun? Kyunki Child ko batana padta hai ki uska Master kaun hai.
+
+Example: Agar Property Master hai aur Favorite Detail hai, toh field Favorite object par banegi.
+
+2. Lookup Relationship
+Kahan banayein? Ismein bhi Child object par hi field banti hai.
+
+Kyun? Taki jab aap Child record kholein, toh wahan se Parent ko "Look up" (dhund) sakein.
+
+Example: Agar Account Parent hai aur Contact Child, toh field Contact object par banegi.
+
+
+//Schema Builder
+Ab hum baat karte hain Schema Builder ki. Yeh Salesforce ka ek aisa tool hai jo aapke poore data model ko ek Map (naksha) ki tarah dikhata hai.
+
+Jab bahut saare objects aur relationships ho jaate hain, toh unhe list mein dekhna mushkil hota hai. Schema Builder mein aap sab kuch ek saath "Drag and Drop" karke dekh aur bana sakte hain.
+
+Iske simple steps aur faide niche diye gaye hain:
+
+1. Schema Builder Kaise Kholein?
+Setup mein jayein.
+
+Quick Find box (search bar) mein likhein: Schema Builder.
+
+Uspar click karke use open karein.
+
+2. Apna Data Model Dekhein (Visualizing)
+Jab aap ise kholte hain, toh bahut saare objects dikh sakte hain. Ise saaf karne ke liye:
+
+Left panel mein Clear All par click karein.
+
+Ab sirf un objects ko tick karein jinhe aap dekhna chahte hain (jaise: Property, Offer, Favorite, aur Contact).
+
+Auto-Layout par click karein.
+
+Ab aapko dikhega ki kaun sa object kis se juda hai. Jo line unke beech mein hai, wahi unka relationship dikhati hai.
+
+3. Naya Object Banana (Schema Builder se)
+Aapko Object Manager mein jaane ki zaroorat nahi, aap yahin se naya object bana sakte hain:
+
+Left side mein Elements tab par click karein.
+
+Object likha hoga, use mouse se pakad kar (Drag) beech wale khali hisse (Canvas) par chhod (Drop) dein.
+
+Ek box khulega, usmein object ka naam (Label) bharein aur Save kar dein.
+
+Aapka naya object turant map par dikhne lagega!
+
+4. Naya Field Banana (Schema Builder se)
+Field banana bhi utna hi aasan hai:
+
+Elements tab mein hi rahein.
+
+Wahan se koi bhi field type chunein (jaise: Text, Number, ya Currency).
+
+Us field type ko drag karke apne banaye huye Object ke box ke upar le jaakar chhod dein.
+
+Field ka naam likhein aur Save karein.
+
+Schema Builder Ke Faide (Simple Words Mein)
+Sab Kuch Ek Saath: Aapko baar-baar tabs badalne ki zaroorat nahi.
+
+Dikhne mein Asan: Lines dekh kar turant samajh aata hai ki Master kaun hai aur Detail kaun.
+
+Fast: Jaldi-jaldi naye fields aur objects banane ke liye best hai.
+
+Note: Schema Builder mein objects ko idhar-udhar hilane se unka data ya relationship kharab nahi hota, wo sirf dekhne ke liye hota hai.
