@@ -1,2 +1,55 @@
 //Data Security
 
+Ab hum Salesforce ka sabse important topic shuru kar rahe hain: Data Security. Iska simple matlab hai ki kis insaan ko kya dikhna chahiye aur kya nahi.
+
+Salesforce security ko 4 Levels mein baanta gaya hai. Isse aap aise samajh sakte hain jaise ek badi building ki security:
+
+1. Organization Level (Building ka Main Gate)
+Ye poori company (Org) ki security hai.
+
+Kaise? Ismein tay hota hai ki kaun login kar sakta hai, kab kar sakta hai (Login Hours), aur kahan se kar sakta hai (IP Address).
+
+Example: Office ke ghante khatam hone ke baad koi login na kar paaye.
+
+2. Object Level (Kamre ka Darwaza)
+Ye sabse simple level hai. Ismein aap tay karte hain ki kya koi user us table (Object) ko dekh bhi sakta hai ya nahi.
+
+Kaise? Iske liye hum Permission Sets aur Profiles ka use karte hain.
+
+Example: Ek Interviewer "Job Applications" dekh sake, par use Delete na kar sake.
+
+3. Field Level (Kamre ke andar ki Tijori)
+Ho sakta hai aap user ko kamre mein aane dein (Object access), par aap chahte hain ki wo kuch khaas cheezein na dekh sake.
+
+Kaise? Field-Level Security (FLS) se hum sensitive fields ko chupa dete hain.
+
+Example: HR manager "Salary" field dekh sake, par baaki employees ko wo field dikhe hi nahi.
+
+4. Record Level (Ek khaas File)
+Aapne user ko Object aur Field ka access de diya, par ab aap chahte hain ki wo sirf apne records dekhe, dusron ke nahi. Isse manage karne ke 4 tarike hain:
+
+Org-Wide Defaults (OWD): Ye base level hai. Isse aap data ko "Private" ya "Public" set karte hain.
+
+Role Hierarchies: Ismein manager apne niche kaam karne walon ka data dekh sakta hai.
+
+Sharing Rules: Ye "Exceptions" hain. Agar koi data private hai, toh rules bana kar kisi khaas group ko access diya ja sakta hai.
+
+Manual Sharing: Jab ek record owner khud kisi dusre user ke saath record share kare.
+
+Auditing (Nazar Rakhna)
+Sirf lock lagana kaafi nahi hai, nazar rakhna bhi zaroori hai:
+
+Login History: Kaun kab login hua?
+
+Field History Tracking: Kisne field ki value badli? (Puraana aur naya data dono dikhta hai).
+
+Setup Audit Trail: Salesforce ki settings mein kisne ched-chad ki?
+
+Quiz Answers (Aapki help ke liye):
+Which feature controls access at the Object level?
+
+Answer: Profiles or Permission Sets (Option mein jo bhi ho).
+
+Which of these is a method for controlling Record-level access?
+
+Answer: Organization-Wide Defaults (OWD).
