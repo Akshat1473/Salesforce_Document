@@ -1,0 +1,39 @@
+//Data Modelling
+
+1. Objects kya hain? (The Spreadsheet)
+Sochiye aapke paas ek Excel file hai jisme alag-alag sheets hain. Har sheet ek Object hai.
+
+Standard Objects: Jo Salesforce ne pehle se bana kar diye hain (Jaise: Accounts, Contacts, Leads).
+
+Custom Objects: Jo aap apni zarurat ke hisaab se khud banate hain (Jaise: DreamHouse company ke liye Property naam ka object).
+
+2. Fields kya hain? (The Columns)
+Sheet mein upar jo headings hoti hain (jaise Name, Phone, Address), unhe Salesforce mein Fields kehte hain.
+
+Identity Field: Har record ki ek unique ID (jaise Roll Number).
+
+System Field: Jo apne aap update hoti hai (jaise kisne kab ye data banaya).
+
+Custom Field: Jo aap khud add karte hain. Inki pehchaan inke naam ke peeche lage __c se hoti hai (Jaise: Price__c).
+
+3. Records kya hain? (The Rows)
+Sheet mein jo har ek line (row) hoti hai, jisme ek insaan ya ek ghar ki puri jaankari hoti hai, use Record kehte hain.
+
+Key Data Types (Data kis tarah ka hai?)
+Jab aap koi Field banate hain, to aapko batana padta hai ki usme kya bhara jayega:
+
+Checkbox: Haan ya Naa (Yes/No).
+
+Currency: Paise ya Price (Jaise: $500,000).
+
+Date: Koi khaas tarikh (Jaise: Birthday).
+
+Formula: Jo apne aap calculation kar le (Jaise: Price par 10% commission nikalna).
+
+Kaam ki Baatein (Best Practices)
+Sahi Naam Rakhein: Object ka naam aisa ho jo samajh aaye (Property2 ki jagah 'Condominium' likhein).
+
+Description Likhein: Taaki dusron ko pata chale ki ye field kis liye hai.
+
+Required Fields: Jo jaankari bahut zaroori ho, use 'Required' mark kar dein taaki koi use khali na chhod sake (Jaise: Ghar ki keemat yaani Price).
+
