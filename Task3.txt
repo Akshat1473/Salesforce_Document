@@ -286,3 +286,60 @@ Security vs Page Layout: Page layout sirf screen se field hatata hai, par FLS fi
 Read-Only: Aap field ko read-only bana sakte ho taaki user dekh toh sake par change na kare.
 
 Best Practice: Salesforce recommend karta hai ki field permissions hamesha Permission Sets se hi manage karein.
+
+//Record Hierarchy
+Concept: Record-Level Security Kya Hai?
+Permission sets se humne "Object" aur "Fields" control kiye, par Record-Level Security yeh decide karti hai ki user ko kaunse specific records (rows) dikhenge.
+
+Example: Kya ek Recruiter ko sirf apne banaye hue candidates dikhne chahiye ya company ke saare candidates? Iska faisla Record-Level Security karti hai.
+
+Four Ways to Control Record Access (Order: Low to High)
+Salesforce mein access hamesha "lock" se "open" ki taraf jata hai:
+
+OWD (Org-Wide Defaults): Sabse pehle data lock karo (Sabse restricted level).
+
+Role Hierarchies: Managers ko subordinates ka data dikhao.
+
+Sharing Rules: Groups ko access dene ke liye automatic exception banayein.
+
+Manual Sharing: Record owner khud kisi ko access de "Share" button se.
+
+Steps: Org-Wide Defaults (OWD) Set Kaise Karein?
+OWD ka maqsad hai sabse restricted user ke liye base-level access set karna.
+
+Step 1: Sharing Settings Open Karein
+Setup mein jayein.
+
+Quick Find box mein Sharing Settings search karein aur select karein.
+
+Step 2: Edit Defaults
+Organization-Wide Defaults section mein upar diye gaye Edit button par click karein.
+
+Step 3: Object Access Choose Karein
+Har object ke liye access level chunein:
+
+Private: Sirf record owner aur uske managers dekh sakte hain. (Example: Candidates, Job Applications).
+
+Public Read Only: Sab dekh sakte hain, par edit sirf owner kar sakta hai. (Example: Positions).
+
+Public Read/Write: Sab dekh aur edit kar sakte hain.
+
+Controlled by Parent: Agar object Master-Detail relationship mein hai (Example: Reviews), toh wo apne parent ka access follow karega.
+
+Step 4: Grant Access Using Hierarchies
+Agar aap chahte hain ki manager apne niche wale logo ka record dekh sake, toh Grant Access Using Hierarchies ko checked rehne dein. Custom objects ke liye aap ise uncheck karke band bhi kar sakte hain.
+
+Step 5: Save and Recalculate
+Save par click karein.
+
+Salesforce data update karega. Ismein thoda time lag sakta hai, aur kaam pura hone par aapko Email notification milega.
+
+Example Scenario (As per your text):
+Position Object: Kyunki standard employees ko saari positions dikhni chahiye par wo edit nahi kar sakte, isliye ise Public Read Only rakha gaya.
+
+Candidate/Job Application: Inmein sensitive info hoti hai, isliye ise Private rakha gaya taaki log ek dusre ka data na dekh sakein.
+
+Review Object: Yeh Candidate ya Job App se juda hota hai, isliye iska access Controlled by Parent hota hai.
+
+Key Takeaway:
+Hamesha OWD ko "Private" ya sabse zyada "Restrictive" rakhein, aur phir Role Hierarchy ya Sharing Rules ka use karke access ko dheere-dheere "Open" karein.
