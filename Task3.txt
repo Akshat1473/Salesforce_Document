@@ -235,3 +235,54 @@ Salesforce mein data access teen tarikon se manage hota hai:
 ---
 
  **Field-Level Security (Control Access to Fields)** 
+ Field-Level Security (FLS) ka matlab hai ki aap decide karte ho ki user ko object ke andar kaunsa specific field dikhega aur kaunsa nahi.
+
+Object Level: Pura "Candidate" folder dikhega ya nahi.
+
+Field Level: Folder ke andar ka "Mobile Number" ya "Salary" dikhega ya nahi.
+
+Steps to Manage Field Permissions (As per your text)
+Step 1: Permission Set banana aur Field Access dena
+Agar aap chahte ho ki Interviewers candidate ka record update kar sakein par sensitive info (jaise SSN) na dekh payein:
+
+Setup search: Setup mein jao aur Permission Sets search karke select karo.
+
+New Set: New par click karo. Label mein naam do Update Candidate Records. License mein None rakho aur Save karo.
+
+Find Settings: Search box mein Candidates (object ka naam) likho aur use select karo.
+
+Edit Permissions: Edit button par click karo.
+
+Object Permissions: Read par tick karo (taaki wo candidate record dekh sakein).
+
+Field Permissions: Ab niche fields ki list aayegi:
+
+Jo dikhana aur edit karwana hai (jaise Apex aur C# checkboxes), unke Read aur Edit dono par tick karo.
+
+Jo sirf dikhana hai (jaise Hire By date), uska sirf Read tick karo.
+
+Jo chhupana hai (jaise SSN, Email), unhe uncheck rehne do.
+
+Save: Settings save kar do.
+
+Step 2: Multiple Permission Sets ko ek saath update karna
+Jab koi naya field banta hai aur aap use bahut saare permission sets mein ek saath set karna chahte ho:
+
+User Management: Setup mein User Management Settings search karo.
+
+Feature On Karo: Field-Level Security for Permission Sets during Field Creation ko Enable (ON) karo.
+
+Object Manager: Object Manager mein jao aur apna object (e.g., Candidate) select karo.
+
+Field Selection: Fields & Relationships mein jao aur us field ko select karo jise manage karna hai (e.g., Job Category).
+
+Set Security: Set Field-Level Security button par click karo.
+
+Mass Update: Saare permission sets ki list dikhegi. Ek hi screen par sabka Read/Edit access set karo aur Save kar do.
+
+Key Takeaways (Important Points)
+Security vs Page Layout: Page layout sirf screen se field hatata hai, par FLS field ko Reports, Search aur List Views se bhi gayab kar deta hai (Real protection).
+
+Read-Only: Aap field ko read-only bana sakte ho taaki user dekh toh sake par change na kare.
+
+Best Practice: Salesforce recommend karta hai ki field permissions hamesha Permission Sets se hi manage karein.
