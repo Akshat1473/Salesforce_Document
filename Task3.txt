@@ -343,3 +343,170 @@ Review Object: Yeh Candidate ya Job App se juda hota hai, isliye iska access Con
 
 Key Takeaway:
 Hamesha OWD ko "Private" ya sabse zyada "Restrictive" rakhein, aur phir Role Hierarchy ya Sharing Rules ka use karke access ko dheere-dheere "Open" karein.
+
+//Sharing Rules
+Yeh ek bahut hi informative module hai jo Salesforce mein **Sharing Rules** aur **Public Groups** ke upar focus karta hai. Neeche maine iska detailed summary aur step-by-step notes taiyar kiye hain taaki aap ise aasani se samajh sakein aur revise kar sakein.
+
+---
+
+## 📝 Salesforce Data Security: Sharing Rules Notes
+
+### 1. Sharing Rules Kya Hain?
+
+Sharing Rules humein **Org-Wide Defaults (OWD)** se ek step aage jaakar access "extend" (badhane) ki permission dete hain.
+
+* **Rule:** Sharing rules kabhi bhi access ko restrict (kam) nahi kar sakte, ye sirf access ko **expand** karte hain.
+* **Use Case:** Jab aapka OWD "Private" ya "Public Read Only" ho, tab aap specific users ko zyada access dene ke liye iska use karte hain.
+
+**Sharing Rule ke 3 Main Components:**
+
+1. **Which Records?** (Kaunse records share karne hain? - Based on Owner or Criteria)
+2. **With Which Users?** (Kinko share karne hain? - Public Groups, Roles, etc.)
+3. **What Access?** (Kitna access dena hai? - Read-Only or Read/Write)
+
+---
+
+### 2. Public Groups Kya Hain?
+
+Public Group admin dwara banaya gaya ek collection hai jisme Users, Roles, aur doosre Groups ho sakte hain.
+
+* **Fayda:** Sharing rules banate waqt har baar alag-alag roles select karne ke bajaye, aap ek group banakar use ek saath access de sakte hain.
+* **Example:** Recruiting Manager + SW Dev Manager = "Reviewers" Group.
+
+---
+
+## 🛠️ Step-by-Step Implementation Guide
+
+### Step 1: Public Group Kaise Banayein
+
+Agar aapko multiple roles ko ek sath access dena hai, toh pehle group banayein:
+
+1. **Setup** mein jayein aur **Public Groups** search karein.
+2. **New** par click karein.
+3. **Label:** `Reviewers` rakhein.
+4. **Members Add Karein:** "Selected Members" list mein niche diye gaye roles ko add karein:
+* SW Dev Manager
+* Director Product Management
+* Director QA
+* Role and Internal Subordinates: Recruiting Manager
+
+
+5. **Save** karein.
+
+### Step 2: Sharing Rule Kaise Banayein (Example: Review Object)
+
+Ab is group ko records ka access dene ke liye rule banayein:
+
+1. **Setup** mein **Sharing Settings** search karein.
+2. **Manage sharing settings for** dropdown mein woh object chunein (e.g., **Review**).
+3. Sharing Rules section mein **New** par click karein.
+4. **Step 1 (Label):** `Edit Reviews` naam dein.
+5. **Step 2 (Rule Type):** "Based on record owner" select karein.
+6. **Step 3 (Which records):** Select "Public Groups" -> "All Internal Users" (Iska matlab sabke records share honge).
+7. **Step 4 (With whom):** Select "Public Groups" -> jo group aapne banaya tha (**Reviewers**).
+8. **Step 5 (Access level):** Select **Read/Write**.
+9. **Save** karein.
+
+---
+
+## 💡 Important Decision Points (Kab use karein?)
+
+Sharing rules wahan best hain jahan users ka group **Predictable** (pehle se pata) ho.
+
+| Scenario | Use Sharing Rule? | Reason |
+| --- | --- | --- |
+| Recruiters needing access to all records | **YES** | Kyunki recruiters ka role fix hota hai. |
+| Hiring Managers needing access to specific apps | **YES** | Agar group bada aur fix hai. |
+| Interviewers for a specific candidate | **NO** | Kyunki interviewers har interview ke liye badal sakte hain (Dynamic). Iske liye **Manual Sharing** ya **Apex Sharing** behtar hai. |
+
+---
+
+### Summary Table: Recruiting App Sharing Rules
+
+| Object |    Rule Name |     Owned By | Share With | Access Level |
+| ---    | ---          | ---          | ---        | ---          |
+| **Review| Edit Reviews| All Internal Users | Reviewers (Group)| Read/Write |
+| **Job App**| Edit Job Apps | All Internal Users | Reviewers (Group) | Read/Write |
+| **Candidate** | Edit Candidates | All Internal Users | Recruiting Manager & Subordinates | Read/Write |
+| **Position** | Edit Positions | Recruiting Manager & Subordinates | Recruiting Manager & Subordinates | Read/Write |
+
+---
+
+**Kya aap chahte hain ki main aapko "Criteria-Based" sharing rules ke baare mein aur vistaar se bataun?**
+Bilkul! **Criteria-Based Sharing Rules** tab kaam aate hain jab aap Owner ke basis par nahi, balki **Record ke andar ki kisi field value** ke basis par access dena chahte hain.
+
+Yahan iska pura concept aur step-by-step process di gayi hai:
+
+---
+
+### 1. Criteria-Based Sharing Rule Kya Hai?
+
+Abhi tak aapne seekha ki agar "User A" record ka owner hai, toh "User B" ko access mil jaye. Lekin **Criteria-based** rule mein owner se fark nahi padta. Isme system check karta hai: *"Kya is record ki field mein 'X' likha hai? Agar haa, toh ise share kar do."*
+
+**Example:**
+
+* **Scenario:** Aap chahte hain ki jitne bhi Positions "IT" Department ki hain, wo sirf IT Managers ko dikhen, chahe unka owner koi bhi ho.
+* **Criteria:** `Department == 'IT'`
+
+---
+
+### 2. Iske Fayde
+
+* **Ownership se Azadi:** Owner koi bhi ho (Recruiter, Manager, ya System), agar criteria match hua toh access mil jayega.
+* **Specific Control:** Aap bahut bariki se control kar sakte hain (e.g., Sirf wahi Candidates share karein jinka "Status" = 'Hired' ho).
+
+---
+
+### 3. Step-by-Step: Criteria-Based Rule Kaise Banayein
+
+Maan lijiye hume ek rule banana hai: **"Sirf 'High Priority' wali Positions ko Directors ke saath share karna hai."**
+
+1. **Setup** mein jayein aur **Sharing Settings** search karein.
+2. **Manage sharing settings for** mein **Position** object select karein.
+3. **Position Sharing Rules** section mein **New** par click karein.
+4. **Step 1: Rule Identification**
+* Label: `High Priority Positions`
+
+
+5. **Step 2: Select Rule Type**
+* Yahan **"Based on criteria"** wala option select karein.
+
+
+6. **Step 3: Select which records to be shared (The Criteria)**
+* **Field:** `Priority`
+* **Operator:** `equals`
+* **Value:** `High`
+*(Aap yahan multiple criteria bhi laga sakte hain, jaise Priority = High AND Status = Open)*.
+
+
+7. **Step 4: Select users to share with**
+* Select: **Roles** -> **Director**.
+
+
+8. **Step 5: Select access level**
+* Select: **Read Only** (ya Read/Write jaisa aap chahein).
+
+
+9. **Save** karein.
+
+---
+
+### 4. Kuch Zaruri Baatein (Important Notes)
+
+* **Field Types:** Aap sabhi fields par criteria nahi laga sakte. Text, Picklist, Lookup aur Checkbox jaisi common fields par ye kaam karta hai. (Encrypted fields ya Long Text Area fields par ye aksar kaam nahi karta).
+* **Performance:** Bahut zyada criteria-based rules banane se org ki performance thodi slow ho sakti hai agar records ka volume bahut bada ho.
+* **Security:** Ye rules hamesha background mein chalte rehte hain. Jaise hi koi record update hoga aur criteria match karega, sharing automatically apply ho jayegi.
+
+---
+
+### Ek Quick Comparison
+
+| Feature | Owner-Based Sharing | Criteria-Based Sharing |
+| --- | --- | --- |
+| **Focus** | Kaun owner hai? | Record mein kya data hai? |
+| **Logic** | Records owned by "Role A" | Records where "Status = Active" |
+| **Use Case** | Team-wise access | Data-specific access |
+
+---
+
+**Kya aapko criteria-based sharing ka concept clear hai, ya main iska koi aur example doon?**
