@@ -106,4 +106,77 @@ Mapping: Data Import Wizard simple drag-and-drop mapping deta hai aur kafi had t
 
 Null Values: Data Loader mein settings hoti hai "Insert Null Values" ki, jisse aap existing data ko blank kar sakte hain. Import Wizard mein ye process thoda alag (e.g., #N/A use karke) hota hai.
 
+//Data Export
+Ab hum Salesforce se **Data Export** (data nikaalne) ke baare mein baat karenge. Iska main maqsad backup lena ya kisi doosre system mein data ko bhejna hota hai.
 
+Niche iska poora breakdown diya gaya hai:
+
+---
+
+## 1. Data Export ke Do Tarike
+
+Salesforce se data nikaalne ke do main methods hote hain:
+
+| Feature | **Data Export Service** (Browser) | **Data Loader** (Software) |
+| --- | --- | --- |
+| **Kaise Use Karein?** | Seedhe Setup menu ke andar se. | Computer mein install karna padta hai. |
+| **Kab Use Karein?** | Jab aapko weekly ya monthly backup chahiye. | Jab aapko turant data chahiye ya automation karni ho. |
+| **File Format** | Ye CSV files ka ek **Zip** folder bana kar deta hai. | Ye direct **CSV** file deta hai. |
+| **Availability** | Manual ya Scheduled (Automatic). | Manual ya Command line ke zariye. |
+
+---
+
+## 2. Data Export Service (Setup Menu)
+
+Ye sabse aasaan tarika hai backup lene ka. Isme do options milte hain:
+
+1. **Export Now:** Ye turant export process shuru kar deta hai (agar pichle export ko kafi time ho gaya ho).
+2. **Schedule Export:** Isme aap set kar sakte hain ki har mahine ya har hafte apne aap backup nikal jaye.
+
+---
+
+## 3. Data Export Karne Ke Steps (Step-by-Step)
+
+Agar aapko backup lena hai, toh ye follow karein:
+
+### Step 1: Tool tak Pahunchein
+
+* **Setup** mein jayein.
+* Quick Find box mein **"Data Export"** search karein aur use select karein.
+* Ab ya toh **Export Now** par click karein (turant ke liye) ya **Schedule Export** par.
+
+### Step 2: Settings Chunein
+
+* **Encoding:** Apne file ka format chunein (zyadatar default hi rehta hai).
+* **Include Images/Attachments:** Agar aapko photos aur documents bhi chahiye, toh in options ko tick karein.
+* **Carriage Returns:** Is option ko select karne se files saaf-suthri aati hain (line breaks ki jagah spaces aa jate hain).
+
+### Step 3: Frequency Set Karein (Schedule ke liye)
+
+* Agar aapne schedule chuna hai, toh batayein ki kab shuru karna hai aur kis time par.
+* **Note:** Professional/Developer edition mein monthly export hi milta hai, Enterprise/Unlimited mein weekly bhi milta hai.
+
+### Step 4: Data Select Karein
+
+* **Include all data:** Salesforce recommend karta hai ki aap hamesha "Include all data" par click karein taaki kuch bhi na choote.
+
+### Step 5: Download Karein
+
+* **Start Export** ya **Save** par click karein.
+* Salesforce aapko ek **Email** bhejega jab backup tayar ho jayega.
+* Email mein diye gaye link par jayein ya wapis "Data Export" page par jakar **Zip file download** karein.
+* **Yaad Rakhein:** Ye link sirf **48 ghante** (2 days) tak valid rehta hai, uske baad delete ho jata hai.
+
+---
+
+## 4. Quiz ke Key Points (Jo aapne complete kiya)
+
+Aapke quiz ke basis par ye 3 points yaad rakhne layak hain:
+
+1. **Data Export Service:** Ye browser-based hai aur isse CSV files milti hain.
+2. **Manual Export:** Setup mein jakar "Export Now" se hota hai.
+3. **Intervals:** Schedule export **Monthly** intervals par kiya ja sakta hai (kuch editions mein weekly bhi).
+
+---
+
+**Agla Step:** Kya aap "Data Loader" ko install karne ya use karne ke baare mein jaanna chahte hain, ya phir aapka data management ka ye topic poora ho gaya hai?
