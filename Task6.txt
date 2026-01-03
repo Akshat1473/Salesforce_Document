@@ -1,0 +1,109 @@
+//Data import and export
+
+## 1. Data Import Methods: Comparison
+
+Salesforce mein data lane ke do main tareeke hain. Aapko kaunsa chun-na hai, ye aapke data ke size par depend karta hai:
+
+| Feature | **Data Import Wizard** | **Data Loader** |
+| --- | --- | --- |
+| **Record Limit** | 50,000 records tak. | 150 Million records tak. |
+| **Object Support** | Sirf kuch standard objects (Accounts, Contacts, Leads) aur saare Custom Objects. | Saare Objects support karta hai. |
+| **Automation** | Nahi kar sakte (Manual hai). | Scheduled aur automated imports kar sakte hain. |
+| **Access** | Setup menu ke andar milta hai (No install). | Alag se software download/install karna padta hai. |
+
+---
+
+## 2. Import ki Taiyari Kaise Karein? (Prepare for Import)
+
+Data import karne se pehle ye steps follow karna zaroori hai taaki koi error na aaye:
+
+1. **Clean Up:** Apni CSV file se duplicates hataein, spelling sahi karein aur faltu information delete karein.
+2. **Mapping Check:** Dekhein ki aapki file ke columns ke naam Salesforce ke field names se match karte hain ya nahi.
+3. **Configuration:** Agar Salesforce mein koi field missing hai (jaise koi naya Custom Field), toh pehle usey bana lein.
+4. **Test Run:** Pehle ek choti file (2-3 records) import karke check karein.
+
+---
+
+## 3. Data Import Wizard Kaise Use Karein? (Steps)
+
+Agar aapko **Hands-on Challenge** pura karna hai, toh ye steps dhyan se follow karein:
+
+### Step A: Wizard Start Karein
+
+* Salesforce **Setup** mein jayein.
+* Quick Find box mein **"Data Import Wizard"** type karein aur usey select karein.
+* **Launch Wizard!** button par click karein.
+
+### Step B: Data Chunein
+
+* **What kind of data are you importing?** – Yahan **Standard Objects** par click karein aur **Accounts and Contacts** ko select karein.
+* **What do you want to do?** – **Add New Records** par click karein.
+* **Match Contact by:** Name select karein.
+
+### Step C: File Upload Karein
+
+* **Where is your data located?** – **CSV** par click karein.
+* **Choose File** par click karke apni downloaded `.csv` file select karein.
+* Character Code ko default (**ISO-8859-1**) rehne dein aur **Next** dabayein.
+
+### Step D: Field Mapping
+
+Yahan aapko apni file ke columns ko Salesforce fields se jorna hai:
+
+* **FNAME** ko map karein **Contact: First Name** se.
+* **LNAME** ko map karein **Contact: Last Name** se.
+* **CELL** ko map karein **Contact: Mobile** se.
+* (Agar koi field unmapped hai, toh 'Map' par click karke sahi field chunein). **Next** par click karein.
+
+### Step E: Review aur Start
+
+* Saari details check karein aur **Start Import** par click karein.
+* Status check karne ke liye "Bulk Data Load Jobs" mein jayein.
+
+---
+
+## 4. Kuch Zaruri Baatein (Important Tips)
+
+* **Checkboxes:** Inke liye file mein `1` (checked) ya `0` (unchecked) ka use karein.
+* **Multi-select Picklists:** Agar ek field mein multiple values hain, toh unhe semicolon (`;`) se alag karein.
+* **Formula Fields:** Inhe aap import nahi kar sakte kyunki ye read-only hote hain.
+* **Validation Rules:** Agar koi rule data ko rok raha hai, toh import ke waqt usey thodi der ke liye deactivate kar dena chahiye.
+
+---
+
+**Kya aap chahte hain ki main aapko CSV file download karne ya kisi specific error ko solve karne mein help karoon?**
+
+
+Salesforce mein Data Import Wizard aur Data Loader ke alag behavior ke piche ka main reason unka architecture aur target use case hai. Jahan Import Wizard ko simple admins ke liye "in-browser" solution banaya gaya hai, wahi Data Loader ek powerful "API-based" tool hai jo developer-level tasks ke liye hai.
+
+Inke behavior mein main differences ye hain:
+
+1. Automation aur Workflow Triggering
+Data Import Wizard: Isme aapke paas option hota hai ki aap Workflow Rules aur Processes ko "Run" karna chahte hain ya nahi. Ye feature tab kaam aata hai jab aap nahi chahte ki purana data upload karte waqt emails ya alerts trigger hon.
+
+Data Loader: Isme Workflow Rules, Triggers, aur Validation Rules hamesha fire hote hain. Aap inhe tool ke andar se band nahi kar sakte; agar band karna hai toh Salesforce Setup mein jaakar manually deactivate karna hoga.
+
+2. Duplicate Management
+Data Import Wizard: Iska sabse bada fayda ye hai ki isme built-in deduplication hota hai. Aap "Account Name" ya "Email" ke basis par records ko match karke duplicates hone se rok sakte hain.
+
+
+Data Loader: Isme koi default duplicate checking nahi hoti. Agar aapke CSV mein duplicate data hai, toh wo seedha Salesforce mein duplicate records bana dega (jab tak ki aapne Duplicate Rules ya Unique External ID use na ki ho).
+
+3. Record Limits aur Objects
+Data Import Wizard: Ye sirf 50,000 records tak support karta hai aur sirf kuch Standard Objects (Accounts, Contacts, Leads, Solutions) aur Custom Objects par kaam karta hai. Ye Opportunities ya Cases support nahi karta.
+
+
+Data Loader: Ye 5 million records tak handle kar sakta hai aur saare Standard aur Custom objects (jaise Opportunities, Products, etc.) par kaam karta hai.
+
+4. Operations (DML)
+Data Import Wizard: Isme sirf Insert, Update, aur Upsert kar sakte hain.
+
+Data Loader: Isme aap Hard Delete, Export, aur Export All (Recycle Bin se bhi data nikalna) jaise extra operations kar sakte hain.
+
+5. Technical Behavior
+Mapping: Data Import Wizard simple drag-and-drop mapping deta hai aur kafi had tak fields ko automatic map kar leta hai. Data Loader mein aapko .sdl mapping files save karni padti hain jo complex tasks ke liye banti hain.
+
+
+Null Values: Data Loader mein settings hoti hai "Insert Null Values" ki, jisse aap existing data ko blank kar sakte hain. Import Wizard mein ye process thoda alag (e.g., #N/A use karke) hota hai.
+
+
