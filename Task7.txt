@@ -1,0 +1,63 @@
+//Automation
+Samajh gaya! Yeh Salesforce automation ka basic unit hai. Isko simple bhasha mein "Achee se" samajhte hain.
+
+Salesforce mein **Automation** ka matlab hai—kaam ko apne aap karwana taaki insaanon ko bar-bar ek hi cheez na karni pade. Isse galtiyan kam hoti hain aur waqt bachta hai.
+
+---
+
+## 1. Automation Kyun Zaruri Hai? (The Power of Automation)
+
+Har business mein kuch fix kaam hote hain. Jaise:
+
+* Jab deal finalize ho, toh automatically bill generate ho jaye.
+* Jab naya customer aaye, toh use welcome email chala jaye.
+* Data entry mein koi galti na ho.
+
+**Mantra:** "Agar user ko sirf ek hi kaam karna hai, toh wo kaam computer se hi karwa do!" Isse aap apne organization ke "Superhero" ban sakte hain.
+
+---
+
+## 2. Automation ke Do Type (Categories)
+
+Salesforce mein automation do tareekon se hota hai:
+
+### A. Interactive Experiences (User ke saath milkar)
+
+Yahan user ko screen par kuch dikhta hai ya wo button dabata hai.
+
+* **Screen Flows:** Jaise koi form bharna ya sawal-jawab wali screen.
+* **Autolaunched Flows:** Jab aap kisi button par click karte hain aur peeche koi kaam ho jata hai.
+* **Approval Processes:** Jaise chutti (leave) mangna ya discount maangna, jahan senior ko 'Approve' ya 'Reject' button dabana hota hai.
+* **Code (Lightning/Visualforce):** Jab standard tools se kaam nahi banta, toh developers HTML/JavaScript se custom design banate hain.
+
+### B. Behind-the-Scenes Automation (Peeche se hone wala kaam)
+
+Yahan user ko pata bhi nahi chalta aur kaam ho jata hai.
+
+* **Record-Triggered Flows:** Jab koi record naya banta hai ya update hota hai (e.g., Address badalte hi manager ko alert jana).
+* **Schedule-Triggered Flows:** Ek fixed time par chalne wala kaam (e.g., Har Monday subah report bhejna).
+* **Platform Event/Data 360 Flows:** Jab data mein koi badlav ho (Data Cloud ka naya naam **Data 360** hai).
+* **Apex Code:** Jab bahut complex calculation karni ho jo Flow se nahi ho sakti.
+
+---
+
+## 3. Quiz Ke Answers (Explaination ke saath)
+
+Aapne jo quiz share kiya hai, uske sahi jawab ye hain:
+
+**Q1: True or false: One benefit of automation is that it can improve data quality and consistency.**
+
+* **Sahi Jawab:** **A. True**
+* **Kyun?** Kyunki computer thakta nahi hai aur wo hamesha wahi rules follow karega jo aapne set kiye hain, isliye data hamesha sahi aur ek jaisa (consistent) rahega.
+
+**Q2: Which type of automation runs at a specific date and time?**
+
+* **Sahi Jawab:** **D. Schedule-triggered flow**
+* **Kyun?** Iske naam mein hi "Schedule" hai. Jaise aap alarm lagate hain, waise hi ye flow kisi fix date ya time par apne aap chalta hai.
+
+---
+
+**Next Step:**
+Kya aap chahte hain ki main aapko **Flow Builder** ke baare mein aur vistaar se bataun ya agle unit ke quiz mein help karun?
+
+
