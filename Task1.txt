@@ -367,3 +367,11 @@ Develop a plan, including budget, timing, and key department use cases.
 When you want to find an app after you install it, what should you type in the Quick Find box in Setup?
 Installed Packages
 
+
+
+Object,Kya Hai?,Udaharan (Example)
+Lead-Potential Customer,Ek person jisne car ke liye inquiry ki.
+Account-Company,"""Maruti Suzuki"" (ek corporate client)."
+Contact-Person,Maruti Suzuki ka Sales Head.
+Opportunity-Potential Deal,50 cars bechne ka proposal.
+Case-Support Issue,Customer ki car ka engine nahi start ho raha.
