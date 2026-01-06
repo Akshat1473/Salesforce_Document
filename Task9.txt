@@ -1,0 +1,114 @@
+//Apex
+Bilkul, hum Trailhead ke is unit ke har ek topic ko detail mein aur asaan Hinglish mein cover karenge.
+
+---
+
+### 1. What is Apex? (Apex Kya Hai?)
+
+Apex ek **Object-Oriented** programming language hai jo Salesforce ke servers par chalti hai. Iska syntax Java se milta-julta hai.
+
+* **Hosted:** Aapko koi software install nahi karna padta. Code Salesforce ke cloud server par save, compile aur execute hota hai.
+* **Strongly-typed:** Apex mein har variable ka type (jaise `Integer`, `String`) fix hota hai. Galat type use karne par code save hi nahi hoga.
+* **Multitenant-aware:** Salesforce ek "shared" system hai (jaise ek building mein alag-alag flats). Apex mein **Governor Limits** hoti hain taaki aapka code doosre users ke resources ko slow na kare.
+* **Integrated with Database:** Database ke records (Account, Contact) ko access karna aur unhe modify karna bahut easy hai. Isme SQL ki tarah **SOQL** (Search) aur **DML** (Insert/Update) inbuilt hota hai.
+
+---
+
+### 2. Apex Language Highlights (Zaroori Features)
+
+Apex mein woh sab hai jo ek modern language mein hota hai, plus kuch Salesforce-specific cheezein:
+
+* **Common Features:** Classes, Interfaces, Loops (`for`, `while`), aur Conditional statements (`if-then-else`).
+* **Triggers:** Yeh special code hote hain jo kisi event (jaise record insert ya delete hone) par apne aap chalte hain.
+* **Case-Insensitivity:** Apex mein `String` aur `string` ek hi baat hai. Aap `System.debug` likho ya `system.debug`, code chal jayega.
+* **Global Access Modifier:** `public` ke alawa isme `global` hota hai, jo kisi bhi application ya namespace se access kiya ja sakta hai.
+
+---
+
+### 3. Data Types (Data ke Prakaar)
+
+Apex mein data store karne ke liye alag-alag containers hote hain:
+
+1. **Primitives:** * `Integer`: Bina decimal wala number (e.g., 100).
+* `Double/Decimal`: Decimal wala number (e.g., 99.50).
+* `String`: Text (Humesha single quotes `' '` mein likha jata hai).
+* `Boolean`: Sirf `true` ya `false`.
+* `ID`: Salesforce ka unique 15 ya 18 character ka record ID.
+
+
+2. **sObjects:** Yeh sabse important hai. Ek `Account` ya `Contact` record ko Apex variable mein store kiya ja sakta hai.
+3. **Collections:** * **Lists:** Ordered list (Duplicate values allow hain).
+* **Sets:** Unique values ki list (Duplicate allow nahi hain).
+* **Maps:** Key-Value pair (Jaise dictionary).
+
+
+
+---
+
+### 4. Apex Collections: List (Detail mein)
+
+List ka use tab hota hai jab humein ek se zyada items ek hi variable mein rakhne hon.
+
+* **Declaration:** `List<String> colors = new List<String>();`
+(Yahan `String` bata raha hai ki is list mein sirf text aayega).
+* **Adding Elements:** `colors.add('red');`
+* **Accessing Elements:** * Index se: `colors[0]` (Pehela item).
+* Method se: `colors.get(0)`.
+
+
+* **Iterating (Loop):** Saare items ek-ek karke dekhne ke liye `for` loop use hota hai:
+```java
+for(String c : colors) {
+    System.debug(c);
+}
+
+```
+
+
+
+---
+
+### 5. Apex Classes & Methods
+
+Class ek "Template" hai aur Methods uske "Actions" hain.
+
+* **Public vs Private:** `public` method ko bahar se call kar sakte hain, `private` sirf usi class ke andar kaam karta hai.
+* **Instance Methods:** Inhe use karne ke liye object banana padta hai:
+`EmailManager obj = new EmailManager();`
+`obj.sendMail(...);`
+* **Static Methods:** Inhe bina object ke seedha class name se call karte hain:
+`EmailManager.sendMail(...);`
+*(Note: Static methods tab use hote hain jab humein class ke variables ko store nahi karna hota).*
+
+---
+
+### 6. Development Tools (Kahan likhein code?)
+
+1. **VS Code (Salesforce Extensions):** Professional developers ise use karte hain.
+2. **Developer Console:** Browser ke andar hi ek mini-tool hai.
+* **File > New > Apex Class:** Nayi class banane ke liye.
+* **Debug > Open Execute Anonymous:** Bina class save kiye code test karne ke liye.
+
+
+
+---
+
+### 7. Inspecting Debug Logs (Output kaise dekhein?)
+
+Jab bhi aap code chalate hain, Salesforce ek "Log" file banata hai.
+
+* **Logs Tab:** Console mein niche hota hai.
+* **Debug Only Checkbox:** Is par click karne se system ki faltu ki lines chup jati hain aur sirf aapke `System.debug()` wale messages dikhte hain. Yeh error dhundne ka sabse bada tool hai.
+
+---
+
+### 8. EmailManager Example Flow
+
+Is example mein dikhaya gaya ki kaise ek class banayi jati hai jo email bhejti hai.
+
+* **Messaging.SingleEmailMessage:** Yeh Salesforce ki ek ready-made class hai email set karne ke liye.
+* **Messaging.sendEmail:** Yeh final command hai jo email bhejta hai.
+* **Error Handling:** `inspectResults` method check karta hai ki email gaya ya nahi, aur result ko console (Debug Log) mein print karta hai.
+
+---
+
