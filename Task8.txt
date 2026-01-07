@@ -1,0 +1,129 @@
+//Flow Builder Basics
+Salesforce mein Business Process Automation ka matlab hai repetitive kaam ko machines ya software se karwana taaki insaano ka time bache aur galti ki gunjayish kam ho.
+
+Automation Ki Value Kya Hai? (The Power of Automation)
+Har company ke apne kaam karne ke tarike hote hain (Business Processes). Automation in kaamo ko smart banata hai:
+
+Time Bachata Hai: Agar koi kaam baar-baar ho raha hai, toh automation se aap saal ke saikdon ghante bacha sakte hain.
+
+Consistency: Insan bhool sakta hai, lekin automation nahi. Isse data quality improve hoti hai.
+
+User Experience: "Agar user ko sirf ek hi kaam karna hai, toh system ko wo kaam khud kar dena chahiye." Jaise hi deal close ho, system apne aap work order generate kar de.
+
+Salesforce Mein Automation Ke Tarike
+Salesforce ne automation ko do (2) bade hisson mein baata hai:
+
+1. Interactive Experiences (Jo User Ke Saamne Hote Hain)
+Jab automation ko chalane ke liye kisi insaan ya user ke input ki zaroorat hoti hai:
+
+Screen Flows: Ye ek wizard ki tarah hota hai jo user se sawal puchta hai aur data collect karta hai.
+
+Autolaunched Flows: Ye tab chalte hain jab koi button dabaya jaye.
+
+Approval Processes: Jaise chutti (leave) ke liye manager ki permission chahiye hoti hai, waise hi records ko approve karne ka system.
+
+Lightning Components & Visualforce: Inmein Code (HTML/JS/Apex) ka use hota hai jab standard tools se kaam nahi banta.
+
+2. Behind-the-Scenes Automation (Jo Piche Chalte Hain)
+Ye automations tab kaam karte hain jab koi "Event" hota hai, user ko kuch karne ki zaroorat nahi padti:
+
+Record-Triggered Flows: Jab koi record create, update ya delete ho (Sabse zyada use hone wala).
+
+Schedule-Triggered Flows: Jo ek fix time par chalein (e.g., roz raat 12 baje report bhejna).
+
+Platform Event-Triggered Flows: Jab koi system message mile.
+
+Data Cloud (Data 360) Flows: Jab Data 360 mein koi badlav ho.
+
+Apex: Jab kaam bahut complex ho aur code likhne ki zaroorat pade.
+
+Quiz Answers (Summary)
+Aapne jo quiz share kiya hai, uske answers ye honge:
+
+True or false: One benefit of automation is that it can improve data quality and consistency.
+
+Answer: True. Kyunki automation manual errors ko khatam kar deta hai.
+
+Which type of automation runs at a specific date and time?
+
+Answer: Schedule-Triggered Flows. Ye tab chalte hain jab aap koi specific date aur time set karte ho.
+
+Tip: Aaj kal Salesforce mein sabse zyada focus Flow Builder par hai. Lagbhag har tarah ka automation ab Flow se ho sakta hai.
+
+//terms
+ Salesforce Flow ek bahut hi powerful tool hai. Isse tum bina code likhe complex tasks automate kar sakte ho. Chalo isse ek fresher ke perspective se simple "Hinglish" mein samajhte hain.
+
+---
+
+## **1. Important Flowcabulary (Basic Terms)**
+
+Sabse pehle ye teen terms ka antar (difference) samajh lo:
+
+* **Salesforce Flow:** Ye ek "Bada Umbrella" (blanket term) hai. Isme wo saari cheezein aati hain jo automation mein help karti hain (jaise Flow Builder, Orchestration, etc.).
+* **Flow Builder:** Ye wo **Tool/Interface** hai jahan tum jaakar automation banate ho (Jaise coding ke liye VS Code hota hai, waise hi flows ke liye Flow Builder hai).
+* **Flow:** Ye wo **Final Product** ya configuration hai jo tumne banayi hai. Ye ek "Flowchart" ki tarah dikhta hai jo actually kaam karta hai.
+* **Flownatic:** Wo log jo flows banane ke shaukeen hote hain (Jaise tum future mein banoge!).
+
+## **2. Flows Are Friends (Flows kya kar sakte hain?)**
+
+Socho ek **Flowchart** ke baare mein jisme boxes aur arrows hote hain. Normal flowchart sirf rasta dikhata hai, lekin Salesforce Flow us raste par **khud chal kar kaam bhi karta hai.**
+
+**Fresher ke liye Key Points:**
+
+* Isko **"Visual Coding"** kehte hain. Tumhe code nahi likhna, lekin logic (if-else, loops) coding wala hi lagta hai.
+* Ye **Declarative Tool** hai (Matlab: Clicks, not Code).
+* Ye bahut saare kaam kar sakta hai, jaise:
+* User se input lena (Screen Flow).
+* Record update hone par kisi doosre record ko update karna.
+* Email bhejna ya kisi external system ko message bhejna.
+
+
+
+## **3. Kab Flow use karein aur kab Code (Apex)?**
+
+Salesforce ka rule hai: **Pehle Flow try karo, agar na ho paye tab Code (Apex) par jao.**
+
+| Scenario | Best Tool |
+| --- | --- |
+| Simple ya Moderate automation | **Flow** (Sasta aur fast) |
+| Bahut complex logic jo Flow mein nahi ho raha | **Apex Code** |
+| PDF generate karna | **Apex Code** (Flow naturaly nahi kar sakta) |
+| User interface (Form) banana | **Flow** (Screen Flow) |
+
+**Pro Tip:** Kabhi-kabhi "Hybrid" approach use hoti hai—Flow ke andar ek chota sa Apex plugin daal dena.
+
+## **4. Case Study: Flo Smith's Example**
+
+Flo (Admin) ki company mein sales reps duplicate contacts bana rahe the aur fields khaali chhod rahe the.
+
+**Requirements:**
+
+1. Ek form chahiye user se data lene ke liye.
+2. Check karna hai ki contact pehle se hai ya nahi (Logic).
+3. Agar hai toh update karo, nahi toh naya banao.
+4. Chatter par post karke inform karo.
+
+**Solution Selection:**
+
+* **Quick Action:** Sirf form de sakta hai, logic nahi laga sakta. (❌ No)
+* **Lightning Component:** Logic aur form dono dega, par **Code** likhna padega. (❌ No)
+* **Flow:** Form bhi dega aur Logic bhi bina code ke. (✅ **Perfect!**)
+
+---
+
+## **Quiz Answers (For your points!)**
+
+**1. How does Flow Builder relate to Salesforce Flow?**
+
+* **Answer: A (Flow Builder is a part of Salesforce Flow.)**
+* * Logic:* Flow Builder ek tool hai jo Salesforce Flow ki family ka hissa hai.
+
+**2. When should you build a flow?**
+
+* **Answer: B (When you want to automate without writing code)**
+* * Logic:* Jab humein bina coding ke automation karna ho, tab Flow sabse best option hai.
+
+---
+
+**Next Step:**
+Kya tum chahte ho main tumhe **Flow Builder ke interface** (Toolbox, Canvas, Elements) ke baare mein bataun taaki tum apni pehli "Screen Flow" banane ke liye taiyar ho sako?
