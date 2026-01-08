@@ -215,4 +215,235 @@ String accName = acc.Name; // Ab ye kaam karega!
 
 
 ---
+---
 
+# Salesforce Apex: Manipulating Records with DML (Detailed Notes)
+
+## 1. Introduction to DML (Data Manipulation Language)
+
+Salesforce mein data ko create aur modify karne ke liye **DML** ka use hota hai. Apex ek data-focused language hai, isliye iska direct access Salesforce data par hota hai.
+
+* **Key Advantage:** Dusri languages ki tarah data source se connect karne ke liye extra setup nahi karna padta.
+
+### Basic DML Statements:
+
+1. **`insert`**: Naye records create karne ke liye.
+2. **`update`**: Existing records ko modify karne ke liye.
+3. **`upsert`**: Naye record create karta hai aur purane ko update (agar match mil jaye).
+4. **`delete`**: Records ko delete karne ke liye (Recycle Bin mein jate hain).
+5. **`undelete`**: Recycle Bin se records wapas lane ke liye.
+6. **`merge`**: Do ya teen same type ke records ko ek banane ke liye (Sirf Account, Contact, Lead aur Case ke liye).
+
+---
+
+## 2. Basic Operation & ID Auto-Assignment
+
+Jab aap koi record `insert` karte ho, toh Salesforce automatically usko ek **Unique ID** assign kar deta hai. Insert hone ke baad aapka sObject variable us ID ko hold kar leta hai.
+
+**Code Example:**
+
+```java
+// 1. sObject create kiya
+Account acct = new Account(Name='Acme', Phone='(415)555-1212', NumberOfEmployees=100);
+
+// 2. DML statement se insert kiya
+insert acct;
+
+// 3. ID automatically populate ho gayi, ab ise use kar sakte hain
+ID acctID = acct.Id;
+System.debug('ID = ' + acctID);
+
+```
+
+---
+
+## 3. Bulk DML (Most Important)
+
+Salesforce mein kabhi bhi loop ke andar DML nahi karna chahiye (Governor Limits ki wajah se). Hamesha **List** ka use karke bulk operations karne chahiye. Ek transaction mein aap maximum **150 DML statements** hi chala sakte hain.
+
+**Code Example (Bulk Insert & Update):**
+
+```java
+// List create ki
+List<Contact> conList = new List<Contact> {
+    new Contact(FirstName='Joe',LastName='Smith',Department='Finance'),
+    new Contact(FirstName='Kathy',LastName='Smith',Department='Technology'),
+    new Contact(FirstName='Caroline',LastName='Roth',Department='Finance'),
+    new Contact(FirstName='Kim',LastName='Shain',Department='Education')
+};
+
+// Bulk insert: Ek hi statement mein 4 records gaye
+insert conList;
+
+// List update ke liye
+List<Contact> listToUpdate = new List<Contact>();
+
+for(Contact con : conList) {
+    if (con.Department == 'Finance') {
+        con.Title = 'Financial analyst';
+        listToUpdate.add(con);
+    }
+}
+
+// Bulk update
+update listToUpdate;
+
+```
+
+---
+
+## 4. Upsert Operation
+
+Upsert "Update + Insert" ka combo hai. Ye duplicate records se bachata hai.
+
+* **Matching Rule:** Agar record ID hai toh update karega, nahi toh naya banayega. Aap specific "External ID" field bhi de sakte ho matching ke liye.
+
+**Syntax:** `upsert sObjectList [matchingField];`
+
+**Code Example (Using ID and External ID):**
+
+```java
+// Part A: Matching via ID
+Contact josh = new Contact(FirstName='Josh',LastName='Kaplan',Department='Finance');
+insert josh; 
+
+josh.Description = 'Josh\'s record has been updated by the upsert operation.';
+Contact kathy = new Contact(FirstName='Kathy',LastName='Brown',Department='Technology');
+
+List<Contact> contacts = new List<Contact> { josh, kathy };
+upsert contacts; // Josh update hoga (ID match), Kathy insert hogi
+
+// Part B: Matching via Specific Field (Email)
+Contact jane = new Contact(FirstName='Jane', LastName='Smith', Email='jane.smith@example.com', Description='Contact of the day');
+insert jane;
+
+Contact jane2 = new Contact(FirstName='Jane', LastName='Smith', Email='jane.smith@example.com', Description='Prefers to be contacted by email.');
+// Email field ko use karke upsert kiya
+upsert jane2 Contact.fields.Email;
+
+```
+
+---
+
+## 5. Deleting Records
+
+Records ko delete karne ke liye `delete` keyword use hota hai. Deleted records **15 days** tak Recycle Bin mein rehte hain.
+
+**Code Example:**
+
+```java
+// Pehle query karke records laye (SOQL)
+Contact[] contactsDel = [SELECT Id FROM Contact WHERE LastName='Smith'];
+// Delete kiya
+delete contactsDel;
+
+```
+
+---
+
+## 6. DML Exceptions (Error Handling)
+
+Agar DML fail hota hai (jaise required field miss hona), toh system `DmlException` throw karta hai. Ise `try-catch` se handle karna chahiye.
+
+**Code Example:**
+
+```java
+try {
+    Account acct = new Account(); // Name field missing hai (Required)
+    insert acct;
+} catch (DmlException e) {
+    System.debug('A DML exception has occurred: ' + e.getMessage());
+}
+
+```
+
+---
+
+## 7. Database Methods (Partial Success)
+
+DML statements (`insert acct;`) "All or None" hote hain—agar ek bhi record fail hua toh pura transaction fail.
+Lekin **Database methods** (`Database.insert()`) se aap **Partial Success** allow kar sakte ho.
+
+* **Parameter:** `allOrNone` (Agar `false` hai, toh sahi records save ho jayenge, galat wale error return karenge).
+
+**Code Example (Partial Success):**
+
+```java
+List<Contact> conList = new List<Contact> {
+    new Contact(FirstName='Joe',LastName='Smith'),
+    new Contact() // Error: LastName missing hai
+};
+
+// false matlab partial success allowed hai
+Database.SaveResult[] srList = Database.insert(conList, false);
+
+for (Database.SaveResult sr : srList) {
+    if (sr.isSuccess()) {
+        System.debug('Success ID: ' + sr.getId());
+    } else {
+        for(Database.Error err : sr.getErrors()) {
+            System.debug('Error: ' + err.getMessage());
+        }
+    }
+}
+
+```
+
+---
+
+## 8. Working with Related Records
+
+Relationship ke liye hamesha Parent ki ID Child ke field mein dalni padti hai.
+
+### A. Insert Related Records
+
+```java
+Account acct = new Account(Name='SFDC Account');
+insert acct;
+ID acctID = acct.ID;
+
+// Contact ko Account se link kiya
+Contact mario = new Contact(FirstName='Mario', LastName='Ruiz', AccountId=acctID);
+insert mario;
+
+```
+
+### B. Update Related Records (Separate Calls)
+
+Ek hi DML call mein Parent aur Child update nahi ho sakte. Alag-alag calls karni padengi.
+
+```java
+Contact queriedContact = [SELECT Account.Name FROM Contact WHERE FirstName = 'Mario' LIMIT 1];
+queriedContact.Phone = '(415)555-1213';
+queriedContact.Account.Industry = 'Technology';
+
+update queriedContact;         // 1. Contact update
+update queriedContact.Account; // 2. Parent Account update
+
+```
+
+### C. Delete Related Records (Cascading Delete)
+
+Agar aap Parent record delete karte ho, toh uske related Child records automatically delete ho jate hain (agar relationship Master-Detail hai ya cascading enabled hai).
+
+---
+
+## 9. Transactions
+
+Apex mein DML ek **Transaction** ke andar chalta hai.
+
+* Agar ek transaction mein 10 operations hain aur 10th fail ho gaya, toh pehle ke 9 bhi **Rollback** ho jayenge (database mein kuch save nahi hoga).
+
+---
+
+### Comparison Table: DML Statements vs Database Methods
+
+| Feature | DML Statement (`insert`) | Database Method (`Database.insert`) |
+| --- | --- | --- |
+| **Partial Success** | Not Supported (All or None) | Supported (via `allOrNone` parameter) |
+| **Exceptions** | Throws Exception on error | Returns Result Array (no exception if false) |
+| **Usage** | Jab aap chahte ho error aane par code ruk jaye | Jab aap error handle karke baki data save karna chahte ho |
+
+---
+
+Kya aap chahte hain main in topics par kuch practice questions (MCQs) ya coding tasks doon taaki aapki MCA exams aur Salesforce trainee role dono ki taiyari ho jaye?
