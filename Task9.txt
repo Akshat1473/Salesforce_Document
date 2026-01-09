@@ -446,4 +446,330 @@ Apex mein DML ek **Transaction** ke andar chalta hai.
 
 ---
 
-Kya aap chahte hain main in topics par kuch practice questions (MCQs) ya coding tasks doon taaki aapki MCA exams aur Salesforce trainee role dono ki taiyari ho jaye?
+//SOQL
+Akshat, SOQL (Salesforce Object Query Language) Salesforce ka sabse powerful tool hai data read karne ke liye. Niche maine is unit ke complete notes taiyar kiye hain, bina kisi code ya point ko skip kiye.
+
+---
+
+# Salesforce Apex: Write SOQL Queries (Detailed Notes)
+
+## 1. SOQL Kya Hai?
+
+SOQL ka matlab hai **Salesforce Object Query Language**. Ye SQL ki tarah hota hai lekin Salesforce platform ke liye customized hai. Iska use Salesforce database se records read karne ke liye kiya jata hai.
+
+* **Inline SOQL:** Jab hum Apex code ke andar hi square brackets `[]` mein query likhte hain, toh use Inline SOQL kehte hain.
+* **Syntax:**
+```java
+Account[] accts = [SELECT Name, Phone FROM Account];
+
+```
+
+
+
+---
+
+## 2. Basic SOQL Syntax
+
+Basic query ka structure aisa hota hai:
+`SELECT fields FROM ObjectName [WHERE Condition] [ORDER BY Field] [LIMIT n]`
+
+* **SELECT Clause:** Kaunse fields chahiye (jaise Name, Phone).
+* **FROM Clause:** Kaunse object se data chahiye (jaise Account ya Custom_Object__c).
+* **FIELDS() Keyword:**
+* `FIELDS(STANDARD)`: Saare standard fields ke liye.
+* `FIELDS(CUSTOM)`: Saare custom fields ke liye.
+* `FIELDS(ALL)`: Saare fields ke liye.
+
+
+
+> **Note:** Apex queries mein `Id` field hamesha return hoti hai, chahe aap use SELECT mein likho ya nahi. Lekin Query Editor mein dekhne ke liye use likhna padta hai.
+
+---
+
+## 3. Filtering Results (WHERE Clause)
+
+Agar aapko saare records nahi balki kuch specific records chahiye, toh `WHERE` use karein.
+
+* **String Comparison:** Case-insensitive hota hai (`'SFDC'` aur `'sfdc'` same hain).
+* **Logical Operators:** `AND`, `OR` aur Parentheses `()` ka use karke complex conditions bana sakte hain.
+* **LIKE Operator:** Fuzzy matching ke liye.
+* `%`: Any number of characters (jaise `Name LIKE 'SFDC%'`).
+* `_`: Exactly one character.
+
+
+
+**Code Example:**
+
+```java
+// Complex filtering
+SELECT Name, Phone FROM Account 
+WHERE (Name = 'SFDC Computing' OR (NumberOfEmployees > 25 AND BillingCity = 'Los Angeles'))
+
+```
+
+---
+
+## 4. Ordering and Limiting Results
+
+* **ORDER BY:** Records ko sort karne ke liye.
+* `ASC` (Default): Alphabetical/Numerical order.
+* `DESC`: Reverse order.
+
+
+* **LIMIT:** Kitne records return karne hain. Agar `LIMIT 1` use karte hain, toh result ek single sObject mein store kar sakte hain (List ki zaroorat nahi).
+
+**Code Example:**
+
+```java
+// Top 10 accounts sorted by Name
+Account[] accts = [SELECT Name, Phone FROM Account 
+                   WHERE NumberOfEmployees > 25 
+                   ORDER BY Name DESC 
+                   LIMIT 10];
+
+```
+
+---
+
+## 5. Apex Variables in SOQL (Bind Variables)
+
+Apex variables ko SOQL query ke andar use karne ke liye variable ke pehle **Colon (:)** lagaya jata hai. Isse **Bind** kehte hain.
+
+**Code Example:**
+
+```java
+String targetDepartment = 'Wingo';
+Contact[] techContacts = [SELECT FirstName, LastName FROM Contact 
+                          WHERE Department = :targetDepartment];
+
+```
+
+---
+
+## 6. Querying Related Records
+
+Salesforce mein Parent-Child relationship ke beech query karna easy hai.
+
+### A. Parent to Child (Inner Query)
+
+Parent record ke saath uske saare child records mangwane ke liye inner query use karte hain. Yahan **Relationship Name** (Contacts) use hota hai, object name nahi.
+
+```java
+Account[] accts = [SELECT Name, (SELECT FirstName, LastName FROM Contacts) 
+                   FROM Account WHERE Name = 'SFDC Computing'];
+// Child records access karna
+Contact[] cts = accts[0].Contacts;
+
+```
+
+### B. Child to Parent (Dot Notation)
+
+Child record se parent ki details nikalne ke liye Dot `.` use karte hain.
+
+```java
+Contact[] cts = [SELECT Account.Name FROM Contact 
+                 WHERE FirstName = 'Carol' AND LastName = 'Ruiz'];
+String parentName = cts[0].Account.Name;
+
+```
+
+* **Custom Objects:** Custom relationships ke liye `__r` suffix use hota hai (jaise `Line_Items__r`).
+
+---
+
+## 7. SOQL For Loops (Efficient Batching)
+
+Heap size limit se bachne ke liye aur governor limits ko manage karne ke liye SOQL For Loop best hai. Ye data ko **200 records ke batches** mein process karta hai.
+
+**Code Example:**
+
+```java
+// SObject List format (Best Practice)
+for (Account[] tmp : [SELECT Id FROM Account WHERE Name LIKE 'for loop _']) {
+    // Ye loop har 200 records ke batch par ek baar chalega
+    System.debug('Batch size: ' + tmp.size());
+}
+
+```
+
+---
+
+## 8. Hands-on Challenge Solution (Logic)
+
+Aapko ek class `ContactSearch` banani hai jisme method `searchForContacts` do strings accept kare.
+
+**Solution Code:**
+
+```java
+public class ContactSearch {
+    public static List<Contact> searchForContacts(String lastName, String postalCode) {
+        // Querying Contact based on parameters
+        List<Contact> conList = [SELECT Id, Name FROM Contact 
+                                 WHERE LastName = :lastName 
+                                 AND MailingPostalCode = :postalCode];
+        return conList;
+    }
+}
+
+```
+
+---
+
+### Prerequisites (Sample Data Creation Code)
+
+Agar aapko practice karni hai, toh pehle ye data Execute Anonymous window mein run karein:
+
+```java
+Account acct = new Account(Name='SFDC Computing', Phone='(415)555-1212', NumberOfEmployees=50, BillingCity='San Francisco');
+insert acct;
+
+Contact con = new Contact(FirstName='Carol', LastName='Ruiz', Phone='(415)555-1212', Department='Wingo', AccountId=acct.Id);
+insert con;
+
+Account acct2 = new Account(Name='The SFDC Query Man', Phone='(310)555-1213', NumberOfEmployees=50, BillingCity='Los Angeles', Description='Expert in wing technologies.');
+insert acct2;
+
+```
+
+//SOSL 
+
+---
+
+# **Notes: Salesforce Object Search Language (SOSL)**
+
+### **1. Introduction to SOSL**
+
+* **Definition:** SOSL ek Salesforce search language hai jiska use records ke andar text search karne ke liye kiya jata hai.
+* **Multiple Objects:** SOSL ki sabse badi khoobi yeh hai ki yeh ek saath kai standard aur custom objects ke fields ko search kar sakta hai.
+* **Inspiration:** Yeh Apache Lucene par based hai.
+* **Inline SOSL:** Jab SOSL queries ko directly Apex code ke andar likha jata hai, toh use "Inline SOSL" kehte hain.
+
+### **2. SOSL vs SOQL (Key Differences)**
+
+| Feature | SOQL | SOSL |
+| --- | --- | --- |
+| **Object Scope** | Sirf ek standard ya custom object ko query karta hai. | Ek saath kai objects ko search kar sakta hai. |
+| **Matching Type** | Default mein "Exact Match" karta hai. | "Word Match" par kaam karta hai (e.g., 'Digital' search karne par 'The Digital Company' bhi mil jayega). |
+| **Use Case** | Jab aapko pata ho ki data kis object mein hai aur specific criteria chahiye. | Jab aapko multiple objects mein text search karna ho aur exact location na pata ho. |
+| **Fields** | Aapko fields specify karni padti hain. | Yeh zyadatar text fields ko search kar sakta hai. |
+
+---
+
+### **3. Prerequisites (Sample Data Setup)**
+
+Agar aapko SOSL test karna hai, toh Developer Console ke **Execute Anonymous** window mein niche diya gaya code run karein:
+
+```java
+// Account aur related Contact add karna
+Account acct = new Account(
+    Name='SFDC Computing',
+    Phone='(415)555-1212',
+    NumberOfEmployees=50,
+    BillingCity='San Francisco');
+insert acct;
+
+ID acctID = acct.ID; // Inserted ID lena
+
+Contact con = new Contact(
+    FirstName='Carol',
+    LastName='Ruiz',
+    Phone='(415)555-1212',
+    Department='Wingo',
+    AccountId=acctID);
+insert con;
+
+// Bina contact wala Account add karna
+Account acct2 = new Account(
+    Name='The SFDC Query Man',
+    Phone='(310)555-1213',
+    NumberOfEmployees=50,
+    BillingCity='Los Angeles',
+    Description='Expert in wing technologies.');
+insert acct2;
+
+```
+
+---
+
+### **4. Basic SOSL Syntax**
+
+SOSL likhne ka tarika **Apex** aur **Query Editor/API** mein thoda alag hota hai:
+
+* **In Apex:** Search query single quotes (`' '`) mein hoti hai.
+`FIND 'SearchQuery' [IN SearchGroup] [RETURNING ObjectsAndFields]`
+* **In Query Editor/API:** Search query curly brackets (`{ }`) mein hoti hai.
+`FIND {SearchQuery} [IN SearchGroup] [RETURNING ObjectsAndFields]`
+
+#### **Syntax Components:**
+
+1. **SearchQuery:** Woh text jo aap search karna chahte hain (Single word ya Phrase).
+* Wildcards: `*` (zero ya zyada characters) aur `?` (sirf ek character).
+* Case-Insensitive: 'Customer', 'customer', aur 'CUSTOMER' sabka result same hoga.
+
+
+2. **SearchGroup (Optional):** Yeh batata hai ki search kahan karni hai.
+* `ALL FIELDS` (Default)
+* `NAME FIELDS`
+* `EMAIL FIELDS`
+* `PHONE FIELDS`
+* `SIDEBAR FIELDS`
+
+
+3. **ObjectsAndFields (Optional):** Kaunsa data return karna hai (e.g., `RETURNING Account(Name), Contact(FirstName)`).
+
+---
+
+### **5. Search Examples & Logic**
+
+| Search Term | Description | Result based on Sample Data |
+| --- | --- | --- |
+| **The Query** | Dono words search karega kisi bhi order mein. | Account: "The SFDC Query Man" |
+| **Wingo OR Man** | Ya toh 'Wingo' mile ya 'Man'. | Contact: Carol Ruiz; Account: The SFDC Query Man |
+| **1212** | Dash `-` ke baad wale numbers ko word maanta hai. | Account: SFDC Computing; Contact: Carol Ruiz |
+| **wing*** | Wildcard search jo 'wing' se shuru hone wale sab search karega. | Account: The SFDC Query Man; Contact: Maria Ruiz |
+
+---
+
+### **6. SOSL Apex Example (List of Lists)**
+
+SOSL hamesha `List<List<sObject>>` return karta hai kyunki isme multiple objects ka data hota hai.
+
+```java
+String soslFindClause = 'Wingo OR SFDC';
+// Inline SOSL with Binding (:soslFindClause)
+List<List<sObject>> searchList = [FIND :soslFindClause IN ALL FIELDS 
+                    RETURNING Account(Name), Contact(FirstName, LastName, Department)];
+
+// Data ko separate lists mein cast karna
+Account[] searchAccounts = (Account[])searchList[0];
+Contact[] searchContacts = (Contact[])searchList[1];
+
+System.debug('Found the following accounts.');
+for (Account a : searchAccounts) {
+    System.debug(a.Name);
+}
+
+System.debug('Found the following contacts.');
+for (Contact c : searchContacts) {
+    System.debug(c.LastName + ', ' + c.FirstName);
+}
+
+```
+
+---
+
+### **7. Advanced SOSL (Filtering & Ordering)**
+
+Aap `RETURNING` clause ke andar results ko refine kar sakte hain:
+
+* **Filtering (WHERE):**
+`RETURNING Account(Name, Industry WHERE Industry='Apparel')`
+* **Ordering (ORDER BY):**
+`RETURNING Account(Name, Industry ORDER BY Name)`
+* **Limiting (LIMIT):**
+`RETURNING Account(Name, Industry LIMIT 10)`
+
+---
+
+**Note for User:** Aapne pichle turns mein **DML** aur **SOQL** par bhi kaam kiya hai. SOSL in teeno ka combination (Basics, DML, SOQL, SOSL) aapki Trailhead module "Apex Basics & Database" ko complete karta hai.
+
