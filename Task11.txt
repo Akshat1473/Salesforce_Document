@@ -1,0 +1,433 @@
+//Reports and dashboard
+---
+
+## 1. Reports aur Dashboards kyun zaroori hain?
+
+Aapke business ke paas sawal hote hain, aur Salesforce data ke paas unke jawab. Jab bhi koi report mangta hai, toh woh ek sawal ke roop mein hota hai.
+
+* **Examples:** "Kaunsa product sabse zyada bik raha hai?" ya "Hamare sabse achhe customers kaun hain?"
+
+### Maria ki Kahani (The Admin Approach)
+
+Maria (Admin) se uski CEO (Sita) ne pucha: **"Kaunse products top sellers hain?"**
+Maria ne seedha report nahi banayi, pehle kuch clarifying questions puche:
+
+* Top seller ka matlab kya hai? Revenue (paisa) ya Quantity (kitne bike)?
+* Kya unhe "Product Family" ke hisaab se group karna hai?
+* Kaunse date range ka data chahiye?
+
+**Result:** Maria ne in sawalon se **Criteria** taiyar kiya (jaise: sirf 'Closed Won' opportunities dekhna aur 'Active' products ko filter karna).
+
+---
+
+## 2. Report Kya Hota Hai? (What is a Report?)
+
+Sabse asaan bhasha mein: **Report records ki ek list hai** (jaise Accounts ya Opportunities ki list) jo aapke bataye huye criteria ko match karti hai.
+
+* **Sirf list nahi hai:** Aap data ko filter kar sakte hain, grouping kar sakte hain, aur math (sum, average) bhi kar sakte hain.
+* **Visuals:** Aap report ke data ko **Charts** (jaise bar chart) mein dikha sakte hain.
+* **Folders:** Har report ek folder mein save hoti hai. Folder se hi decide hota hai ki kaun us report ko dekh sakta hai ya edit kar sakta hai.
+
+---
+
+## 3. Report Type Kya Hota Hai? (What is a Report Type?)
+
+Report Type ek **Template** ki tarah hai. Ye sabse pehla step hota hai report banane mein.
+
+* **Kaam:** Ye decide karta hai ki aapki report mein kaunse **Objects** (jaise Accounts, Leads) aur kaunse **Fields** (Name, Date, Amount) available honge.
+* **Standard Report Types:** Salesforce pehle se kuch banakar deta hai (e.g., "Opportunities with Products").
+* **Custom Report Types:** Agar standard se kaam na chale, toh Admin apna khud ka template bana sakta hai. Jaise agar aapko sirf wahi Leads dekhni hain jinke saath koi Activity judi ho, toh aap "Leads with Activities" ka custom report type banayenge.
+
+---
+
+## 4. Dashboard Kya Hota Hai? (What is a Dashboard?)
+
+Dashboard aapke data ka ek **Visual Display** hai. Ye bade bade metrics aur trends ko ek saath dikhata hai.
+
+* **Widgets:** Dashboard par alag-alag widgets hote hain (pie charts, bar graphs).
+* **Source:** Har widget ke peeche ek **Source Report** hoti hai.
+* **Folders:** Reports ki tarah dashboards bhi folders mein save hote hain.
+
+### Running User (Zaroori Concept)
+
+Har dashboard ka ek "Running User" hota hai. Us user ki security settings taiyar karti hain ki dashboard par kitna data dikhega.
+
+* **Static Dashboard:** Agar Sales Manager 'Running User' hai, toh baaki team members ko bhi wahi data dikhega jo Manager dekh sakta hai.
+* **Dynamic Dashboard:** Isme data us insaan ke hisaab se dikhta hai jo login hai (Logged-in user). Ye tab useful hai jab aap chahte hain ki har koi sirf apna data dekhe.
+
+---
+
+## 5. Organize Kaise Karein?
+
+Reports aur Dashboards ko **Folders** mein manage kiya jata hai.
+
+* Aap access control kar sakte hain: **Public** (sab ke liye), **Private** (sirf aapke liye), ya **Shared** (kuch khaas logo ke liye).
+* Access roles, permissions, ya territories ke basis par diya ja sakta hai.
+
+---
+
+### Quiz ke Answers (For your understanding):
+
+**1. What is a dashboard?**
+**Answer:** Dashboard ek visual display hai jo key metrics aur trends ko dikhata hai. Ye reports se data lekar widgets (charts) ke roop mein pesh karta hai.
+
+**2. What does a report type determine?**
+**Answer:** Report type ye decide karta hai ki report banate waqt aapko kaunse records aur fields istemal karne ke liye milenge (basically it defines the objects and fields available).
+
+---
+
+Salesforce mein **Report Builder** ka istemal karke report banana bahut simple hai. Ye ek **Drag-and-Drop** tool hai jahan aap bina coding ke apna data dekh sakte hain.
+
+Chaliye is unit ke main points ko **Hinglish** mein samajhte hain:
+
+---
+
+## 1. Report Kaise Banayein? (Step-by-Step)
+
+Salesforce mein report banane ka process niche diye gaye steps mein hota hai:
+
+1. **App Launcher** par click karein aur **Reports** par jayein.
+2. **New Report** button par click karein.
+3. **Report Type** chunein (Jaise Accounts ya Leads). Ye decide karta hai ki aapko kaunse fields milenge.
+4. **Start Report** par click karein. Aapko screen par Report Builder dikhega.
+
+---
+
+## 2. Report Builder ke 3 Main Parts
+
+Report Builder ke left side mein teen zaroori tabs/panels hote hain:
+
+* **Outline Tab:** * Yahan se aap report ka format change kar sakte hain.
+* Aap rows ko **Group** kar sakte hain (Summary Report banane ke liye) ya fir rows aur columns dono ko group kar sakte hain (Matrix Report banane ke liye).
+
+
+* **Filters Tab:** * Ye tab data ko "Chhaanne" (filter) ke kaam aata hai.
+* Aap yahan filters laga sakte hain jaise "Show me only Open Leads" ya "Created Date = Last 30 Days".
+
+
+* **Fields Panel:** * Yahan wo saare fields ki list hoti hai jo aapki report mein aa sakte hain.
+* Aap yahan se kisi bhi field ko pakad kar (drag karke) sidha report preview mein dal sakte hain.
+
+
+
+---
+
+## 3. Preview aur Run mein Antar
+
+* **Preview Area:** Jab aap report bana rahe hote hain, toh right side mein aapko data ka sample dikhta hai. Agar data nahi dikh raha, toh **"All Time"** filter check karein.
+* **Save & Run:** Jab aap apni report se khush hon, tab **Save** karein aur fir **Run** button dabayein. Run karne par aapko saara asli data (real-time) dikhai deta hai.
+
+---
+
+## 4. Hands-on Challenge Guide (Hinglish Help)
+
+Aapko ek **Lead Source Report** banani hai. Iske liye ye karein:
+
+1. **New Report** banayein aur Type mein **Leads** select karein.
+2. **Fields:** Outline tab mein check karein ki **State/Province** aur **Lead Source** fields add hain ya nahi. Agar nahi, toh Fields panel se drag karke add kar lein.
+3. **Filter:** Agar preview khali hai, toh Filters tab mein jaakar Date filter ko **"All Time"** kar dein.
+4. **Save:** Report ka naam **Lead Source Report** rakhein.
+5. **Folder:** Sabse zaroori step! Save karte waqt folder ko **"Public Reports"** chunein (warna challenge fail ho jayega).
+6. **Run** karke check karein aur fir Trailhead par points claim karein.
+
+---
+
+### Key Takeaway Table
+
+| Feature | Kaam Kya Hai? |
+| --- | --- |
+| **Drag-and-Drop** | Fields ko uthakar report mein kahin bhi rakhna. |
+| **Outline** | Grouping aur Columns set karna. |
+| **Filters** | Sirf wahi data dekhna jo zaroori hai. |
+| **Public Folder** | Dusro ko report dikhane ke liye yahan save karein. |
+
+Salesforce Report Builder mein "All Time" ek bahut zaroori Date Filter hai. Iska matlab aur kaam niche simple points mein samjhein:
+
+1. Ye kya hai?
+Jab aap koi report banate hain, toh Salesforce by default aksar "Current Quarter" (pichle 3 mahine) ka data dikhata hai. Agar aapka data purana hai, toh report preview khali (empty) dikhegi.
+
+2. Iska kaam kya hai?
+"All Time" select karne ka matlab hai ki aap Salesforce ko bol rahe hain: "Mujhe date ki chinta nahi hai, shuruat se lekar aaj tak ka saara data dikhao."
+
+Preview mein help: Agar aap report bana rahe hain aur aapko screen par koi records nahi dikh rahe, toh 90% cases mein Range ko "All Time" karne se data dikhna shuru ho jata hai.
+
+3. Ise kaise badalte hain?
+Report Builder mein Filters tab par jayein.
+
+Wahan Date Filter (jaise Created Date ya Close Date) par click karein.
+
+Range wale drop-down mein jayein aur "All Time" select karke Apply kar dein.
+
+4. Kab use karein?
+Jab aapko pura purana data check karna ho.
+
+Jab aap report design kar rahe hon aur aapko sample ke liye data dekhna ho.
+
+Note: Agar aapki company mein laakhon records hain, toh "All Time" report thoda slow ho sakti hai. Tab hum ise "Current FY" (Financial Year) par rakhte hain.
+
+Yaha aapke Trailhead unit **"Filter Your Report"** ke complete notes hain, simple Hinglish mein taaki aap easily samajh sakein aur steps follow kar sakein:
+
+---
+
+## 📊 Report Filters Kya Hai?
+
+Jab aap Salesforce mein report banate hain, toh filter ki madad se aap specific data dekh sakte hain. Filters ka use karke aap unnecessary records ko hata sakte hain.
+
+### 1. Types of Filters (Filter ke Prakaar)
+
+| Filter Type | Description |
+| --- | --- |
+| **Standard Filter** | Ye har object ke saath pehle se aate hain. Jaise **Show Me** (My accounts/All accounts) aur **Date Field** (Created Date/Last Month). |
+| **Field Filter** | Kisi bhi specific field par filter lagane ke liye. Isme aap **Field**, **Operator** (equals, not equal to), aur **Value** set karte hain. |
+| **Filter Logic** | Agar aapke paas multiple field filters hain (1, 2, 3), toh aap unhe **AND**, **OR**, **NOT** ke saath combine kar sakte hain. |
+| **Cross Filter** | Do objects ke relationship par filter lagane ke liye. Jaise: Woh Accounts jinke paas Opportunities **WITH** (hai) ya **WITHOUT** (nahi hai). |
+| **Row Limit** | Tabular reports mein maximum kitne records dikhane hain (e.g., Top 10 Accounts). |
+
+---
+
+### 2. Field Filter Kaise Lagaye (Step-by-Step)
+
+Lance ko sirf "Direct Customers" ki report chahiye:
+
+1. **Report Edit** karein aur **Filters** tab par click karein.
+2. **Show Me** filter mein "My accounts" select karke **Apply** karein.
+3. **Add Filter** par click karein aur **Type** field choose karein.
+4. Operator ko **equals** rakhein aur Value mein **Customer - Direct** select karein.
+5. **Save & Run** karein.
+
+> **Note:** "Not Equals" operator use karte waqt savdhani bartein, kyunki ye report ko slow kar sakta hai.
+
+---
+
+### 3. Cross Filters Ka Use (Exception Reporting)
+
+Cross filters tab kaam aate hain jab humein dekhna ho ki ek object ka doosre se kya rishta hai.
+*Example: Accounts with early-stage opportunities.*
+
+**Steps:**
+
+1. New Report banayein (**Accounts** type).
+2. Filters mein **Show Me** ko "All accounts" aur **Date** ko "All Time" karein.
+3. **More Actions** (arrow) par click karke **Add Cross Filter** chunein.
+4. Select karein: **Accounts WITH Opportunities**.
+5. **Add Opportunities Filter** par click karke sub-filter lagayein (e.g., Stage equals Prospecting).
+
+---
+
+### 4. Filter Logic (AND, OR, NOT)
+
+Agar Erin ko woh opportunities dekhni hain jinka Amount > $100k **YA** Probability > 50% hai:
+
+1. Do filters lagayein: (1) Amount > 100000, (2) Probability > 50.
+2. **More Actions** arrow par click karein aur **Add Filter Logic** select karein.
+3. Default `1 AND 2` ko badal kar `1 OR 2` kar dein.
+4. **Apply** karein.
+
+---
+
+### 5. Locking Filters (Filters ko Lock Karna)
+
+Agar aap chahte hain ki report dekhne wala user filter ki value na badal sake:
+
+1. Filter setup karte waqt **Locked** checkbox par tick kar dein.
+2. Isse run page par user us filter ko dekh toh sakega par change nahi kar payega.
+
+---
+
+## 🛠 Hands-on Challenge Guide (Step-by-Step)
+
+Ada Balewa ke liye "Cases by Status" report banani hai:
+
+1. **Report Banayein:** Reports tab par jayein > **New Report** > **Cases** select karein aur **Start Report** click karein.
+2. **Standard Filter:** Filter tab mein jayein, **Units** filter ko **Days** par set karein.
+3. **Fields Check Karein:** Outline tab mein check karein ki **Industry**, **Status**, aur **Type** fields report mein added hain.
+4. **Custom Filters Add Karein (Order Mat Badaliye):**
+* Filter 1: **Industry** equals **Energy**.
+* Filter 2: **Industry** equals **Electronics**.
+* Filter 3: **Status** NOT EQUAL TO **Escalated**.
+* Filter 4: **Type** equals **Structural**.
+
+
+5. **Filter Logic Lagayein:**
+* More Actions arrow click karein > **Add Filter Logic**.
+* Box mein ye type karein: `(1 OR 2) AND 3 AND NOT 4`.
+* **Apply** click karein.
+
+
+6. **Save Karein:**
+* Report Name: `Cases by Status`
+* Folder: **Public Reports**
+* **Save** & Run click karein.
+
+
+Bilkul! Aapke content ke basis par, main har ek feature aur step ko bahut zyada depth mein explain kar raha hoon taaki aapko "Kyu" aur "Kaise" dono clear ho jayein.
+
+---
+
+## 🛠 Salesforce Report Filtering: Master Guide
+
+### 1. Standard Filters (The Foundation)
+
+Ye filters har report mein pehle se maujood hote hain. Inka kaam report ka basic "scope" set karna hota hai.
+
+* **Show Me Filter:** Yeh decide karta hai ki aap kiska data dekh rahe hain.
+* *My Accounts:* Sirf wahi records jinke owner **aap** hain.
+* *All Accounts:* Poori company ke records (jo aapko dikhne ki permission ho).
+
+
+* **Date Field Filter:** Yeh "Timeline" set karta hai.
+* *Range:* Aap "Current Fiscal Year," "Last 30 Days," ya "All Time" select kar sakte hain.
+* *Relative Dates:* Aap "Yesterday" ya "Next Month" jaise words bhi use kar sakte hain.
+
+
+
+---
+
+### 2. Field Filters (Precision Tool)
+
+Jab aapko kisi specific criteria par data filter karna ho (jaise: "Sirf Mumbai ke customers dikhao").
+
+* **Field:** Woh column jis par filter lagana hai (e.g., *Industry*).
+* **Operator:** Yeh sabse important part hai.
+* **Equals / Not Equal To:** Exact match ke liye.
+* **Contains:** Agar aapko poora naam yaad nahi hai (e.g., "Contains: Solar").
+* **Starts With:** Sirf shuruat ke letters match karne ke liye.
+
+
+* **Value:** Woh text ya number jo aap dhoond rahe hain.
+
+---
+
+### 3. Cross Filters (The "Relationship" Filter)
+
+Yeh tab use hota hai jab aap ek object (Parent) ko doosre object (Child) ke basis par filter karte hain.
+
+* **WITH Condition:** "Woh Accounts dikhao jinke paas Opportunities **hai**." (Sales team ke liye useful).
+* **WITHOUT Condition:** "Woh Accounts dikhao jinke paas koi Case **nahi hai**." (Customer service check karne ke liye).
+* **Sub-Filters:** Cross filter ke andar ek aur filter.
+* *Example:* Accounts with Opportunities **WHERE** Amount > 50,000.
+
+
+
+---
+
+### 4. Filter Logic (The Brain of the Report)
+
+Jab aap multiple filters lagate hain, toh Salesforce unhe "1 AND 2" ki tarah treat karta hai. Filter logic se aap ise change kar sakte hain.
+
+* **AND (Intersection):** Record tabhi dikhega jab saari conditions puri hon.
+* **OR (Union):** Agar koi bhi ek condition sahi hai, toh record dikh jayega.
+* **NOT (Exclusion):** Kisi specific category ko list se bahar nikalne ke liye.
+* *Logic Example:* `(1 OR 2) AND 3`. Matlab: Ya toh condition 1 sahi ho ya 2, par condition 3 ka hona compulsory hai.
+
+
+
+---
+
+### 5. Row Limits (For Top-N Reports)
+
+Agar aapko "Top 5" ya "Bottom 10" records dekhne hain, toh "Row Limit" filter ka use hota hai.
+
+* Yeh sirf **Tabular Reports** (simple lists) par kaam karta hai.
+* Iska use karke aap Dashboard par sundar charts aur tables dikha sakte hain.
+
+---
+
+## 📝 Hands-on Challenge: Detailed Step-by-Step
+
+Ada Balewa ki requirement ko pura karne ke liye, niche diye gaye steps ko dhyan se follow karein:
+
+### Step 1: Create Case Report
+
+1. **Reports** tab par jayein.
+2. **New Report** par click karein.
+3. Search bar mein **Cases** type karein aur **Start Report** click karein.
+
+### Step 2: Set Standard Filters & Columns
+
+1. **Filters** tab par jayein.
+2. **Units** filter par click karein aur use **Days** par set karke **Apply** karein.
+3. **Outline** tab par click karein aur check karein ki **Industry**, **Status**, aur **Type** columns list mein hain ya nahi. Agar nahi hain, toh "Add Column" mein search karke add karein.
+
+### Step 3: Add Custom Field Filters (In Sequence)
+
+Filters tab mein "Add Filter" par jayein aur ye 4 filters line se lagayein:
+
+1. **Industry** | Operator: *equals* | Value: **Energy** | Apply.
+2. **Industry** | Operator: *equals* | Value: **Electronics** | Apply.
+3. **Status** | Operator: *not equal to* | Value: **Escalated** | Apply.
+4. **Type** | Operator: *equals* | Value: **Structural** | Apply.
+
+### Step 4: Apply Filter Logic
+
+1. Filters pane mein **More Actions** (chhota arrow) click karein.
+2. **Add Filter Logic** select karein.
+3. Box mein ye logic paste karein: `(1 OR 2) AND 3 AND NOT 4`.
+* *Iska matlab:* Use Energy ya Electronics industry chahiye, status Escalated nahi hona chahiye, aur type Structural bilkul nahi hona chahiye.
+
+
+
+### Step 5: Save and Organize
+
+1. **Save & Run** par click karein.
+2. **Report Name:** `Cases by Status`.
+3. **Folder:** Select Folder par click karein aur **Public Reports** chunein.
+4. **Save** par click karein. Done!
+
+Theek hai! Main har ek term aur step ko aur bhi zyada detail mein explain kar raha hoon taaki aapko ek-ek cheez clear ho jaye.
+
+📑 Salesforce Report Filtering: In-Depth Guide
+Report filters ka asli maqsad hai hazaron records mein se sirf wahi dhundna jo aapke kaam ke hain. Niche har ek filter type ka detailed breakdown hai:
+
+1. Standard Filters (Pehle se bane filters)
+Har object ke liye Salesforce kuch automatic filters deta hai. Inhe aap delete nahi kar sakte.
+
+Show Me: Iska use "Data Ownership" ke liye hota hai.
+
+My Accounts: Sirf wahi records dikhayega jiske owner aap hain.
+
+All Accounts: Company ke saare records dikhayega.
+
+Date Field: Yeh time-based filtering hai.
+
+Isme aapko do cheezein select karni hoti hain: Field (jaise Created Date ya Close Date) aur Range (jaise Current Quarter, Last Month, ya All Time).
+
+2. Field Filters (Custom Criteria)
+Jab aapko kisi specific column (field) par filter lagana ho, toh Field Filter use karte hain.
+
+Operator ka Role:
+
+Equals: Jab aapko exact wahi value chahiye (e.g., Status equals 'Open').
+
+Not Equal To: Uss value ko chhod kar baaki sab dikhayega.
+
+Contains: Agar aapko poora naam nahi pata, bas ek part pata hai.
+
+Value: Woh actual data jo aap search kar rahe hain.
+
+3. Filter Logic (Conditions ko combine karna)
+By default, Salesforce saare filters par AND lagata hai (matlab saari conditions poori honi chahiye). Filter Logic se aap ise change kar sakte hain.
+
+AND: Record tab dikhega jab dono baatein sahi hon.
+
+OR: Record tab dikhega jab koi ek baat bhi sahi ho.
+
+NOT: Kisi cheez ko hatane ke liye.
+
+Logic Example: (1 OR 2) AND 3. Matlab: Industry 'Energy' ya 'Electronics' ho (1 ya 2), LEKIN status 'Open' hona zaroori hai (3).
+
+4. Cross Filters (Related Objects ka Filter)
+Yeh sabse advanced filter hai. Isme aap ek object ko uske related object ke hisaab se filter karte hain.
+
+WITH: "Accounts WITH Opportunities" ka matlab hai sirf wahi accounts dikhao jinki koi deal chal rahi hai.
+
+WITHOUT: "Accounts WITHOUT Activities" ka matlab hai woh accounts jin par koi kaam nahi ho raha (Stale accounts).
+
+Sub-filters: Cross filter ke andar aap aur gehra filter laga sakte hain (e.g., Accounts with Opportunities jinka Amount > $50,000 ho).
+
+5. Row Limits (Top/Bottom Reports)
+Yeh sirf Tabular reports (simple list) ke liye hota hai.
+
+Iska use tab karte hain jab aapko "Top 10" ya "Top 5" records dekhne hon.
+
+Aapko ek field batani padti hai jiske basis par ranking hogi (jaise Annual Revenue).
