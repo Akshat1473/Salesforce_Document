@@ -431,3 +431,196 @@ Yeh sirf Tabular reports (simple list) ke liye hota hai.
 Iska use tab karte hain jab aapko "Top 10" ya "Top 5" records dekhne hon.
 
 Aapko ek field batani padti hai jiske basis par ranking hogi (jaise Annual Revenue).
+
+Salesforce mein reports ko format karna seekhna bahut zaroori hai taaki aap data ko sahi dhang se analyze kar sakein. Is poore content ko step-by-step Hinglish mein niche samjhaya gaya hai:
+
+---
+
+## 1. Learning Objectives (Aap kya seekhenge)
+
+Is unit ko khatam karne ke baad aap:
+
+* Teeno tarah ke report formats (**Tabular, Summary, aur Matrix**) ko describe kar paayenge.
+* Ek **Matrix report** bana paayenge.
+
+---
+
+## 2. Report Formats Table (Comparison)
+
+Salesforce mein 3 main formats hote hain:
+
+| Report Format | Primary Use Case (Kab use karein) | Dashboard & Charts |
+| --- | --- | --- |
+| **Tabular** | Ek simple list banane ke liye (Spreadsheet ki tarah). | Limited (Sirf row limit ke saath). |
+| **Summary** | Data ko **Group** karne aur subtotals dekhne ke liye. | Haan, Supported hai. |
+| **Matrix** | Data ko **Rows aur Columns** dono se group karne ke liye. | Haan, Sabse zyada detail deta hai. |
+
+---
+
+## 3. Tabular Reports (Simple List)
+
+Ye sabse simple format hai. Isme data columns aur rows mein hota hai, bilkul Excel sheet ki tarah.
+
+* **Best For:** Mailing lists banane ke liye.
+* **Example:** Maria ko "Open Opportunities" ki list chahiye thi, toh usne Tabular format chuna.
+
+**Steps to Build (Maria's Example):**
+
+1. **Reports** par jayein, **New Report** par click karein aur **Opportunities** type select karein.
+2. **Filters** mein jayein:
+* *Show Me:* All Opportunities.
+* *Opportunity Status:* Open.
+* *Date Range:* All Time (Fast results ke liye hamesha chota range rakhein).
+
+
+3. Default columns (Name, Amount, Stage etc.) check karein.
+4. Report ko **Open Opportunities This Year** naam se save karein aur **Run** karein.
+
+---
+
+## 4. Summary Reports (Grouping Data)
+
+Ye report ka "workhorse" hai (sabse zyada use hone wala). Isme aap rows ko group kar sakte hain aur charts add kar sakte hain.
+
+* **Best For:** Dashboard mein use karne ke liye.
+* **Example:** Roberto ko dekhna hai ki kitne "Closed Cases" High, Medium ya Low priority ke hain.
+
+**Steps to Build (Roberto's Example):**
+
+1. **New Report** > **Customer Support Reports** > **Cases** select karein.
+2. **Filters** apply karein:
+* *Show Me:* All Cases.
+* *Date Range:* All Time.
+* Ek naya filter add karein: **Closed equals True**.
+
+
+3. **Outline** par click karein.
+4. **GROUP ROWS** ke andar **Priority** field ko select karein.
+5. Details chhupane ke liye niche se **Detail Rows** off kar dein.
+6. **Closed Cases for All Time** naam se save karke **Run** karein.
+
+---
+
+## 5. Matrix Reports (Row + Column Grouping)
+
+Ye setup karne mein thoda time leti hai par sabse detailed view deti hai. Isme aap horizontal (rows) aur vertical (columns) dono tarah se grouping karte hain.
+
+* **Best For:** Revenue trends ya quantity trends dekhne ke liye.
+* **Example:** Sita (CEO) ko month-over-month revenue trends dekhne hain.
+
+**Steps to Build (Sita's Example):**
+
+1. **New Report** > **Opportunities** select karein.
+2. **Filters** apply karein:
+* *Opportunity Status:* Closed Won.
+* *Date Range:* All Time.
+
+
+3. **Amount** column ke drop-down par click karke **Summarize** > **Sum** select karein.
+4. **Outline** tab mein jayein:
+* **GROUP ROWS:** Close Month select karein.
+* **GROUP COLUMNS:** Type select karein.
+
+
+5. **Detail Rows** ko switch off kar dein taaki report saaf dikhe.
+6. **Opportunities by Sum of Amount** naam se save karke **Run** karein.
+
+---
+
+## 6. Hands-on Challenge (Aapka Kaam)
+
+Aapko ek **Summary Report** banani hai jisme Roberto dekh sake ki kaunse cases "New" hain aur kaunse "Closed".
+
+* **Report Type:** Cases
+* **Filter:** Opened Date (All Time)
+* **Fields:** Case Owner, Subject, Account Name
+* **Grouping:** Status (Isse ye Summary report ban jayegi)
+* **Report Name:** Case Status
+
+---
+
+Salesforce Lightning Dashboards aapke data ko visual banane ka sabse behtareen tareeka hain. Is unit ko aasaan Hinglish mein step-by-step samjhte hain:
+
+---
+
+## 1. Dashboards Kya Hain?
+
+Reports ek table ki tarah data dikhati hain, lekin **Dashboards** usi data ko graphical layout (charts, graphs) mein dikhate hain.
+
+* Ek dashboard par aap kai reports ko ek saath side-by-side dekh sakte hain.
+* Inke liye **Dashboard Widgets** ka use hota hai (jaise Charts, Gauges, Tables, aur Metrics).
+
+---
+
+## 2. Dashboard Widgets ke Types
+
+Jab aap dashboard banate hain, toh aapko ye types milte hain:
+
+* **Chart:** Data ko graphically dikhane ke liye (Bar, Pie, Donut charts).
+* **Gauge:** Jab aapko ek single value ko kisi range ke andar dikhana ho (jaise Sales Target).
+* **Metric:** Jab sirf ek important number dikhana ho (jaise Total Revenue).
+* **Table:** Report ke data ko column form mein dikhane ke liye.
+
+---
+
+## 3. Dashboard Kaise Banayein (Step-by-Step)
+
+Dashboard banane se pehle aapke paas ek **Source Report** honi chahiye.
+
+### Step A: Source Report Banayein (Example: Leads by Source)
+
+1. **Reports Tab** par jayein > **New Report** > **Leads** select karein.
+2. **Filters** mein: *Show Me* ko "All Leads" aur *Date Range* ko "All Time" karein.
+3. **Outline** mein: *Group Rows* mein jaker **Lead Source** select karein (Grouping zaroori hai chart banane ke liye).
+4. Report ko **Leads by Lead Source** naam se save karke **Run** karein.
+
+### Step B: Dashboard Banayein
+
+1. **Dashboards Tab** par jayein > **New Dashboard** par click karein.
+2. Naam dein: **Leads Dashboard** aur **Create** par click karein.
+3. **+ Widget** par click karein aur **Chart or Table** chunein.
+4. Apni banayi hui report (*Leads by Lead Source*) select karein.
+5. **Donut Chart** choose karein aur **Add** par click karein.
+6. **Save** karke **Done** kar dein.
+
+---
+
+## 4. Dynamic Dashboards (Sabse Kaam ka Feature)
+
+Normal dashboard mein wahi data dikhta hai jo "Running User" ko dikhta hai. Lekin **Dynamic Dashboard** mein:
+
+* Jo user login karega, use sirf wahi data dikhega jiska uske paas access hai.
+* **Fayda:** Aapko 45 alag-alag managers ke liye 45 dashboard nahi banane padenge; sirf 1 dynamic dashboard se kaam chal jayega.
+
+**Setting:** Dashboard ki **Properties** (gear icon) mein jayein aur "View Dashboard As" mein **The dashboard viewer** select karein.
+
+---
+
+## 5. Report Charts
+
+Agar aapko poora dashboard nahi banana, sirf ek report ke upar ek chota sa graph chahiye, toh aap **Report Chart** use kar sakte hain.
+
+* Report ke top right mein **Add Chart** icon click karne se graph wahi dikhne lagta hai.
+
+---
+
+## 6. Hands-on Challenge (Kaise Poora Karein)
+
+Aapko ek **Opportunities Report** banani hai aur use **Dashboard** mein add karna hai.
+
+1. **Report Banayein:**
+* **Type:** Opportunities.
+* **Filter:** Close Date = All Time.
+* **Group Rows:** Stage (Ye bahut zaroori hai).
+* **Name:** `Opportunities in Stages`.
+
+
+2. **Dashboard Banayein:**
+* **Name:** `Big Deals`.
+* **Widget:** `Chart or Table` select karein.
+* **Report:** `Opportunities in Stages` select karein.
+* **Display As:** **Donut Chart**.
+* **Title:** `Opportunities in Stages`.
+
+
+3. **Save** aur **Done** karein.
