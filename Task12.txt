@@ -1,0 +1,257 @@
+//triggers
+Salesforce me **Apex Triggers** ek bahut powerful tool hain jo aapko database events (jaise record insert ya update hona) par custom logic likhne ki permission dete hain.
+
+## 1. Apex Triggers Kya Hain?
+
+Triggers ka kaam tab shuru hota hai jab Salesforce me koi record **insert, update, delete, ya undelete** hota hai. Jab bhi ye events hote hain, trigger automatically fire ho jata hai.
+
+**Kab use karein?**
+
+* Jab logic itna complex ho ki "Flow" ya "Validation Rules" se kaam na chale.
+* Jab aapko high performance aur scale ki zaroorat ho.
+
+---
+
+## 2. Trigger Syntax
+
+Trigger likhne ka tarika kaafi simple hai:
+
+```apex
+trigger TriggerName on ObjectName (trigger_events) { 
+   // Aapka code yahan aayega
+}
+
+```
+
+**Trigger Events:**
+Aap comma se separate karke multiple events de sakte hain:
+
+* `before insert`, `before update`, `before delete`
+* `after insert`, `after update`, `after delete`, `after undelete`
+
+---
+
+## 3. Types of Triggers (Sabse Important)
+
+Triggers do types ke hote hain:
+
+1. **Before Triggers:** Inka use record ke **save hone se pehle** data ko update ya validate karne ke liye hota hai. Inme `insert` ya `update` command ki zaroorat nahi padti.
+2. **After Triggers:** Inka use tab hota hai jab aapko **System-generated fields** (jaise Record ID) ki zaroorat ho, ya doosre records me change karna ho. Inme records **Read-only** hote hain.
+
+---
+
+## 4. Context Variables (Trigger ka Dimag)
+
+Context variables aapko batate hain ki trigger kyu fire hua aur kaunse records par fire hua.
+
+* **Trigger.new:** Naye records ki list jo insert ya update ho rahe hain.
+* **Trigger.old:** Purane records ki list (sirf update aur delete me milti hai).
+* **Trigger.isBefore / Trigger.isAfter:** Check karne ke liye ki kaunsa phase chal raha hai.
+* **Trigger.isInsert / Trigger.isUpdate:** Check karne ke liye ki operation kya hai.
+
+**Example Code:**
+
+```apex
+trigger HelloWorldTrigger on Account (before insert) {
+    for(Account a : Trigger.new) {
+        a.Description = 'New description'; // Save hone se pehle field update
+    }
+}
+
+```
+
+---
+
+## 5. Calling Class Methods (Best Practice)
+
+Hamesha trigger ke andar saara code nahi likhna chahiye. Trigger ko "Thin" rakhna chahiye aur logic ko ek **Apex Class** me daal kar trigger se call karna chahiye.
+
+**Example Trigger Calling Class:**
+
+```apex
+trigger ContactNotificationTrigger on Contact (after insert) {
+    if (Trigger.isInsert) {
+        Set<String> recipientIDs = new Set<String>{UserInfo.getUserId()};
+        // Class method call ho raha hai
+        CustomContactNotification.notifyUsers(recipientIDs, Trigger.new.size());
+    }
+}
+
+```
+
+---
+
+## 6. Using `addError()` Method
+
+Agar aap chahte hain ki koi record specific condition par save **na** ho, to aap `.addError()` use karte hain. Ye user ko screen par error message dikhayega aur operation ko rok dega.
+
+```apex
+trigger AccountDeletion on Account (before delete) {
+    for (Account a : [SELECT Id FROM Account WHERE Id IN (SELECT AccountId FROM Opportunity) AND Id IN :Trigger.old]) {
+        // Error throw karega agar related opportunities hain
+        Trigger.oldMap.get(a.Id).addError('Cannot delete account with related opportunities.');
+    }
+}
+
+```
+
+---
+
+## 7. Triggers and Callouts (External API)
+
+Triggers se aap external API call (Callouts) kar sakte hain, lekin wo **Asynchronous** (Background me) honi chahiye. Iske liye aapko class method par `@future(callout=true)` annotation lagani padti hai.
+
+---
+
+## 🚀 Hands-on Challenge Solution (Hinglish Guide)
+
+Aapko ek trigger banana hai jo **Account** ke `Billing Postal Code` ko `Shipping Postal Code` me copy kar de, agar `Match_Billing_Address__c` checkbox true ho.
+
+**Steps:**
+
+1. Setup me jaakar Account par **Match Billing Address** (Checkbox) field banayein.
+2. Developer Console me naya Trigger banayein:
+
+**Code for Challenge:**
+
+```apex
+trigger AccountAddressTrigger on Account (before insert, before update) {
+    for (Account a : Trigger.new) {
+        // Condition: Checkbox true hona chahiye aur BillingPostalCode null nahi hona chahiye
+        if (a.Match_Billing_Address__c ) {
+            a.ShippingPostalCode = a.BillingPostalCode;
+        }
+    }
+}
+
+```
+
+**Logic:** Kyunki ye ek **Before** trigger hai, isliye hume `update a;` likhne ki zaroorat nahi hai. Salesforce automatically changes ko database me save kar dega.
+
+//Bulkified Trigger
+Salesforce mein **Bulk Apex Triggers** ka matlab hai aise triggers likhna jo ek saath bahut saare records (200 ya usse zyada) ko bina kisi error ya limit exceed kiye handle kar sakein.
+
+Simple words mein: Agar aap 1 record insert karo ya 10,000, aapka code dono cases mein "Governor Limits" ke andar reh kar chalna chahiye.
+
+---
+
+### 1. Operating on Record Sets (Ek saath sabhi records par kaam karna)
+
+Jab bhi koi trigger fire hota hai, wo ek record ke liye bhi ho sakta hai aur bulk data import (jaise Data Loader) ke liye bhi.
+
+* **Trigger.new:** Yeh ek list hoti hai un records ki jo insert ya update ho rahe hain.
+* **Best Practice:** Hamesha `for` loop ka use karein taaki aap list ke har record par kaam kar sakein, sirf pehle record (`Trigger.new[0]`) par nahi.
+
+**Example (Bulkified Code):**
+
+```apex
+trigger MyTriggerBulk on Account(before insert) {
+    // Sabhi records par iterate (baari-baari jana) karne ke liye for loop use karein
+    for(Account a : Trigger.new) {
+        a.Description = 'New description'; // Har account ki description set hogi
+    }
+}
+
+```
+
+---
+
+### 2. Performing Bulk SOQL (Database queries ko loop se bahar rakhna)
+
+Salesforce mein aap ek transaction mein sirf **100 SOQL queries** kar sakte hain. Agar aapne `for` loop ke andar query likhi, toh 101 records aate hi aapka code crash ho jayega.
+
+* **Bad Practice:** Loop ke andar query karna.
+* **Good Practice:** Saara data ek hi baar loop se pehle query kar lo ya fir `IN` clause ka use karo.
+
+**Example (Efficient SOQL):**
+
+```apex
+trigger SoqlTriggerBulk on Account(after update) {
+    // Sirf ek baar query karo aur saare related Opportunities le aao
+    List<Opportunity> relatedOpps = [SELECT Id, Name FROM Opportunity 
+                                     WHERE AccountId IN :Trigger.new];
+    
+    for(Opportunity opp : relatedOpps) {
+        // Yahan processing karein
+    }
+}
+
+```
+
+---
+
+### 3. Performing Bulk DML (Insert/Update ko bundle karna)
+
+Aap ek baar mein sirf **150 DML calls** (insert, update, delete) kar sakte hain. Agar aap loop mein `update record;` likhte hain, toh limit jaldi hit ho jayegi.
+
+* **Solution:** Ek empty `List` banayein, usme records ko `.add()` karein, aur loop ke bahar ek hi baar mein `update` command chalayein.
+
+**Example (Bulk DML):**
+
+```apex
+trigger DmlTriggerBulk on Account(after update) {
+    List<Opportunity> oppsToUpdate = new List<Opportunity>(); // Ek khali list banayi
+    
+    for(Opportunity opp : [SELECT Id FROM Opportunity WHERE AccountId IN :Trigger.new]) {
+        opp.Description = 'Updated!';
+        oppsToUpdate.add(opp); // Record ko list mein dala
+    }
+    
+    update oppsToUpdate; // Saare records ek hi baar mein update ho gaye!
+}
+
+```
+
+---
+
+### Meaning of Key Terms (Aasaan Bhasha Mein)
+
+1. **sObject:** Salesforce ka koi bhi object (jaise Account, Contact, ya Opportunity).
+2. **Governor Limits:** Salesforce ke banaye gaye rules taaki koi bhi ek user saare server resources consume na kar le.
+3. **SOQL (Salesforce Object Query Language):** Database se data nikalne ka tarika.
+4. **DML (Data Manipulation Language):** Data ko insert, update, ya delete karne ka tarika.
+5. **Trigger.new:** Ek "Context Variable" jo un naye records ki list hold karta hai jo trigger fire hone ka kaaran bane hain.
+6. **Bulkify:** Code ko is tarah likhna ki wo bade data sets par efficiently chale.
+
+---
+
+### Hands-on Challenge Solution
+
+Aapko ek trigger banana hai jo **Opportunity** ke "Closed Won" hote hi ek **Task** create kare.
+
+**Trigger Code:**
+
+```apex
+trigger ClosedOpportunityTrigger on Opportunity (after insert, after update) {
+    // 1. Ek list banayein Tasks hold karne ke liye (Bulk DML ke liye)
+    List<Task> taskList = new List<Task>();
+    
+    // 2. Trigger.new par loop chalayein
+    for (Opportunity opp : Trigger.new) {
+        // 3. Condition check karein: Stage 'Closed Won' hai?
+        if (opp.StageName == 'Closed Won') {
+            // 4. Naya task assign karein
+            Task t = new Task();
+            t.Subject = 'Follow Up Test Task';
+            t.WhatId = opp.Id; // Opportunity se link karne ke liye
+            taskList.add(t);
+        }
+    }
+    
+    // 5. Loop ke bahar ek hi baar insert karein
+    if (taskList.size() > 0) {
+        insert taskList;
+    }
+}
+
+```
+
+**Step-by-step logic:**
+
+1. Humne `after insert, after update` use kiya kyunki hume Opportunity ki ID chahiye Task banane ke liye.
+2. Humne `Task` ki ek list banayi taaki **Bulk DML** ka rule follow ho.
+3. Humne loop ke andar sirf check kiya ki `StageName` correct hai ya nahi.
+4. `insert taskList;` ko loop ke bahar rakha taaki 200 records hone par bhi sirf **1 DML call** use ho.
+
+
+
