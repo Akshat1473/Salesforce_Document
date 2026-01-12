@@ -17,6 +17,58 @@ Salesforce ne automation ko do (2) bade hisson mein baata hai:
 Jab automation ko chalane ke liye kisi insaan ya user ke input ki zaroorat hoti hai:
 
 Screen Flows: Ye ek wizard ki tarah hota hai jo user se sawal puchta hai aur data collect karta hai.
+Salesforce mein Screen Flow ek bahut hi powerful tool hai jo users ke liye ek "Wizard" ya "Step-by-Step" interface banane ke kaam aata hai. Iska main maqsad user se input lena aur uske basis par Salesforce mein data create ya update karna hota hai.
+
+Ek student aur future trainee ke taur par, aap ise ek "UI-based Automation" samajh sakte hain jahan aapko code (LWC ya Visualforce) likhne ki zaroorat nahi padti.
+
+1. Screen Flow ke Main Components
+Screen Flow banane ke liye niche diye gaye teen main elements ka use hota hai:
+
+Screen Element: Ye wo interface hai jo user ko dikhta hai. Isme aap Input fields (Text, Number, Date, Picklist) aur Display components (Text, Images) daal sakte hain.
+
+Logic Elements: Jaise Decision (agar-magar check karne ke liye), Assignment (variables ki value set karne ke liye), aur Loop.
+
+Data Elements: Salesforce database se interact karne ke liye: Create Records, Update Records, Get Records, aur Delete Records.
+
+2. Screen Flow Kaise Kaam Karta Hai? (Step-by-Step)
+Maan lijiye aapko ek aisa form banana hai jahan user ek Lead ki details enter kare aur button dabate hi Lead create ho jaye:
+
+Start: Flow Builder mein 'Screen Flow' select karein.
+
+Screen: Ek "Screen" element add karein. Isme First Name, Last Name, aur Company ke input fields dalein.
+
+Create Record: Screen ke baad ek "Create Records" element lagayein. Isme Lead object select karein aur Screen fields ko Lead fields se map karein.
+
+Success Message: Ek aur Screen dikhayein jisme likha ho "Lead successfully created!"
+
+Finish: Flow ko Save aur Activate karein.
+
+3. Screen Flow Kahan Use Hota Hai? (Use Cases)
+Guided Selling: Sales reps ko step-by-step batana ki customer se kya sawal poochne hain.
+
+Data Entry: Mushkil objects ke liye simple form banana.
+
+Call Scripts: Customer support agents ke liye script flow banana.
+
+4. Screen Flow ko Run Kaise Karte Hain?
+Screen Flow "Autolaunched" nahi hota, ise trigger karne ke liye user interaction chahiye hota hai:
+
+Lightning Page: Ise kisi Record Page (Account/Lead) par chipka sakte hain.
+
+Quick Action: Ek button banakar use run kar sakte hain.
+
+Experience Cloud: Website par users ke liye publish kar sakte hain.
+
+Utility Bar: Footer mein rakh sakte hain taaki kahin se bhi access ho sake.
+
+Tips for Cloud Analogy Training:
+Variable Naming: Hamesha meaningful naam rakhein (e.g., vLeadFirstName).
+
+Fault Path: Hamesha error handling ke liye "Fault Path" ka use karein taaki agar flow fail ho toh user ko ganda error message na dikhe.
+
+Collection Variables: Jab ek se zyada records par kaam karna ho, toh 'Collection' ka concept zaroor padhein.
+
+Now see,
 
 Autolaunched Flows: Ye tab chalte hain jab koi button dabaya jaye.
 
@@ -248,5 +300,72 @@ Jab sab sahi chale, toh **Save** karke **Activate** button dabao.
 2. Email bhejne ka kaam **Action** element ka hai (**Ans: B**).
 
 ---
+
+//Flow Variables 
+
+### 1. Variable Kya Hai? (What is a Variable?)
+
+Variable ko ek **"Container" (Dabba)** samjho jisme aap koi jankari (information) store karte ho.
+
+* **Variable kyun kehte hain?** Kyunki iski value flow ke beech mein "vary" (change) ho sakti hai.
+* **Simple Example:** Maan lo aapne ek dabba banaya jiska naam hai `Status`. Flow shuru hote waqt usme "New" likha hai, par kaam khatam hone par flow use badal kar "Closed" kar sakta hai.
+
+### 2. Hamein Variables ki zaroorat kyun hai?
+
+Flow mein bina variables ke kaam nahi chalta. Iske kuch bade reasons:
+
+* **Record ID store karna:** Screen flow mein kis record par kaam ho raha hai, uski ID save karne ke liye.
+* **Calculations:** Do numbers ko jodna ya ghatana.
+* **Text Jodna:** Do alag-alag words ko milakar ek sentence banana.
+* **Data Carry Karna:** Ek record se data uthakar doosre record mein copy karna ya screen par dikhana.
+* **Looping:** Ye yaad rakhna ki ek loop kitni baar chal chuka hai (Tally rakhna).
+
+---
+
+### 3. Variables mein hum kya-kya store kar sakte hain? (Data Types)
+
+Jab aap variable banate ho, to aapko batana padta hai ki usme kis tarah ka maal (data) aayega:
+
+* **Text:** Letters, numbers ya Salesforce ID (e.g., "Yes", "001XXXXXXXX").
+* **Number / Currency:** Sirf numerical values. Yaad rahe, isme `$` ya `€` ka symbol nahi lagate, sirf digits (e.g., 42 or 246.01).
+* **Boolean:** Sirf do cheezein—**True** ya **False**. (Flow mein iske liye `GlobalConstant.True` use karte hain).
+* **Date / Date-Time:** Khaas format mein date ya time (e.g., 2023-04-05).
+* **Record:** Ye sabse powerful hai. Isme ek poora ka poora Salesforce record (saari fields ke saath) ek hi variable mein aa jata hai.
+
+> **Note:** Har baar jab Flow naye sire se chalta hai, variables khali (default value) ho jate hain. Ek baar ka data doosre user ya doosre flow run mein apne aap nahi jata.
+
+---
+
+### 4. Variable Kaise Banayein? (Steps)
+
+Aap flow ke **Toolbox** mein jaakar ye steps follow karte hain:
+
+1. **New Resource** par click karein.
+2. Resource Type mein **Variable** chunein.
+3. **API Name** dein (unique naam).
+4. **Data Type** chunein (Text, Number, etc.).
+5. **Done** par click karein.
+
+---
+
+### 5. Variables jaisi aur cheezein (Other Resources)
+
+Variable ke alawa Toolbox mein kuch aur "bhai-behen" bhi hote hain:
+
+* **Constants (Sthir):** Ye variable jaisa hi hai, bas fark ye hai ki **iski value change nahi ho sakti**. Ek baar "3.14" set kar diya to poore flow mein wahi rahega.
+* **Formulas:** Jaise Excel ya Salesforce fields mein formula hote hain. Ye har baar recalculate hote hain jab unhe use kiya jata hai. Isme aap do variables ko plus-minus bhi kar sakte ho.
+* **Text Templates:** Agar aapko koi bada message, email body ya formatted text (bold, colors, lists) save karna hai, to iska use karein. Iske andar aap variables ko "Merge Fields" ki tarah daal sakte ho (Jaise: "Hello {!UserName}").
+
+---
+
+### Summary Table
+
+| Resource | Value Badal Sakti Hai? | Use Case |
+| --- | --- | --- |
+| **Variable** | Haan | Data store karne aur badalne ke liye. |
+| **Constant** | Nahi | Fixed value (e.g., Tax Rate) ke liye. |
+| **Formula** | Haan (Recalculate) | Calculation ya logic ke liye. |
+| **Text Template** | Nahi (Fixed format) | Emails ya screen messages ke liye. |
+
 
 

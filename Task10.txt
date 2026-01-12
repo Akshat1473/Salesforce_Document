@@ -1,0 +1,72 @@
+//Developer console
+Yeh rahe aapke **Developer Console** ke detailed notes:
+
+---
+
+## 2. **Developer Console: Mission Control Center**
+
+Developer Console aapke Salesforce org ka ek **Integrated Development Environment (IDE)** hai. Iska matlab yeh ek aisa tool hai jahan aap code likh sakte ho, errors check kar sakte ho (debug), aur testing kar sakte ho.
+
+### **A. Developer Console ke Main Uses (Usage):**
+
+Content ke mutabik, aap isse ye saare kaam kar sakte hain:
+
+* **Navigate & Edit:** Apex classes, triggers, Aura components, aur Visualforce pages ko open, create aur edit karna.
+* **Packages:** Apne org mein banaye gaye packages ko browse karna.
+* **Logs:** Debugging ke liye logs generate karna aur unhe alag-alag perspectives se analyze karna.
+* **Testing:** Apex code ko test karna taaki wo error-free rahe.
+* **Checkpoints:** Code mein checkpoints set karke errors ko identify aur resolve karna.
+* **SOQL/SOSL:** Query likh kar org ke records ko dhundna (find), create karna ya update karna.
+
+> **Important Note:** Spring ‘19 release ke baad se aap isme **Aura Components** toh bana sakte ho, lekin **Lightning Web Components (LWC)** develop nahi kar sakte. LWC ke liye aapko VS Code chahiye hota hai.
+
+---
+
+### **B. Developer Console vs Other Tools (Kab kya use karein?)**
+
+Salesforce spaceship ko control karne ke liye aapke paas teen raste hain: **VS Code**, **Developer Console**, aur **AppExchange tools**.
+
+| Feature | Developer Console | VS Code (SF Extensions) |
+| --- | --- | --- |
+| **Setup** | Browser-based (Kuch install nahi karna) | Software install karna padta hai |
+| **Connection** | Ek baar mein sirf **ek org** se connect hota hai | Ek saath **multiple orgs** se connect ho sakta hai |
+| **Speed** | Changes turant (immediately) effective hote hain | Files ko synchronize ya deploy karna padta hai |
+| **Version Control** | Isme version control ya conflict resolution **nahi** hota | Isme version control (Git) use kar sakte hain |
+
+**Warning:** Kyunki isme conflict resolution nahi hai, toh agar aap team mein kaam kar rahe ho, toh dhyan rakhein ki aap kisi aur ka code overwrite na kar dein.
+
+---
+
+### **C. Developer Console Access Kaise Karein?**
+
+Login karne ke baad, **Quick Access Menu (Gear Icon ⚙️)** par click karein aur wahan **Developer Console** select karein.
+
+**Interface ke 2 main parts hote hain:**
+
+1. **Main Pane (Source Code Editor):** Jahan aap apna code likhte aur modify karte ho.
+2. **Tabs Pane (Bottom section):** Jahan aap Logs, Errors aur Query Editor dekhte ho.
+
+---
+
+### **D. Workspaces (Apna Kaam Organize Karna)**
+
+Agar aap ek saath do alag-alag projects par kaam kar rahe ho (jaise Moon project aur Mars project), toh unka data mix ho sakta hai. Isse bachne ke liye **Workspaces** use hote hain.
+
+* **Workspace Kya Hai?** Yeh tabs ka ek collection hai. Aap har project ke liye alag workspace bana sakte ho.
+* **Fayda:** Isse clutter (kachra) kam hota hai aur ek project se dusre project par switch karna aasan ho jata hai.
+* **Kaise Use Karein?**
+* **New Workspace:** `Workspace | New Workspace` par jaakar naam dein.
+* **Switching:** `Workspace | Switch Workspace` par jaakar ek project se dusre par jump karein.
+
+
+
+---
+
+### **Quiz Summary (For Quick Revision):**
+
+1. **Kya-kya kar sakte hain?** Apex, Visualforce, Aura aur Logs sab manage kar sakte hain.
+2. **Kaisa tool hai?** Yeh browser-based hai aur ek baar mein **ek hi org** se judta hai.
+3. **Workspace Manager ka kaam?** Resources ko organize karna aur unke beech switch karna.
+
+---
+
