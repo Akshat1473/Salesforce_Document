@@ -1,0 +1,259 @@
+//Notes
+
+## **Unit: Navigate and Edit Source Code (Notes)**
+
+Is unit mein humne sikha ki Developer Console ka use karke **Apex Classes, Lightning Components,** aur **Visualforce Pages** kaise banate hain.
+
+---
+
+### **1. Apex Class (Backend Logic)**
+
+**Apex** ek programming language hai jo Java jaisi dikhti hai. Iska kaam hai Salesforce ke server par business logic chalana (jaise email bhejna ya data update karna).
+
+**Steps to Create & Execute:**
+
+1. **Create:** Developer Console mein `File | New | Apex Class` par jayein. Name rakhein: `EmailMissionSpecialist`.
+2. **Code:** Diya gaya code paste karein jo email bhejta hai.
+3. **Save:** `File | Save` dabayein. Agar code mein galti hogi, toh niche **Problems tab** mein dikhegi.
+4. **Execute (Run):** Code test karne ke liye `Debug | Open Execute Anonymous Window` par jayein. Wahan class ka object banakar `sendMail()` method call karein.
+
+**Key Terms:**
+
+* **Strongly Typed:** Matlab har variable ka data type (String, Integer, etc.) batana zaroori hai.
+* **Execute Anonymous:** Ek temporary window jahan aap pura program likhe bina code test kar sakte ho. Isse hone wale changes direct database mein reflect hote hain.
+* **System.debug():** Iska use console mein output check karne ke liye hota hai (jaise Print statement).
+
+---
+
+### **2. Aura Components (Modern UI)**
+
+Lightning Components framework ka use responsive apps banane ke liye hota hai jo mobile aur desktop dono par chalein.
+
+**Steps to Create:**
+
+1. **Create:** `File | New | Lightning Component` par jayein. Name rakhein: `meetGreet`.
+2. **Markup:** `.cmp` file mein apna HTML-jaisa code (markup) likhein.
+3. **Bundle:** Right side mein aapko alag-alag resources milenge (Style, Controller, Helper).
+
+**Key Terms:**
+
+* **Component Bundle:** Yeh ek "folder" ki tarah hota hai jisme component ka markup, CSS, aur JavaScript ek saath rehte hain.
+* **Aura vs LWC:** Aura purana model hai, aur LWC (Lightning Web Components) naya aur fast model hai. Dono saath mein kaam kar sakte hain.
+
+---
+
+### **3. Visualforce Page (Classic UI)**
+
+Visualforce ek purana "Page-Centric" framework hai. Isme jab aap page save karte ho, toh pura page refresh hota hai.
+
+**Steps to Create:**
+
+1. **Create:** `File | New | Visualforce Page` par jayein. Name rakhein: `FlightSystemsChecklist`.
+2. **Tags:** Isme `<apex:page>`, `<apex:form>`, aur `<apex:inputCheckbox>` jaise tags use hote hain.
+3. **Preview:** Code save karne ke baad top-left mein **Preview** button dabayein, isse real-time mein page browser par kaisa dikhega woh pata chal jayega.
+
+**Key Terms:**
+
+* **Page-Centric:** Isme saara logic server-side par hota hai (reload zaroori hai).
+* **Lightning Framework (Client-Side):** Iske opposite, Lightning zyada kaam browser (user ke device) par hi kar leta hai.
+
+---
+
+### **Summary Table for Quick Revision**
+
+| Feature | Language/Tech | Best For | Location in Console |
+| --- | --- | --- | --- |
+| **Apex Class** | Apex (Java-like) | Business Logic & Database | File > New > Apex Class |
+| **Aura Component** | JS, HTML, CSS | Modern, Responsive UI | File > New > Lightning Component |
+| **Visualforce** | Tag-based (HTML-like) | Classic UI & PDF Generation | File > New > Visualforce Page |
+
+---
+
+Yeh unit Salesforce mein **Debug Logs** ko samajhne aur analyze karne ke baare mein hai. Debug logs aapko batate hain ki backend mein aapka code kaise execute ho raha hai aur kahan galti (error) ho rahi hai.
+
+Niche iske main points aur steps Hinglish mein diye gaye hain:
+
+---
+
+## **1. Debug Logs ko dekhna (Viewing Logs)**
+
+Logs dekhne ke do tareeke hote hain:
+
+* **Method 1:** Code run karne se pehle "Execute Anonymous" window mein **'Open Log'** checkbox ko select karein. Code run hote hi log apne aap khul jayega.
+* **Method 2:** Code run hone ke baad, Developer Console ke niche **'Logs'** tab par jayein aur sabse naye log par double-click karein.
+
+### **Log Data ko Kaise Padhein?**
+
+Log mein 3 main cheezein hoti hain:
+
+1. **Timestamp:** Kab event hua (HH:mm:ss format mein).
+2. **Event:** Kya hua? (Jaise `USER_DEBUG` ya `FATAL_ERROR`).
+3. **Details:** Kaunsi line par code chala aur kya result aaya.
+
+---
+
+## **2. Log Inspector ka Use Karna**
+
+Jab log bahut bada hota hai, toh use simple text mein padhna mushkil hota hai. **Log Inspector** ise alag-alag panels mein divide kar deta hai.
+
+**Main Panels:**
+
+* **Stack Tree:** Hierarchy dikhata hai (kaunsa method kisne call kiya).
+* **Execution Log:** Har ek action ki step-by-step list.
+* **Source:** Code ki woh line dikhata hai jahan error aaya.
+* **Variables:** Us waqt variables ki kya value thi, yeh dikhata hai.
+
+**Perspectives:**
+Aap panels ke layout ko badal sakte hain. `Debug | Switch Perspectives` mein jakar aap **Analysis** ya **Debug** layout chun sakte hain.
+
+---
+
+## **3. Log Levels aur Categories (Control your Logs)**
+
+Agar aapke log mein bahut zyada faltu information (garbage) aa rahi hai, toh aap **Log Levels** ka use karke use filter kar sakte hain.
+
+### **Log Categories**
+
+Yeh batata hai ki kis type ki information chahiye:
+
+* **ApexCode:** Methods aur loops ki jankari.
+* **Database:** DML (insert/update) aur Queries (SOQL) ki jankari.
+
+### **Log Levels (Ordered from Least to Most Detail)**
+
+Aap decide kar sakte hain ki kitni detail chahiye. Levels yeh hain:
+
+1. **NONE** (Kuch nahi)
+2. **ERROR** (Sirf galtiyan)
+3. **WARN** (Warnings)
+4. **INFO** (General information)
+5. **DEBUG** (Aapke banaye hue debug messages)
+6. **FINE / FINER / FINEST** (Sabse zyada deep details)
+
+> **Note:** Agar aap `INFO` level set karte hain, toh `ERROR` aur `WARN` apne aap dikhenge, lekin `FINEST` nahi dikhega.
+
+---
+
+## **Summary Table for Notes**
+
+| Term | Meaning (Hinglish) |
+| --- | --- |
+| **System.debug()** | Code ke beech mein message print karne ka tareeka. |
+| **Raw Log** | Log ka asli roop bina kisi formatting ke (Nanoseconds mein time). |
+| **Log Filter** | Sirf wahi words dhundna jo aapko chahiye (e.g., 'Error'). |
+| **Change Log Levels** | Information ki "quantity" ko kam ya zyada karna. |
+
+---
+
+Yeh unit **Checkpoints** ke baare mein hai. Checkpoints ko aap Apex ka "X-ray" samajh sakte hain—yeh aapko batata hai ki kisi khaas line par pahunchne ke baad computer ki memory mein variables ki kya state (value) thi.
+
+Niche iske main points aur steps Hinglish mein diye gaye hain:
+
+---
+
+## **1. Checkpoints Kya Hain?**
+
+Jab aapko debug logs mein error samajh nahi aata, tab aap **Checkpoints** ka use karte hain. Yeh code ke execution ke beech ka ek "Snapshot" le leta hai.
+
+* Ek baar mein aap maximum **5 checkpoints** set kar sakte hain.
+* Yeh sirf **Apex code** ke liye hote hain (Visualforce ke liye nahi).
+
+---
+
+## **2. Checkpoints Kaise Set Karein? (Steps)**
+
+1. **Apex Code Open Karein:** Developer Console mein apni class kholein.
+2. **Log Level Set Karein:** `Debug | Change Log Levels` par jayein aur **ApexCode** ko **FINEST** par set karein (Checkpoint ke liye FINEST zaroori hai).
+3. **Checkpoint Lagayein:** Code editor mein line number ke bagal mein click karein. Ek **Red Dot** ban jayega (matlab checkpoint lag gaya).
+4. **Execute Karein:** `Debug | Open Execute Anonymous Window` mein jakar code run karein.
+5. **View Results:** Niche **Checkpoints** tab par double-click karein.
+
+---
+
+## **3. Checkpoint Inspector (Analyse Karna)**
+
+Jab aap checkpoint par double-click karte hain, toh **Checkpoint Inspector** khulta hai jisme do main tabs hote hain:
+
+* **Heap Tab:** Yeh dikhata hai ki us line par kitne objects ban chuke hain aur unhone kitni memory (bytes) li hai. Isme aap objects ke andar ki fields aur values (State) dekh sakte hain.
+* **Symbols Tab:** Yeh tree view mein saare variables aur objects ki list dikhata hai. Aap dekh sakte hain ki `address` mein kya email hai ya `subject` mein kya text hai.
+
+---
+
+## **4. Challenge Tips (Hands-on Challenge)**
+
+Is unit ka challenge pura karne ke liye:
+
+1. Aapki `EmailMissionSpecialist` class ki **Line 12** par checkpoint set karein.
+2. `Execute Anonymous` window mein apna real email dalkar code run karein.
+3. Ensure karein ki aapne **ApexCode** ka log level **FINEST** rakha hai, nahi toh checkpoint capture nahi hoga.
+
+---
+
+## **Summary Table for Notes**
+
+| Term | Meaning (Hinglish) |
+| --- | --- |
+| **Snapshot** | Code chalte waqt memory ki halat ki ek "photo". |
+| **FINEST Log Level** | Checkpoint data capture karne ke liye sabse zaroori setting. |
+| **Heap** | Computer ki woh memory jahan objects store hote hain. |
+| **Red Dot** | Checkpoint ka nishan jo line number ke paas dikhta hai. |
+
+---
+
+Bahut badhiya! Aapne **Developer Console Basics** module successfully complete kar liya hai. Is aakhri unit mein humne Salesforce database se data nikalne ke do main tarike sikhe: **SOQL** aur **SOSL**.
+
+Niche is unit ke important notes Hinglish mein hain:
+
+---
+
+## **1. SOQL (Salesforce Object Query Language)**
+
+SOQL ka use tab kiya jata hai jab aapko pata ho ki data **kaunse object** (jaise Contact ya Account) mein chhupa hai. Yeh SQL jaisa dikhta hai.
+
+* **Kahan use karein:** Developer Console ke **Query Editor** tab mein ya direct **Apex code** (Inline SOQL) mein.
+* **Kaise kaam karta hai:** Aapko fields aur object ka naam batana padta hai.
+* **Filter:** `WHERE` clause ka use karke aap specific data search kar sakte hain (jaise sirf 'Mission Control' department ke log).
+
+**Example:**
+`SELECT Name, Email FROM Contact WHERE Department = 'Mission Control'`
+
+---
+
+## **2. SOSL (Salesforce Object Search Language)**
+
+SOSL ek "Text Search" language hai. Yeh Google search ki tarah kaam karti hai.
+
+* **Kahan use karein:** Jab aapko ye na pata ho ki data kis object mein hai. Yeh ek saath **kaafi saare objects** (Contact, Account, Lead) ko search kar sakta hai.
+* **Match:** Yeh partial words ko bhi dhund leta hai (jaise 'Specialty' ki jagah sirf 'Crisis' likhne par bhi result mil jayega).
+* **Keyword:** Isme `FIND` keyword ka use hota hai.
+
+**Example:**
+`FIND {Crisis} IN ALL FIELDS RETURNING Contact(Name, Phone)`
+
+---
+
+## **3. SOQL vs SOSL: Difference Table**
+
+| Feature | SOQL | SOSL |
+| --- | --- | --- |
+| **Full Form** | Salesforce Object Query Language | Salesforce Object Search Language |
+| **Object Limit** | Ek baar mein sirf **1 object** query karta hai. | Ek saath **multiple objects** search kar sakta hai. |
+| **Fields** | Aapko field name batana padta hai. | Yeh **saare text fields** ko ek saath search kar sakta hai. |
+| **Syntax** | `SELECT ... FROM ...` | `FIND {...} IN ALL FIELDS ...` |
+| **Performance** | Database se exact data nikalne ke liye fast hai. | Poore org mein text dhundne ke liye best hai. |
+
+---
+
+## **Key Terms to Remember**
+
+* **Query Editor:** Developer Console ka wo tab jahan aap bina code likhe SOQL/SOSL test kar sakte hain.
+* **Inline SOQL:** Jab Apex code ke andar square brackets `[]` mein query likhi jati hai.
+* **Refresh Grid:** Query ke results ko update karne ke liye button.
+
+---
+
+**Aapka Safar:**
+Aapne Developer Console mein **Code likhna (Apex)**, **UI banana (Aura/Visualforce)**, **Logs check karna**, **Checkpoints use karna**, aur **Data query karna** seekh liya hai.
+
+
+
