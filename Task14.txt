@@ -1,0 +1,408 @@
+/APEX
+Congratulations on starting your Apex journey! Yeh ek bahut exciting step hai, especially ek Salesforce Admin ke liye. Aapne jo module share kiya hai, uske basis par main aapko simplified summary aur aapke quiz questions ke answers de deta hoon.
+
+---
+
+## 🚀 Apex Basics: Quick Summary
+
+### **Code Kya Hai?**
+
+Code insaano aur computers ke beech ki ek **bhasha (language)** hai. Jaise ek recipe mein step-by-step instructions hote hain khana banane ke liye, waise hi code computer ko precise instructions deta hai tasks perform karne ke liye.
+
+### **Pseudocode: Planning ki Pehli Seedhi**
+
+Asli code likhne se pehle hum **Pseudocode** likhte hain. Yeh normal English (ya kisi bhi language) mein likha gaya ek plan hota hai jo step-by-step batata hai ki program kya karega.
+
+* **Kyun zaroori hai?** Taaki non-programmers bhi samajh sakein ki kya logic build ho raha hai aur koi step miss na ho.
+
+### **Code Commenting: Kyun aur Kaise?**
+
+Comments wo notes hote hain jo developers apne liye ya doosre developers ke liye chhodte hain. Computer inko **ignore** kar deta hai; ye sirf readability ke liye hote hain.
+
+1. **Single Line Comment:** Iske liye `//` use hota hai.
+* *Example:* `// Yeh ek single line comment hai`
+
+2. **Multiline Comment:** Iske liye `/*` se shuru aur `*/` se khatam karte hain.
+* *Example:*
+```apex
+/* Yeh ek 
+   multiline comment hai */
+
+## 📝 Quiz Answers (Hinglish)
+
+Aapne jo questions puche hain, unke correct answers ye rahe:
+
+### **1. What is code?**
+
+**Answer:** Code wo language hai jo humans computer se baat karne ke liye use karte hain. Yeh ek **precise set of instructions** hota hai jo computer ko batata hai ki kya action perform karna hai.
+
+### **2. What is the syntax to begin a multiline code comment?**
+
+**Answer:** Multiline code comment shuru karne ke liye **`/*`** (forward slash followed by an asterisk) ka use kiya jata hai. Isse close karne ke liye `*/` lagaya jata hai.
+
+Wah, aapne Apex ke basics ka doosra unit bhi finish kar liya! Developer Console mein practice karna aur variables ko samajhna programming ki duniya mein bahut bade steps hain.
+
+Aapke share kiye gaye text ke basis par, main aapko concept ki summary aur quiz answers provide kar raha hoon.
+
+---
+### **Variables Kya Hain?**
+
+Variable ek **container** ki tarah hota hai jisme aap data store karte hain.
+
+* **Best Practice:** Hamesha descriptive naam rakhein (jaise `firstName` bajaye sirf `f` ke) taaki code padhne mein aasani ho.
+
+### **Common Data Types**
+
+1. **Integer:** Bina decimal waale numbers (e.g., `10`, `-5`).
+2. **Decimal:** Decimal waale numbers (e.g., `12.50`).
+3. **String:** Text jo single quotes (`' '`) mein hota hai.
+4. **Boolean:** Sirf `true` ya `false`.
+5. **ID:** Salesforce ka 18-character record ID.
+
+### **System.debug aur Syntax**
+
+* **System.debug:** Iska use hum tab karte hain jab humein check karna ho ki kisi variable ki value kisi point par kya hai. Yeh "troubleshooting" mein bahut kaam aata hai.
+* **Concatenation:** `+` sign ka use karke hum text aur variables ko jod sakte hain (e.g., `'Value is: ' + myVar`).
+* **Syntax Rules:** * Har statement ke baad semicolon (`;`) lagana zaroori hai.
+* Strings hamesha single quotes (`' '`) mein honi chahiye.
+
+
+
+---
+
+## 📝 Quiz Answers (Hinglish)
+
+Aapne jo quiz questions mention kiye hain, unke logic-based answers ye rahe:
+
+### **1. Integer teaKettleFull = false; mein kya galti hai?**
+
+**Answer:** Yahan `false` ek **Boolean** value hai, lekin variable ka data type **Integer** rakha gaya hai. Isko sahi karne ke liye aapko data type change karna hoga:
+`Boolean teaKettleFull = false;`
+
+### **2. What is syntax?**
+
+**Answer:** Syntax programming language ke **rules** hote hain jo batate hain ki text aur punctuation (jaise semicolons, quotes) ko kaise arrange karna hai taaki computer use samajh sake.
+
+---
+
+### **Practice ke liye ek Tip:**
+
+Jab aap Developer Console mein **Execute Anonymous Window** use karte hain, toh "Open Log" aur "Debug Only" checkbox par click karna mat bhoolna, tabhi aapko clean output dikhega.
+
+Apex collections (specifically **Lists**) ka concept bahut simple hai. Socho ki aapke paas ek bag hai jisme aap ek hi tarah ki cheezein (jaise sugar cubes ya shopping items) store kar sakte ho.
+
+Yahan Apex Lists ka breakdown aur important methods diye gaye hain:
+
+## 1. List Kya Hai?
+
+List ek "Ordered Collection" hai. Iska matlab hai ki items ek sequence mein hote hain aur har item ka ek unique number hota hai jise **Index** kehte hain.
+
+> **Imp Note:** Programming mein ginti hamesha **0** se shuru hoti hai, 1 se nahi.
+
+---
+
+## 2. List Declare aur Initialize Kaise Karein?
+
+Aap teen tarike se list bana sakte hain:
+
+* **Empty List Banana:**
+`List<String> groceries = new List<String>();`
+* **Direct Value Ke Saath (Curly Braces):**
+`List<String> groceries = new List<String>{'Tea', 'Sugar'};`
+* **Fixed Size Ke Saath (Array Notation):**
+`String[] groceries = new String[4];` (Isse 4 khaali slots ban jayenge).
+
+---
+
+## 3. Important Inbuilt Methods (Don't Skip)
+
+Apex humein kuch ready-made methods deta hai list ke saath kaam karne ke liye:
+
+| Method | Kaam Kya Hai? | Example |
+| --- | --- | --- |
+| **add(item)** | List ke end mein naya item jodne ke liye. | `groceries.add('Honey');` |
+| **add(index, item)** | Kisi specific position par item daalne ke liye. | `groceries.add(0, 'Milk');` (Milk index 0 par aa jayega) |
+| **get(index)** | Kisi specific index ki value dekhne ke liye. | `String item = groceries.get(1);` |
+| **size()** | List mein total kitne items hain check karne ke liye. | `Integer count = groceries.size();` |
+| **clear()** | List ke saare items delete karne ke liye. | `groceries.clear();` |
+| **sort()** | Items ko alphabetical ya numerical order mein set karne ke liye. | `groceries.sort();` |
+
+---
+
+## 4. Important Example: Adding vs. Setting Size
+
+Bahut se log yahan confuse hote hain. Agar aapne size pehle hi fix kar diya hai, toh `add()` method list ka size badha deta hai.
+
+**Example Code:**
+
+```java
+String[] groceries = new String[2]; // Size 2 hai (null, null)
+groceries.add('Tea'); 
+// Ab list ka size 3 ho gaya! [null, null, 'Tea']
+// Kyunki add() hamesha end mein jotta hai.
+
+```
+
+Agar aapko pehle box (index 0) mein value daalni hai, toh aapko index use karna chahiye:
+`groceries[0] = 'Tea';`
+
+---
+
+## 5. Quiz Review (Logic)
+
+Aapne jo quiz dekha, uske logic samajhte hain:
+
+1. **Creating List:** `List<String> sports = new List<String>();` ya `String[] sports = new String[3];`
+2. **Referencing Item:** Agar list hai `{'Soccer', 'Baseball', 'Golf', 'Tennis'}`, toh 'Golf' ka index **2** hoga (0: Soccer, 1: Baseball, 2: Golf). Code hoga: `sports[2]`.
+
+Salesforce Apex mein **Set** aur **Map** do bahut hi powerful collections hain jo aapke code ko fast aur efficient banate hain. Aaiye inhein asaan bhasha (Hinglish) mein samajhte hain:
+
+---
+
+## 1. Set (The "Unique" Collection)
+
+Set ek aisa bag hai jisme **duplicates allow nahi hote**. Agar aap isme ek hi cheez do baar dalne ki koshish karenge, toh wo use ek hi baar count karega.
+
+* **Unordered:** Isme items ka koi fixed order (sequence) nahi hota.
+* **Unique Elements:** Sirf alag-alag values hi store hoti hain.
+* **Case Sensitive:** String ke case mein 'Apple' aur 'apple' alag-alag maane jayenge.
+
+### Set Declare aur Initialize:
+
+```java
+// Khali Set banana
+Set<String> uniqueColors = new Set<String>();
+
+// Value ke saath banana
+Set<String> fruits = new Set<String>{'Apple', 'Banana', 'Apple'}; 
+// Output: {'Apple', 'Banana'} -- Dusra 'Apple' delete ho jayega.
+
+```
+
+### Important Methods for Set:
+
+| Method | Kaam Kya Hai? | Example |
+| --- | --- | --- |
+| **add(element)** | Naya item add karne ke liye. | `fruits.add('Mango');` |
+| **contains(element)** | Check karne ke liye ki item set mein hai ya nahi. | `fruits.contains('Apple');` // returns true |
+| **remove(element)** | Kisi item ko delete karne ke liye. | `fruits.remove('Banana');` |
+| **size()** | Total unique items check karne ke liye. | `fruits.size();` |
+
+---
+
+## 2. Map (The "Key-Value" Pair)
+
+Map sabse zyada use hone wala collection hai. Ye ek **Phone Book** ki tarah hai, jahan ek **Name (Key)** hota hai aur uska ek **Phone Number (Value)** hota hai.
+
+* **Key:** Hamesha unique hoti hai (e.g., Student ID).
+* **Value:** Duplicate ho sakti hai (e.g., Do students ka naam same ho sakta hai).
+* **Efficient:** Key ki madad se value ko bahut jaldi dhoonda ja sakta hai.
+
+### Map Declare aur Initialize:
+
+```java
+// Map<KeyType, ValueType>
+Map<Integer, String> studentMap = new Map<Integer, String>();
+
+// Values add karna (put method)
+studentMap.put(101, 'Rahul');
+studentMap.put(102, 'Amit');
+studentMap.put(101, 'Vijay'); // 101 pe ab 'Vijay' ho jayega, Rahul overwrite ho jayega.
+
+```
+
+### Important Methods for Map:
+
+| Method | Kaam Kya Hai? | Example |
+| --- | --- | --- |
+| **put(key, value)** | Key aur Value ka pair add karne ke liye. | `map.put('IN', 'India');` |
+| **get(key)** | Key ka use karke value nikalne ke liye. | `String c = map.get('IN');` // 'India' |
+| **containsKey(key)** | Check karne ke liye ki wo key map mein hai ya nahi. | `map.containsKey('US');` |
+| **keySet()** | Saari keys ko ek **Set** mein nikalne ke liye. | `Set<String> keys = map.keySet();` |
+| **values()** | Saari values ko ek **List** mein nikalne ke liye. | `List<String> allValues = map.values();` |
+
+---
+
+## 3. Real-World Example: List vs Set vs Map
+
+Maano aapke paas Accounts ki ek list hai:
+
+1. **List:** `[Acc1, Acc2, Acc3, Acc1]` (Duplicate allow hain, order fix hai).
+2. **Set:** `[Acc1, Acc2, Acc3]` (Duplicates hata diye, sirf unique IDs rakhne ke liye best hai).
+3. **Map:** `{Acc1.Id => Acc1, Acc2.Id => Acc2}` (Id se Account record ko turant find karne ke liye best hai).
+
+---
+
+### Important Tip:
+
+Salesforce Trigger mein hum aksar `Trigger.newMap` use karte hain jo hamein Records ki ID aur unka pura Data ek Map mein deta hai, taaki humein loop ke andar baar-baar search na karna pade.
+
+//Control Flow 
+Apex mein code ka flow control karne ke liye hum **Decision Making** statements ka use karte hain. Iska matlab hai ki computer kab kaunsa kaam karega, ye kuch conditions par depend karta hai.
+
+Aaiye ise hinglish mein aur simple tarike se samajhte hain:
+
+---
+
+## 1. Comparison Operators (Tulna Karne Wale)
+
+Decision lene se pehle hum do cheezon ko compare karte hain. Iska result hamesha **Boolean** (True ya False) hota hai.
+
+| Operator | Meaning | Example | Result |
+| --- | --- | --- | --- |
+| `==` | Barabar hai? | `10 == 10` | True |
+| `!=` | Barabar nahi hai? | `10 != 5` | True |
+| `>` | Bada hai? | `20 > 10` | True |
+| `<` | Chhota hai? | `5 < 10` | True |
+| `>=` | Bada ya barabar? | `10 >= 10` | True |
+
+> **Dhyan Dein:** `=` ka matlab hota hai value dena (Assign), aur `==` ka matlab hota hai check karna (Compare).
+
+---
+
+## 2. If-Else Statements
+
+Ye sabse basic decision-making tool hai.
+
+* **If-Else:** Jab sirf do hi raste hon. "Agar barish hui toh umbrella lo, nahi toh mat lo."
+* **If-Else If-Else:** Jab do se zyada options hon.
+
+**Example:**
+
+```java
+String waterLevel = 'half';
+
+if(waterLevel == 'empty') {
+    System.debug('Kettle bharo');
+} else if(waterLevel == 'half') {
+    System.debug('Thoda aur paani daalo');
+} else {
+    System.debug('Kettle full hai');
+}
+
+```
+
+---
+
+## 3. Switch Statement (Smart Choice)
+
+Jab aapke paas ek hi variable ki bahut saari alag-alag values check karni hon, toh `switch` use karna zyada saaf (clean) lagta hai.
+
+```java
+switch on waterLevel {
+    when 'empty', 'half' { 
+        System.debug('Paani bharo');
+    }
+    when 'full' {
+        System.debug('Chai banao');
+    }
+    when else {
+        System.debug('Error!');
+    }
+}
+
+```
+
+---
+
+## 4. Logical Operators (AND aur OR)
+
+Kabhi-kabhi ek decision lene ke liye do conditions check karni padti hain.
+
+* **AND (`&&`):** Dono conditions true honi chahiye. (e.g., Chai patti BHI honi chahiye AUR doodh BHI).
+* **OR (`||`):** Koi bhi ek condition true ho jaye toh kaam ban jayega. (e.g., Chai mil jaye YA Coffee mil jaye).
+
+**Example (Redundant code hatane ke liye):**
+
+```java
+// Purana tarika (Redundant)
+if(water == 'empty') { fill(); }
+else if(water == 'half') { fill(); }
+
+// Naya Smart Tarika (Using OR)
+if(water == 'empty' || water == 'half') {
+    fill(); // Ek hi baar likhna pada!
+}
+
+```
+
+---
+
+## 5. Quiz Solutions (Logic)
+
+Aapke quiz ke answers ka logic ye hai:
+
+1. **Result Variable:** `Integer i = 44; Boolean result = i < 20;`
+* Yahan check ho raha hai: Kya 44 chhota hai 20 se? **Jawab: False.**
+
+
+2. **Options in If-Else:** Ek basic `if-else` statement mein hamesha **2 options** hote hain (ek `if` wala aur ek default `else` wala).
+
+Apex mein loops ka use repetitive tasks ko handle karne ke liye kiya jata hai. Yahan sabhi loops ke short examples aur unka logic diya gaya hai:
+
+### 1. While Loop
+
+Jab aapko ye nahi pata ki loop kitni baar chalega, bas ek **condition** pata ho. Ye pehle condition check karta hai, phir execute hota hai.
+
+```java
+Integer count = 1;
+while (count <= 3) {
+    System.debug('Count is: ' + count);
+    count++; // Value badhana zaroori hai nahi toh infinite loop ho jayega
+}
+// Output: 1, 2, 3
+
+```
+
+### 2. Do-While Loop
+
+Ye loop **kam se kam ek baar** zaroor chalta hai, chahe condition shuru mein hi galat kyun na ho, kyunki condition baad mein check hoti hai.
+
+```java
+Integer i = 10;
+do {
+    System.debug('Run hua: ' + i);
+    i++;
+} while (i < 5); 
+// Output: Run hua: 10 (Ek baar chala phir ruk gaya kyunki 11 < 5 false hai)
+
+```
+
+### 3. Standard For Loop
+
+Jab aapko fix pata ho ki loop **kitni baar** chalana hai. Initialization, Condition, aur Increment sab ek hi line mein hota hai.
+
+```java
+for (Integer i = 1; i <= 3; i++) {
+    System.debug('Number: ' + i);
+}
+// Output: 1, 2, 3
+
+```
+
+### 4. For-Each Loop (List/Collection Loop)
+
+Salesforce mein sabse zyada use hone wala loop. Ye kisi **List** ya **Set** ke har ek item par automatic iterate karta hai.
+
+```java
+List<String> teaTypes = new List<String>{'Green', 'Black', 'Masala'};
+
+for (String tea : teaTypes) {
+    System.debug('Available Tea: ' + tea);
+}
+// Output: Green, Black, Masala
+
+```
+
+---
+
+**Summary Table:**
+| Loop | Best Use Case |
+| :--- | :--- |
+| **While** | Jab tak condition true hai (Check first). |
+| **Do-While** | Kam se kam 1 baar run karne ke liye. |
+| **For** | Jab counting (1 to N) karni ho. |
+| **For-Each** | List ya Records ke saath kaam karne ke liye. |
+
+
+
