@@ -1,0 +1,604 @@
+//Asynchronous apex
+ye rahe aapke **Asynchronous Apex** ke notes **Hinglish** mein, jo exam aur interview dono ke liye kaam aayenge:
+
+---
+
+## 🚀 Asynchronous Apex: Short Notes
+
+### 1. Synchronous vs Asynchronous (Basic Difference)
+
+* **Synchronous:** Ye "Real-time" hota hai. User ko kaam khatam hone tak wait karna padta hai.
+* **Asynchronous:** Ye "Background" mein chalta hai. User ko wait nahi karna padta aur wo doosra kaam kar sakta hai.
+* *Example:* Agar car mechanic ke paas chhod kar aap shopping karne chale gaye, toh wo **Asynchronous** hai.
+
+
+
+### 2. Key Benefits (Fayde)
+
+* **User Efficiency:** User ka screen freeze nahi hota, kaam background mein chalta rehta hai.
+* **Scalability:** Salesforce resource load ko manage kar pata hai.
+* **Higher Limits:** Ismein limits (Governor Limits) synchronous se zyada milti hain.
+
+---
+
+### 3. Types of Asynchronous Apex
+
+| Type | Kab use karein? | Key Point |
+| --- | --- | --- |
+| **Future Methods** | Callouts ke liye. | Simple methods hote hain, par inmein jobs chain nahi kar sakte. |
+| **Batch Apex** | Lakhon records update karne ke liye. | Data ko 200-200 ke chunks mein divide kar deta hai. |
+| **Queueable Apex** | Complex logic aur job chaining ke liye. | Future method ka advance version hai. |
+| **Scheduled Apex** | Time-based tasks ke liye. | Daily ya Weekly basis par run hota hai. |
+
+---
+
+### 4. Governor & Execution Limits (Most Important)
+
+Asynchronous Apex mein limits double ya usse zyada milti hain:
+
+* **SOQL Queries:** Synchronous mein 100 hoti hain, par Async mein **200** queries milti hain.
+* **Heap Size & CPU Time:** Async mein memory (Heap) aur CPU processing time dono zyada milte hain.
+* **Independent Limits:** Async job ki apni alag limits hoti hain. Ye us trigger ya class ki limits ko affect nahi karta jahan se ise call kiya gaya hai.
+
+---
+
+### 5. Framework Kaam Kaise Karta Hai?
+
+Salesforce ek **Queue-based framework** use karta hai:
+
+1. **Enqueue:** Request queue mein lag jati hai.
+2. **Persistence:** Request save ho jati hai taaki agar system fail ho, toh data loss na ho.
+3. **Dequeue:** Jab background resources free hote hain, tab job run ho jati hai.
+
+> **Point to Remember:** Asynchronous jobs ki priority browser transactions se **kam** hoti hai. Agar server par bohot zyada load hai, toh job thodi late start ho sakti hai.
+
+---
+
+### 6. Quiz Answers
+
+1. **Correct Answer: A** (Higher governor and execution limits).
+2. **Correct Answer: C** (Update all records in your org - kyunki Batch Apex bulk data ke liye best hai).
+
+---
+---
+
+## 🕒 Future Methods: Deep Dive Notes
+
+### 1. Future Method Kya Hai?
+
+Future method ek simple method hota hai jo `@future` annotation ke saath define kiya jata hai. Ye background mein chalta hai jab system ke paas free resources hote hain.
+
+> **Note:** Salesforce ab Future Methods ki jagah **Queueable Apex** recommend karta hai kyunki Queueables zyada flexible hote hain.
+
+### 2. Syntax aur Rules (Zaroori Baatein)
+
+* **Static & Void:** Future method hamesha `public static void` hona chahiye.
+* **Arguments:** Ismein sirf **Primitive Data Types** (String, ID, Integer, etc.) ya unki **Collections** (List, Set) pass kar sakte hain.
+* **No Objects:** Aap ismein `Account` ya `Contact` jaise objects pass **nahi** kar sakte.
+* *Reason:* Kyunki job queue mein rehti hai, tab tak database mein record change ho sakta hai. Isliye hamesha **IDs** pass ki jati hain aur method ke andar naya SOQL kiya jata hai.
+
+
+
+```java
+public class MyClass {
+    @future
+    public static void myMethod(List<Id> recordIds) {
+        // Logic yahan aayega
+    }
+}
+
+```
+
+---
+
+### 3. Use Cases (Kab use karein?)
+
+1. **Web Service Callouts:** Agar Trigger se API call karni hai, toh `@future(callout=true)` use karna compulsory hai.
+2. **Mixed DML Error:** Jab aap Setup objects (User, Group) aur Non-Setup objects (Account, Contact) ko ek saath update karte hain, toh error aata hai. Use avoid karne ke liye ek part ko Future method mein dal dete hain.
+3. **Resource Intensive Tasks:** Aise kaam jo user ki screen ko slow kar sakte hain.
+
+---
+
+### 4. Limitations (Yaan Rakhein!)
+
+* **Order Guarantee Nahi Hai:** Agar aapne 2 future methods call kiye (Method A then Method B), toh zaroori nahi ki A pehle khatam ho.
+* **No Chaining:** Ek future method se doosre future method ko call **nahi** kar sakte.
+* **Testing:** Future method ko test karne ke liye `Test.startTest()` aur `Test.stopTest()` ke beech mein call karna padta hai.
+
+---
+
+### 5. Hands-on Challenge Solution Hint 💡
+
+Aapko ek class banani hai jo Account ke Contacts count karke field update kare.
+
+**Step 1: Apex Class (`AccountProcessor`)**
+
+```java
+public class AccountProcessor {
+    @future
+    public static void countContacts(List<Id> accountIds) {
+        List<Account> accountsToUpdate = new List<Account>();
+        
+        // Account fetch karo aur saath mein unke Contacts bhi
+        List<Account> accounts = [SELECT Id, (SELECT Id FROM Contacts) FROM Account WHERE Id IN :accountIds];
+        
+        for (Account acc : accounts) {
+            acc.Number_Of_Contacts__c = acc.Contacts.size();
+            accountsToUpdate.add(acc);
+        }
+        update accountsToUpdate;
+    }
+}
+
+```
+
+**Step 2: Test Class (`AccountProcessorTest`)**
+
+```java
+@IsTest
+public class AccountProcessorTest {
+    @IsTest
+    public static void testCountContacts() {
+        // 1. Data Setup
+        Account acc = new Account(Name='Test Acc');
+        insert acc;
+        Contact con = new Contact(LastName='Test Con', AccountId = acc.Id);
+        insert con;
+        
+        List<Id> accIds = new List<Id>();
+        accIds.add(acc.Id);
+        
+        // 2. Execute Test
+        Test.startTest();
+        AccountProcessor.countContacts(accIds);
+        Test.stopTest(); // Iske baad hi future method execute hoga
+        
+        // 3. Verify Result
+        Account updatedAcc = [SELECT Number_Of_Contacts__c FROM Account WHERE Id = :acc.Id];
+        System.assertEquals(1, updatedAcc.Number_Of_Contacts__c);
+    }
+}
+
+//Batch
+Batch Apex ko samajhna bahut zaroori hai jab aap lakhon records (millions) ke saath deal karte hain. Simple words mein: Jab normal code limit cross kar deta hai, tab **Batch Apex** kaam aata hai.
+
+Yahan aapke notes ka complete flow aur solution diya gaya hai:
+
+---
+
+### 1. Batch Apex Kya Hai? (The "Under the Hood" Logic)
+
+Agar aapko 1 million records process karne hain, toh Salesforce unhe chhote-chhote tukdon mein baant deta hai, jinhe **Batches** kehte hain (Default size: 200).
+
+* **Governor Limits:** Har batch ko apni khud ki fresh limits milti hain.
+* **Error Handling:** Agar ek batch fail ho gaya, toh baaki successful batches roll back nahi hote.
+
+---
+
+### 2. The 3 Pillars (Methods) of Batch Apex
+
+Batch class banane ke liye aapko `Database.Batchable` interface use karna hota hai:
+
+1. **`start()`**: Saara data collect karta hai (Queries up to 50 million records).
+2. **`execute()`**: Asli kaam yahan hota hai (Processing in chunks).
+3. **`finish()`**: Kaam khatam hone ke baad final step (Jaise Email bhejna).
+
+---
+
+### 3. Your Challenge Solution (LeadProcessor)
+
+Aapko ek class banani hai jo saare Leads ka `LeadSource` badal kar **'Dreamforce'** kar de.
+
+#### Step A: Create `LeadProcessor` Class
+
+```java
+// Database.Batchable<sObject> use karna mandatory hai
+public class LeadProcessor implements Database.Batchable<sObject> {
+
+    // 1. START: Saare Lead records collect karega
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        return Database.getQueryLocator([SELECT Id, LeadSource FROM Lead]);
+    }
+
+    // 2. EXECUTE: Leads ko chunks mein update karega
+    public void execute(Database.BatchableContext bc, List<Lead> scope) {
+        for (Lead l : scope) {
+            l.LeadSource = 'Dreamforce';
+        }
+        update scope;
+    }
+
+    // 3. FINISH: Post-processing (Required by interface)
+    public void finish(Database.BatchableContext bc) {
+        System.debug('Batch processing complete.');
+    }
+}
+```
+
+---
+
+#### Step B: Create `LeadProcessorTest` Class
+
+Test class mein hume 200 records create karke check karna hai ki kya hamara batch sahi chal raha hai.
+
+```java
+@isTest
+private class LeadProcessorTest {
+    @isTest
+    static void testLeadProcessorBatch() {
+        // Step 1: 200 Leads create karna
+        List<Lead> testLeads = new List<Lead>();
+        for (Integer i = 0; i < 200; i++) {
+            testLeads.add(new Lead(
+                LastName = 'AkshatTest ' + i, 
+                Company = 'Cloud Analogy', 
+                Status = 'Open - Not Contacted'
+            ));
+        }
+        insert testLeads;
+
+        // Step 2: Batch class ko call karna
+        Test.startTest();
+        LeadProcessor lp = new LeadProcessor();
+        Id batchId = Database.executeBatch(lp);
+        Test.stopTest(); // Ye wait karega batch finish hone ka
+
+        // Step 3: Verify karna
+        Integer updatedCount = [SELECT count() FROM Lead WHERE LeadSource = 'Dreamforce'];
+        System.assertEquals(200, updatedCount, 'Saare 200 leads Dreamforce source mein update hone chahiye the.');
+    }
+}
+
+```
+
+---
+
+### 4. Important Best Practices (Notes Highlights)
+
+* **Database.Stateful:** Agar aapko variables ki value ek batch se dusre batch tak yaad rakhni hai (jaise total count), toh class definition mein `Database.Stateful` add karein.
+* **Batch Size:** Default 200 hota hai, par aap ise `Database.executeBatch(obj, 100);` karke kam bhi kar sakte hain agar governor limits hit ho rahi hain.
+* **When to avoid:** Agar records kam hain (Sirf ek batch layak), toh **Queueable Apex** use karein.
+
+### 5. Challenge Verify Kaise Karein?
+
+1. Developer Console mein dono classes save karein.
+2. **Test > Run All** par click karein.
+3. Check karein ki **`LeadProcessor`** ki coverage **100%** hai.
+4. Ab Trailhead par jaakar **Check Challenge** click karein.
+
+Queueable Apex Salesforce ka ek bahut powerful feature hai jo asynchronous processing (background mein kaam karne) ke liye use hota hai. Beginner ke liye isse samajhna zaroori hai kyunki ye **@future** methods ki limitations ko khatam karta hai.
+
+Chaliye isse simple language mein samajhte hain:
+
+---
+
+### 1. Queueable Apex Kya Hai?
+
+Queueable Apex, Future methods ka ek advanced version hai. Jab aapko koi aisa kaam karna ho jisme time lag sakta hai (jaise external API callout ya hazaron records update karna), toh aap use "Queue" mein daal dete hain taaki user ko wait na karna pade.
+
+**Iske Fayde (Benefits):**
+
+* **Non-primitive types:** Future methods mein aap sirf `String`, `Integer` jaisi cheezein bhej sakte the, lekin Queueable mein aap pura ka pura **sObject (Account, Contact)** ya **Custom List** bhej sakte hain.
+* **Monitoring:** Jab aap job submit karte hain, toh aapko ek **Job ID** milti hai. Is ID se aap check kar sakte hain ki kaam pura hua ya nahi.
+* **Chaining:** Aap ek Queueable job ke khatam hone par dusri job start kar sakte hain.
+
+---
+
+### 2. Syntax (Kaise Likhte Hain)
+
+Iske liye aapko `Queueable` interface implement karna padta hai aur `execute` method likhna hota hai.
+
+```java
+public class MyQueueableClass implements Queueable {
+    public void execute(QueueableContext context) {
+        // Aapka logic yahan aayega
+    }
+}
+
+```
+
+---
+
+### 3. Hands-on Challenge Solution (Step-by-Step)
+
+Aapko ek class banani hai jo kisi specific state ke sabhi Accounts ke liye ek Contact insert kare.
+
+#### Step A: Apex Class `AddPrimaryContact`
+
+Isme hum `clone()` method ka use karenge kyunki ek hi Contact object ko baar-baar insert nahi kar sakte, har Account ke liye uski copy banani padegi.
+
+```java
+public class AddPrimaryContact implements Queueable {
+    
+    private Contact con;
+    private String state;
+
+    // Constructor: Jo data humein chahiye wo yahan receive karenge
+    public AddPrimaryContact(Contact inputContact, String inputState) {
+        this.con = inputContact;
+        this.state = inputState;
+    }
+
+    public void execute(QueueableContext context) {
+        // 1. Query 200 Accounts based on State
+        List<Account> accounts = [SELECT Id FROM Account WHERE BillingState = :state LIMIT 200];
+        
+        List<Contact> contactList = new List<Contact>();
+        
+        for (Account acc : accounts) {
+            // 2. Contact ki copy banana (clone)
+            Contact contactCopy = con.clone(false, false, false, false);
+            contactCopy.AccountId = acc.Id; // Account se link karna
+            contactList.add(contactCopy);
+        }
+        
+        // 3. Saare contacts ek saath insert karna (Bulk DML)
+        if (contactList.size() > 0) {
+            insert contactList;
+        }
+    }
+}
+
+```
+
+#### Step B: Test Class `AddPrimaryContactTest`
+
+Salesforce mein 75% code coverage zaroori hai, isliye hum test class likhte hain.
+
+```java
+@isTest
+public class AddPrimaryContactTest {
+    
+    @isTest
+    static void testQueueable() {
+        // 1. Test Data banana (50 NY Accounts aur 50 CA Accounts)
+        List<Account> testAccounts = new List<Account>();
+        for (Integer i = 0; i < 50; i++) {
+            testAccounts.add(new Account(Name='NY Acc '+i, BillingState='NY'));
+            testAccounts.add(new Account(Name='CA Acc '+i, BillingState='CA'));
+        }
+        insert testAccounts;
+
+        // 2. Ek sample Contact banana
+        Contact myContact = new Contact(FirstName='Akshat', LastName='Jain');
+
+        // 3. Queueable class ka object banana (State = 'CA')
+        AddPrimaryContact updater = new AddPrimaryContact(myContact, 'CA');
+
+        // 4. Job ko enqueue karna (Start/Stop ke beech)
+        Test.startTest();
+        System.enqueueJob(updater);
+        Test.stopTest();
+
+        // 5. Verification: Check karna ki CA waale 50 Accounts mein Contact add hua ya nahi
+        System.assertEquals(50, [SELECT count() FROM Contact WHERE FirstName='Akshat']);
+    }
+}
+
+```
+
+---
+
+### 4. Interview ke liye Important Points (Don't Skip)
+
+* **Chaining Limit:** Ek Queueable job se aap sirf **ek hi** child job chain kar sakte hain.
+* **Transaction Limit:** Ek transaction mein aap maximum **50 jobs** `System.enqueueJob` se add kar sakte hain.
+* **Stack Depth:** Developer edition mein chaining ki limit **5** tak hoti hai (aap 5 baar ek ke baad ek job chala sakte hain).
+
+Bilkul, `clone()` method ko samajhna bahut zaroori hai, khaas karke jab aap Loops ke andar records create kar rahe hon.
+
+Salesforce mein jab hum `insert` karte hain, toh har record ki apni ek unique **ID** hoti hai. Agar aap ek hi Contact variable ko baar-baar loop mein use karenge, toh Salesforce confuse ho jayega kyunki wo purani ID ko hi carry forward karega. Isliye hum **`clone()`** ka use karke uski fresh copy banate hain.
+
+Standard syntax ye hota hai:
+`record.clone(preserveId, isDeepClone, preserveReadonlyTimestamps, preserveAutonumber)`
+
+Chaliye, in chaaron **Boolean (True/False)** parameters ko simple bhasha mein samajhte hain:
+
+---
+
+### 1. `preserveId` (Default: False)
+
+* **False (Recommended):** Iska matlab hai ki naye cloned record ki apni koi ID nahi hogi. Ye ek "Fresh" record ki tarah treat hoga.
+* **True:** Ye purane record ki ID ko copy kar lega. (Hum ise tab use karte hain jab humein database mein naya record insert nahi karna ho, balki sirf memory mein kuch calculations karni hon).
+* **Aapke Challenge mein:** Humne `false` rakha taaki har Account ke liye ek **Naya (New)** Contact insert ho sake.
+
+### 2. `isDeepClone` (Default: False)
+
+* **False:** Isse "Shallow Clone" kehte hain. Ye sirf record ki basic fields copy karta hai.
+* **True:** Ye "Deep Clone" hai. Agar us record se jude huye kuch child records (related records) hain, toh ye unhe bhi memory mein copy kar leta hai.
+* **Aapke Challenge mein:** Humein sirf Contact ki fields chahiye thi, uske related records nahi, isliye `false`.
+
+### 3. `preserveReadonlyTimestamps` (Default: False)
+
+* **False:** Naye record mein `CreatedDate` aur `LastModifiedDate` system khud naye sire se set karega.
+* **True:** Ye purane record ki dates ko hi copy kar lega (par ye sirf read-only hota hai, hum ise change nahi kar sakte).
+
+### 4. `preserveAutonumber` (Default: False)
+
+* **False:** Naye record ko ek naya Auto-number milega (agar koi field auto-number hai toh).
+* **True:** Ye purane record ka hi auto-number copy karne ki koshish karega.
+
+---
+
+### Ek Simple Example
+
+Sochiye aapke paas ek Contact hai: **Name: Akshat, ID: 003xxxxxx**.
+
+* Agar aap loop mein bina clone kiye use karenge: Salesforce kahega "Ye 003xxxxxx ID toh pehle hi insert ho chuki hai!" aur error de dega (**Duplicate ID error**).
+* Agar aap `con.clone(false, false, false, false)` karenge: Toh har loop mein ek naya Contact banega jiske paas **Name: Akshat** toh hoga, par **ID: null** hogi. Jab aap use `insert` karenge, toh Salesforce use ek nayi unique ID de dega.
+
+### Challenge Code ka Recap:
+
+```java
+// Humne aise likha tha:
+Contact contactCopy = con.clone(false, false, false, false);
+
+```
+
+Iska matlab tha: *"Bhai, ek naya Contact copy banao jiski ID blank ho, koi related records na hon, aur dates bhi fresh hon."*
+
+---
+Ab hum Salesforce ke ek aur interesting topic par hain: **Scheduled Apex**. Ye bilkul waisa hi hai jaise aap apne phone mein **Alarm** lagate hain. Aap system ko batate hain ki, *"Bhai, har roz raat ko 2 baje ye wala kaam (Apex code) chala dena."*
+
+Beginner ke liye ye samajhna bahut zaroori hai kyunki companies mein maintenance tasks (jaise purane leads clean karna ya daily reports bhejna) isi se hote hain.
+
+---
+
+### 1. Scheduled Apex Kya Hai?
+
+Scheduled Apex aapko allow karta hai ki aap apna code kisi specific time ya interval (daily, weekly, monthly) par run karein.
+
+**Kaise Kaam Karta Hai?**
+
+1. Aap ek class banate hain jo `Schedulable` interface implement karti hai.
+2. Usme `execute` method likhte hain.
+3. System ko **CRON Expression** ke zariye batate hain ki kab chalna hai.
+
+---
+
+### 2. CRON Expression (Time Batane ka Tarika)
+
+Ye thoda tricky lag sakta hai par asaan hai. Isme 6-7 numbers/symbols hote hain:
+`Seconds Minutes Hours Day_of_Month Month Day_of_Week Optional_Year`
+
+**Example:** `0 0 13 * * ?`
+Iska matlab hai: *Har roz dopahar 1 baje (13:00) code chalao.*
+
+---
+
+### 3. Hands-on Challenge Solution
+
+Humein ek class banani hai jo un Leads ko update kare jinka `LeadSource` khali (blank) hai.
+
+#### Step A: Apex Class `DailyLeadProcessor`
+
+```java
+public class DailyLeadProcessor implements Schedulable {
+
+    public void execute(SchedulableContext ctx) {
+        // 1. Pehle 200 Leads dhundo jinka LeadSource blank hai
+        List<Lead> leads = [SELECT Id, LeadSource FROM Lead 
+                            WHERE LeadSource = null 
+                            LIMIT 200];
+        
+        // 2. Unka LeadSource 'Dreamforce' set karo
+        if(!leads.isEmpty()) {
+            for(Lead l : leads) {
+                l.LeadSource = 'Dreamforce';
+            }
+            // 3. Database update karo
+            update leads;
+        }
+    }
+}
+
+```
+
+#### Step B: Test Class `DailyLeadProcessorTest`
+
+Test class mein hum check karenge ki kya scheduler sahi se kaam kar raha hai.
+
+```java
+@isTest
+public class DailyLeadProcessorTest {
+
+    // CRON expression: Midnight on a specific date (Test ke liye kuch bhi de sakte hain)
+    public static String CRON_EXP = '0 0 0 15 3 ? 2042';
+
+    @isTest
+    static void testScheduledJob() {
+        // 1. 200 Test Leads insert karo (LeadSource blank rakhna hai)
+        List<Lead> leads = new List<Lead>();
+        for (Integer i = 0; i < 200; i++) {
+            leads.add(new Lead(LastName = 'Lead '+i, Company = 'Cloud Analogy', Status = 'Open - Not Contacted'));
+        }
+        insert leads;
+
+        // 2. Schedule the job
+        Test.startTest();
+        String jobId = System.schedule('ScheduledApexTest', CRON_EXP, new DailyLeadProcessor());
+        // Test.stopTest() ke baad hi async job run hoti hai
+        Test.stopTest();
+
+        // 3. Verification: Check karo ki sabhi 200 Leads update huye ya nahi
+        List<Lead> updatedLeads = [SELECT Id FROM Lead WHERE LeadSource = 'Dreamforce'];
+        System.assertEquals(200, updatedLeads.size(), 'Leads were not updated correctly');
+    }
+}
+
+```
+
+---
+
+### 4. Important Points to Remember (For Interview)
+
+* **Maximum Limit:** Ek org mein ek waqt par sirf **100 scheduled jobs** active ho sakti hain.
+* **Callouts:** Scheduled Apex se aap direct API callout nahi kar sakte. Iske liye aapko `@future(callout=true)` method ko call karna padega ya Batch Apex use karna padega.
+* **Monitoring:** Aap `Setup -> Scheduled Jobs` mein jaakar dekh sakte hain ki kaunsa job kab chalne wala hai.
+
+---
+
+### 5. Bonus Tip: UI se Schedule Kaise Karein?
+
+Agar aapko code (CRON) nahi likhna, toh aap Salesforce Setup mein jaakar **"Apex Classes"** search karein. Wahan **"Schedule Apex"** button dikhega. Wahan se aap class select karke calendar jaisa interface use kar sakte hain.
+
+Asynchronous Apex ka sabse bada challenge yahi hai ki ye "Background" mein chalta hai. Agar aapne koi job run ki aur wo fail ho gayi, toh aapko tab tak pata nahi chalega jab tak aap use **Monitor** karna nahi jaante.
+
+Akshat, trainee role ke liye ye unit bahut important hai kyunki real projects mein "Job Monitoring" daily task ka hissa hota hai.
+
+---
+
+### 1. Monitoring ke Tarike (The Easy Way)
+
+Salesforce UI mein do main jagah hain jahan se aap jobs dekh sakte hain:
+
+1. **Apex Jobs Page:** `Setup -> Apex Jobs`. Yahan aapko har tarah ki async job (Future, Queueable, Batch, Scheduled) ka status dikhega (Queued, Processing, Completed, ya Failed).
+2. **Apex Flex Queue:** `Setup -> Apex Flex Queue`. Ye sirf **Batch Jobs** ke liye hota hai.
+
+---
+
+### 2. Flex Queue Kya Hai? (Interview Favourite)
+
+Sochiye aapke paas 100 Batch jobs hain. Salesforce ek sath sirf **5 jobs** run kar sakta hai. Baaki ki 95 jobs kahan jayengi? Wo **Flex Queue** mein "Holding" status mein rahengi.
+
+* **Limit:** Aap maximum **100 batch jobs** Flex Queue mein rakh sakte hain.
+* **Reordering:** Aap UI se kisi important job ko upar (Front) move kar sakte hain taaki wo pehle process ho.
+
+---
+
+### 3. Quiz Answers (Step-by-Step)
+
+Aapke provide kiye gaye quiz ke answers niche diye gaye hain:
+
+#### **Question 1: What type of jobs do not show up in the Apex Flex Queue?**
+
+* **Correct Answer: A (Future Method Jobs)**
+* **Reason:** Future methods directly `Apex Jobs` page par jaate hain, wo Flex Queue ka hissa nahi hote. Queueable aur Batch jobs flex queue/holding status mein ja sakte hain.
+
+#### **Question 2: Which statement is true regarding the flex queue?**
+
+* **Correct Answer: B (Jobs are processed first-in first-out.)**
+* **Reason:** By default, jo job pehle submit hui, wo pehle pick hoti hai (FIFO). Halanki, aap is order ko manually change kar sakte hain. (Option A galat hai kyunki limit 100 hai, 200 nahi).
+
+---
+
+### 4. Technical Monitoring (SOQL Se)
+
+Agar aap code ke andar check karna chahte hain ki job ka kya hua, toh aap in Tables (Objects) ko query karte hain:
+
+* **AsyncApexJob:** Isme saari background jobs ka data hota hai.
+```sql
+SELECT Id, Status, NumberOfErrors FROM AsyncApexJob WHERE Id = :jobID
+
+```
+
+
+* **CronTrigger:** Ye sirf **Scheduled Jobs** ka data nikalne ke liye use hota hai (Next kab chalegi, kitni baar chali, etc.).
+
+---
+
+### 5. Akshat's Career Note (Salesforce Trainee Tip)
+
+Jab aap **Cloud Analogy** join karenge, toh aapko aksar "Error Logs" check karne ko kaha jayega. Hamesha **Apex Jobs** page par `Status Detail` column check karna, wahan likha hota hai ki job kyun fail hui (jaise: "Limit Exceeded" ya "Null Pointer Exception").
+
+
