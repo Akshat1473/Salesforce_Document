@@ -1,0 +1,383 @@
+//Visualforce
+# 📝 Visualforce Detailed Notes (Based on your Content)
+
+### 1. Introduction to Visualforce (The "What" and "How")
+
+* **Definition:** Visualforce ek **web development framework** hai jo developers ko Lightning Platform par host hone wali mobile aur desktop apps ke liye **sophisticated, custom user interfaces** banane ki power deta hai.
+* **Styling:** Aap isse Lightning Experience jaisa look bhi de sakte hain ya apna ekdum **completely custom interface** bhi bana sakte hain.
+* **Flexibility:** Ye Salesforce ke built-in features ko **extend** (badhane), naya functionality se **replace** karne, ya ekdum **new apps** banane ke kaam aata hai.
+* **Server Processing:** Jab koi page access karta hai, toh **server data processing** karta hai, page ko HTML mein render karta hai, aur fir browser ko result bhejta hai.
+
+### 2. An Example Visualforce Page (Code Analysis)
+
+Aapke content ka example code dikhata hai ki kaise **dozen lines** mein bahut saara kaam ho jata hai:
+
+* **Standard Controller Connection:** Bina code likhe ye automatic data access aur modification provide karta hai.
+* **Smart Behavior:**
+* **New vs Edit:** Agar record ID nahi hai, toh blank form dikhayega. Agar ID hai, toh data lookup karke editable form dikhayega.
+* **Field Intelligence:** Email field valid email check karti hai aur date field mein apne aap **date widget** (calendar) aa jata hai.
+* **Standard Actions:** `Save` button direct controller ke `save` method ko call karta hai.
+
+
+
+### 3. Where You Can Use Visualforce (6 Key Places)
+
+Aapke content ke mutabiq, in 6 jagaho par Visualforce use hota hai:
+
+1. **App Launcher:** Custom apps aur tabs ke roop mein (View All mein milta hai).
+2. **Navigation Bar:** App ke navigation items mein Visualforce tabs add kar sakte hain.
+3. **Standard Page Layout:** Record ke **Details** section mein custom content embed karne ke liye.
+4. **Lightning App Builder:** Iske liye page par **"Available for Lightning Experience, Lightning Communities, and the mobile app"** checkbox enable hona zaroori hai.
+5. **Quick Action:** Publisher area mein quick action ki tarah launch karna.
+6. **Standard Button Overrides:** Jab user "New" ya "Edit" button click kare, toh standard page ki jagah aapka Visualforce page dikhe.
+
+---
+
+### 🚀 Code Snippet for Your Notes
+
+Aap ye code apne notes mein rakhein, isme har line ka matlab likha hai:
+
+```html
+<apex:page standardController="Contact"> 
+    <apex:form> 
+        <apex:pageBlock title="Edit Contact"> 
+            <apex:pageBlockSection columns="1"> 
+                <apex:inputField value="{!Contact.FirstName}"/>
+                <apex:inputField value="{!Contact.LastName}"/>
+                <apex:inputField value="{!Contact.Email}"/>
+                <apex:inputField value="{!Contact.Birthdate}"/>
+            </apex:pageBlockSection> 
+            <apex:pageBlockButtons> 
+                <apex:commandButton action="{!save}" value="Save"/> 
+            </apex:pageBlockButtons> 
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>
+
+```
+
+---
+
+### 🎯 Quick Summary for Quiz
+
+* **Visualforce is:** A web development framework for custom UIs on Lightning Platform.
+* **Display locations:** Sab jagah ho sakta hai (Tabs, Layouts, Buttons), **except "Any Setup Page"**.
+* **Integration:** Ye kisi bhi standard web technology ya **JavaScript framework** ke saath integrate ho sakta hai.
+
+Cool 👍
+Neeche **poora content Hinglish me**, **step-by-step**, **without skipping anything**, **notes banane ke format me** diya hai. Tum directly exam / revision / Trailhead ke liye use kar sakte ho.
+
+---
+
+# 📘 Create & Edit Visualforce Pages – Hinglish Notes
+
+---
+
+## 🎯 Learning Objectives (Is unit ke baad tum kya seekh loge)
+
+Is unit complete karne ke baad tum:
+
+* Samajh paoge **Visualforce Page kya hota hai** aur uske **key attributes** kya hote hain
+* Apni Salesforce org me **existing Visualforce pages ko list aur open** kar paoge
+* **Developer Console** ka use karke **Visualforce page create aur edit** kar paoge
+* **Visualforce tags aur attributes** ko identify, add aur customize kar paoge
+
+---
+
+## 🔰 Introduction to Visualforce Pages
+
+* **Visualforce pages** application developers ke liye **basic building blocks** hote hain
+* Ye **normal web pages jaise** hote hain, but extra power ke saath:
+
+  * Salesforce data ko **access**, **display**, aur **update** kar sakte hain
+* Har Visualforce page ka **unique URL** hota hai
+
+  * Bilkul traditional web server pages jaise
+
+---
+
+## 🏷️ Visualforce Markup Language
+
+* Visualforce ek **tag-based markup language** use karta hai (HTML jaisa)
+* Har **Visualforce tag** ek UI component ko represent karta hai:
+
+  * Page section
+  * List view
+  * Individual field
+* Salesforce me lagbhag **150+ built-in Visualforce components** hote hain
+* Developers apne **custom components** bhi bana sakte hain
+* Visualforce ke saath:
+
+  * HTML
+  * CSS
+  * JavaScript
+    freely mix kar sakte ho → full UI flexibility 💡
+
+---
+
+## 🛠️ Visualforce Pages Create/Edit Karne ke Tarike
+
+Visualforce pages ko multiple ways se create/edit kar sakte ho:
+
+1. **Developer Console** ✅ (Best option)
+2. **Setup Editor**
+3. **Development Mode footer**
+4. **Salesforce APIs**
+5. **Visual Studio Code (VS Code)** with Salesforce Extensions
+
+---
+
+## 💻 Create Visualforce Page Using Developer Console
+
+### 🔹 Developer Console Kya Hai?
+
+* Salesforce ka **most powerful built-in development tool**
+* Features:
+
+  * Syntax highlighting
+  * Auto-complete
+  * Auto-suggest
+  * Tag matching
+  * Smart indenting
+
+👉 Complex pages aur custom controllers ke liye **best tool**
+
+---
+
+### 🪜 Steps to Create Visualforce Page
+
+1. Salesforce me **Your Name** ya **Setup gear icon** se
+   👉 **Developer Console open karo**
+2. New window open hogi
+3. Click:
+   **File | New | Visualforce Page**
+4. Page name enter karo:
+   **HelloWorld**
+5. Click **OK**
+6. Blank Visualforce page open ho jayega
+
+---
+
+### ✍️ Basic Visualforce Code
+
+```html
+<apex:page>
+    <h1>Hello World</h1>
+</apex:page>
+```
+
+7. **File | Save** karo
+8. **Preview** button click karo
+
+   * New window me page render hoga
+   * Salesforce styling nahi dikhegi
+
+---
+
+### ⚡ Lightning Experience me Page Open Karna
+
+* Lightning me direct `/apex/PageName` kaam nahi karta
+* Browser ke **JavaScript Console** me ye code run karo:
+
+```javascript
+$A.get("e.force:navigateToURL")
+ .setParams({"url": "/apex/pageName"})
+ .fire();
+```
+
+👉 `pageName` ko apne page ke naam se replace karo
+
+---
+
+## 🧩 Developer Console Features
+
+* **File | Open** → existing Visualforce pages dekh sakte ho
+* Double-click → page open
+* Apex Classes, Triggers, Components bhi open ho jaate hain
+
+---
+
+## ✨ Add Attributes Using Auto-Suggest
+
+### Attributes Kya Hote Hain?
+
+* Visualforce components ka behavior control karte hain
+
+---
+
+### 🪜 Steps: Attribute Add Karna
+
+1. `<apex:page>` ke opening tag ke andar cursor rakho
+2. Space + `s` type karo
+   👉 auto-suggest aayega
+3. `sidebar` select karo → Enter
+4. Value select karo → `false`
+
+```html
+<apex:page sidebar="false">
+```
+
+5. Save karo
+
+---
+
+### ➕ showHeader Attribute Add Karo
+
+```html
+<apex:page sidebar="false" showHeader="false">
+    <h1>Hello World</h1>
+</apex:page>
+```
+
+---
+
+### 🔍 Important Notes
+
+* **Salesforce Classic**:
+
+  * `sidebar` & `showHeader` default = `true`
+* **Lightning Experience / Mobile App**:
+
+  * Ye attributes **always false** hote hain
+  * Lightning header ko remove nahi kar sakte ❌
+
+---
+
+### 🎨 Salesforce Styling Remove Karna
+
+```html
+standardStylesheets="false"
+```
+
+👉 Isse Salesforce CSS bhi hat jaati hai
+
+---
+
+## 🧱 Add & Compose Components (Page Structure)
+
+---
+
+### 🔹 apex:pageBlock
+
+* UI ke related items ko group karta hai
+* Salesforce Classic style follow karta hai
+
+---
+
+### 🪜 Steps: Page Structure Banana
+
+```html
+<apex:page>
+    <h1>Hello World</h1>
+
+    <apex:pageBlock title="A Block Title">
+
+        <apex:pageBlockSection title="A Section Title">
+            I'm three components deep!
+        </apex:pageBlockSection>
+
+    </apex:pageBlock>
+</apex:page>
+```
+
+---
+
+### 🔹 apex:pageBlockSection
+
+* PageBlock ke andar hota hai
+* Collapsible hota hai (user collapse kar sakta hai)
+
+---
+
+### ➕ Add Another Section
+
+```html
+<apex:pageBlockSection title="A New Section">
+    This is another section.
+</apex:pageBlockSection>
+```
+
+---
+
+### ⚠️ Rule Yaad Rakho
+
+❌ `<apex:pageBlockSection>`
+✔️ Sirf `<apex:pageBlock>` ke andar hi use hota hai
+
+---
+
+## 🚀 Beyond the Basics
+
+* Developer Console = most powerful internal tool
+* Dusre options:
+
+  * **Development Mode footer** → quick edits
+  * **Setup Editor** → page settings access
+  * **VS Code** → professional development
+
+---
+
+### 🧩 Additional Components
+
+* `<apex:pageBlockSectionItem>`
+* `<apex:pageBlockButtons>`
+
+👉 **pageBlockSectionItem** nest hota hai
+👉 `<apex:pageBlockSection>` ke andar ✅
+
+---
+
+## 📚 Resources
+
+* Salesforce Help: Create Visualforce Pages
+* Developer Console Functionality
+* Visualforce Developer Guide
+* Standard Component Reference
+* Salesforce Extensions for VS Code
+
+---
+
+## 🧪 Hands-on Challenge (500 Points)
+
+### 🎯 Task
+
+Ek Visualforce page banao jo **image display kare**
+
+---
+
+### 📌 Requirements
+
+* Page Label: **DisplayImage**
+* Page Name: **DisplayImage**
+* Standard Salesforce header **hide hona chahiye**
+* `<apex:image>` component use karo
+* Image URL:
+
+```
+https://developer.salesforce.com/files/salesforce-developer-network-logo.png
+```
+
+---
+
+### ✅ Final Visualforce Code (Classic)
+
+```html
+<apex:page showHeader="false" sidebar="false">
+    <apex:image 
+        url="https://developer.salesforce.com/files/salesforce-developer-network-logo.png"
+        alt="Salesforce Developer Network Logo"/>
+</apex:page>
+```
+
+---
+
+## 🎉 Summary
+
+* Visualforce = Salesforce ka powerful UI framework
+* Tag-based language (HTML jaisa)
+* Developer Console = best editor
+* Components ko nest karke structured UI banti hai
+* Attributes se behavior control hota hai
+* Hands-on challenge me `<apex:image>` use hota hai
+
+---
