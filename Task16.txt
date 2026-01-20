@@ -381,3 +381,499 @@ https://developer.salesforce.com/files/salesforce-developer-network-logo.png
 * Hands-on challenge me `<apex:image>` use hota hai
 
 ---
+
+Visualforce expressions ek bahut powerful tool hain jo aapke pages ko **dynamic** banate hain. Matlab ye ki page par wahi dikhega jo user ya system ke status ke hisaab se sahi ho.
+
+Chalo isse step-by-step Hinglish mein samajhte hain:
+
+---
+
+## 1. Visualforce Expression Kya Hai?
+
+Simple words mein, koi bhi aisi cheez jo single value return kare, wo expression hai. Iska syntax hamesha aisa hota hai:
+`{! expression }`
+
+* **{! }** ka matlab hai ki Salesforce ko iske andar ki cheez evaluate (calculate) karni hai.
+* Ye rendered page par asli value se replace ho jata hai.
+* Isme aap variables, formula, aur calculations use kar sakte ho, lekin **method calls (jaise Apex methods) allowed nahi hain.**
+
+---
+
+## 2. Global Variables ($)
+
+Global variables wo hote hain jo Salesforce system ki jaankari dete hain (jaise logged-in user ki details). Inke aage hamesha **$** sign lagta hai.
+
+* **`$User`**: Current user ki details (FirstName, LastName, Email, isActive).
+* **`$Organization`**: Aapki company/org ki details.
+* **`$Setup`**: Custom settings access karne ke liye.
+
+**Example:**
+Agar aapko user ka pehla naam dikhana hai:
+`{! $User.FirstName }`
+
+---
+
+## 3. Formula Expressions & Functions
+
+Sirf variables hi nahi, aap Visualforce mein math aur logic bhi laga sakte ho.
+
+* **Concatenation (&)**: Do strings ko jodne ke liye.
+`{! $User.FirstName & ' ' & $User.LastName }` (Result: Akshat Jain)
+* **Math Functions**: `MAX()`, `SQRT()`, ya `TODAY() + 7` (agle hafte ki date).
+* **Text Functions**: `CONTAINS('salesforce.com', 'force.com')` ye check karega ki pehle word mein dusra word hai ya nahi. Iska result **True** ya **False** aata hai.
+
+---
+
+## 4. Conditional Expressions (IF Function)
+
+Ye sabse kaam ki cheez hai. Iska format hota hai:
+`{! IF( condition, true_value, false_value ) }`
+
+**Example:**
+Agar user active hai toh uska naam dikhao, nahi toh 'inactive' likho:
+`{! IF($User.isActive, $User.Username, 'inactive') }`
+
+---
+
+## 5. Hands-on Challenge Guide (DisplayUserInfo)
+
+Aapko ek naya Visualforce page banana hai jisme logged-in user ka `FirstName` dikhana hai.
+
+**Steps:**
+
+1. **Developer Console** kholo.
+2. **File | New | Visualforce Page** par click karo.
+3. Name rakho: `DisplayUserInfo`.
+4. Code mein niche diya gaya markup likho:
+
+```html
+<apex:page>
+    <apex:pageBlock title="User Info">
+        <apex:pageBlockSection columns="1">
+            {! $User.FirstName }
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+5. **Save** karo aur **Preview** karke dekho. Challenge pass ho jayega!
+
+---
+
+### Key Points to Remember:
+
+* Expressions **case-insensitive** hote hain (chahe capital likho ya small, farak nahi padta).
+* Braces `{! }` ke andar ki **whitespace** (khali jagah) ignore ho jati hai.
+* Agar `showHeader="false"` karoge toh Salesforce ka standard header gayab ho jayega (jo humne pichle topic mein discuss kiya tha).
+
+Component,Real-life Example,Visual Role
+pageBlock,Ek poora Register,Border aur Page ka title dena.
+pageBlockSection,Register ka ek Chapter,Data ko groups mein baantna aur columns decide karna.
+Columns,Column lines,Decide karna ki ek line mein kitni fields aayengi.
+
+<apex:page>
+    <apex:pageBlock title="User Profile Dashboard">
+        
+        <apex:pageBlockSection title="User Information" columns="2">
+            <apex:outputText label="First Name" value="{!$User.FirstName}"/>
+            <apex:outputText label="User ID" value="{!$User.Id}"/>
+            
+            <apex:outputText label="Last Name" value="{!$User.LastName}"/>
+            <apex:outputText label="Manager" value="Jane Doe (Sample)"/>
+            
+            <apex:outputText label="Email" value="{!$User.Email}"/>
+            <apex:outputText label="Department" value="R/D"/>
+        </apex:pageBlockSection>
+        
+        <br/> <apex:pageBlockSection title="System Details" columns="1">
+            <apex:outputText label="Is Active" value="{!IF($User.isActive, '✅ True', '❌ False')}"/>
+            <apex:outputText label="Last Login" value="{!TODAY()}"/>
+            <apex:outputText label="License Type" value="Salesforce User"/>
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+</apex:page>
+
+Ab hum **Standard Controllers** ke concept ko Hinglish mein achhe se samajhte hain.
+
+### 1. Standard Controller Kya Hai? (The Logic)
+
+Salesforce mein har object (Account, Contact, etc.) ke paas ek "Standard Controller" pehle se bana-banaya hota hai. Iska kaam hai **Database aur Page ke beech mein bridge (pul)** banana.
+
+* **MVC Model:** Visualforce ek MVC pattern follow karta hai:
+* **M (Model):** Aapka database (Account, Contact records).
+* **V (View):** Aapka Visualforce page.
+* **C (Controller):** Wo logic jo data ko database se utha kar page par lata hai.
+
+
+
+---
+
+### 2. Record ID ka Khel (The Request URL)
+
+Agar aap kisi specific record ka data (jaise "Akshat" naam ke contact ki details) dikhana chahte hain, toh Controller ko us record ki **ID** batani padti hai.
+
+* URL mein ID kaise pass karte hain: `.../apex/AccountSummary?id=001D000000JRBes`
+* Jab aap URL mein `id=...` dete hain, toh Standard Controller apne aap database mein jaakar us ID ka record dhoond leta hai.
+
+---
+
+### 3. Dot Notation (Traversing Relationships)
+
+Salesforce mein records ek-dusre se jude hote hain.
+
+* **Simple Field:** `{! Account.Name }` (Account ka naam).
+* **Related Field:** `{! Account.Owner.Name }`. Yahan hum Account se uske **Owner** (jo ki ek User record hai) par gaye, aur fir Owner ka **Name** uthaya. Isse "Traversing the relationship" kehte hain.
+
+---
+
+### 4. Hands-on Challenge Guide (ContactView)
+
+Aapko ek page banana hai `ContactView` jo Contact ka data dikhaye.
+
+**Requirement:**
+
+1. **First Name** dikhao.
+2. **Last Name** dikhao.
+3. Contact ke **Owner ka Email** dikhao (ye related field hai).
+
+**Steps:**
+
+1. Developer Console mein jaao.
+2. **File | New | Visualforce Page** -> Name: `ContactView`.
+3. Niche diya gaya code likho:
+
+```html
+<apex:page standardController="Contact">
+    <apex:pageBlock title="Contact Details">
+        <apex:pageBlockSection columns="1">
+            
+            First Name: {! Contact.FirstName } <br/>
+            Last Name: {! Contact.LastName } <br/>
+            
+            Owner Email: {! Contact.Owner.Email }
+            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+### Code Breakdown:
+
+* `standardController="Contact"`: Ye line Salesforce ko batati hai ki hum **Contact** object ka data use karne waale hain.
+* `{! Contact.FirstName }`: Ye Contact record se First Name nikaal lega.
+* `{! Contact.Owner.Email }`: Contact ke Owner (User) ke paas jayega aur uska Email field nikaal kar dikhayega.
+
+**Important Note for Challenge:**
+Challenge pass karne ke liye aapko URL mein ID daalne ki zaroorat nahi hai (Salesforce check karte waqt khud ID pass kar deta hai), bas aapka code aur expressions (`{! ... }`) sahi hone chahiye.
+
+Ab hum **Output Components** ke baare mein baat karenge. Inka kaam hota hai data ko dikhana (display karna). Visualforce mein do tarah ke components hote hain: **Coarse-grained** (jo ek baar mein bahut kuch dikhate hain) aur **Fine-grained** (jo specific details ke liye use hote hain).
+
+---
+
+### 1. Coarse-grained Components (The "All-in-One" Tags)
+
+Ye tags kam mehnat mein zyada result dete hain.
+
+* **`<apex:detail>`**: Sirf ye ek line likhne se poora record page (fields, buttons, related lists) ban jata hai.
+* **`<apex:relatedList>`**: Agar aapko poora page nahi, sirf ek specific related list (jaise Contacts ya Opportunities) dikhani ho.
+
+---
+
+### 2. Fine-grained Components (The "Custom" Tags)
+
+Jab aapko control chahiye ki kaun sa field kahan dikhe, tab hum inka use karte hain.
+
+* **`<apex:outputField>`**: Ye sirf ek single field ki value dikhata hai. Iski khasiyat ye hai ki ye data type ko pehchanta hai (Currency ko `₹` sign ke saath aur Date ko sahi format mein dikhayega).
+* **Dhyan dein:** Agar aap ise bina `<apex:pageBlockSection>` ke use karenge, toh label nahi dikhega. Label dikhane ke liye ise section ke andar daalna zaroori hai.
+
+---
+
+### 3. Iteration Components (Table Banana)
+
+Jab ek se zyada records (List) dikhane hon, toh hum **Iteration** use karte hain. Iska matlab hai ek hi kaam ko baar-baar karna (Loop chalana).
+
+* **`<apex:pageBlockTable>`**: Ye ek sundar table banata hai. Isme do cheezein important hain:
+1. **`value`**: Records ki list (Jaise `{!Account.contacts}`).
+2. **`var`**: Ek temporary naam jo har row ke liye use hoga (Jaise `contact`).
+
+
+
+---
+
+### 4. Hands-on Challenge Guide (OppView)
+
+Aapko ek page banana hai `OppView` jo **Opportunity** ka data dikhaye.
+
+**Requirement:**
+
+1. **Opportunity Name**
+2. **Amount**
+3. **Close Date**
+4. **Account Name** (Relationship field)
+
+**Steps:**
+
+1. Developer Console mein **File | New | Visualforce Page** banayein.
+2. Name rakhein: `OppView`.
+3. Niche diya gaya code likhein:
+
+```html
+<apex:page standardController="Opportunity">
+    <apex:pageBlock title="Opportunity Details">
+        <apex:pageBlockSection>
+            
+            <apex:outputField value="{! Opportunity.Name }"/>
+            <apex:outputField value="{! Opportunity.Amount }"/>
+            <apex:outputField value="{! Opportunity.CloseDate }"/>
+            <apex:outputField value="{! Opportunity.Account.Name }"/>
+            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+### Is Code ki Khas Baat:
+
+* **`standardController="Opportunity"`**: Isse page ko pata chala ki hume Opportunity ka data chahiye.
+* **`Opportunity.Account.Name`**: Ye humne pichle lesson mein sikha tha (Dot notation). Opportunity se Account par gaye aur uska Name nikaala.
+* **`<apex:outputField>`**: Ye Amount ko apne aap Currency format mein dikhayega.
+
+---
+
+### Summary Table:
+
+| Component | Type | Best For |
+| --- | --- | --- |
+| **apex:detail** | Coarse | Poora page jaldi banane ke liye. |
+| **apex:outputField** | Fine | Single field ko design ke saath dikhane ke liye. |
+| **apex:pageBlockTable** | Iteration | Records ki list ko table format mein dikhane ke liye. |
+
+Chalo, **`value`** aur **`var`** ke concept ko ek simple diagram aur example se samajhte hain, kyunki ye Visualforce tables ka sabse important hissa hai.
+
+### Table Ka Logic: "The Loop"
+
+Jab hum `<apex:pageBlockTable>` use karte hain, toh ye backend mein ek loop (cycle) chalata hai.
+
+1. **`value="{!Account.contacts}"`**: Ye woh **Pura Thail (Bag)** hai jisme bahut saare Contact records hain.
+2. **`var="con"`**: Ye ek **Temporary Khali Dibba** hai.
+* Pehli baar loop chalega: Pehla contact is dibbe mein aayega.
+* Dusri baar loop chalega: Dusra contact is dibbe mein aayega.
+
+
+3. **`<apex:column value="{!con.Name}"/>`**: Ye batata hai ki us "dibbe" mein se kaunsi cheez nikaal kar column mein dikhani hai.
+
+---
+
+### Ek Real-Life Example se Samjho:
+
+Maan lo ek Class (Account) hai jisme bahut saare Students (Contacts) hain.
+
+* **Value:** Poori class ke students ki list.
+* **Var:** Ek-ek karke student ko stage par bulana. Jab "Rahul" stage par aayega, toh `con` ka matlab Rahul hoga. Jab "Sneha" aayegi, toh `con` ka matlab Sneha hoga.
+
+```html
+<apex:pageBlockTable value="{!Account.contacts}" var="con">
+    
+    <apex:column value="{!con.FirstName}"/> 
+    <apex:column value="{!con.LastName}"/>
+    
+</apex:pageBlockTable>
+
+```
+
+### Table vs List:
+
+| Feature | `<apex:pageBlockTable>` | `<apex:relatedList>` |
+| --- | --- | --- |
+| **Control** | Aap decide karte ho kaunsa column dikhega. | Salesforce decide karta hai. |
+| **Design** | Classic look and feel. | Poora standard layout. |
+| **Customization** | Aap formula ya icons bhi daal sakte ho. | Fixed format hota hai. |
+
+Ab tak humne sirf data ko **dekhna** (Output) sikha hai. Ab hum sikhenge ki data ko **enter aur save** (Input) kaise karte hain. Salesforce mein forms banane ke liye `<apex:form>` ka hona sabse zaroori hai.
+
+---
+
+### 1. Visualforce Form ke 3 Main Pillars
+
+Ek functional form banane ke liye ye 3 tags milkar kaam karte hain:
+
+1. **`<apex:form>`**: Ye ek boundary hai. Iske andar jo bhi data hoga, wahi server par "Save" hone ke liye jayega.
+2. **`<apex:inputField>`**: Ye data entry ke liye box banata hai. Iski sabse badi khoobi ye hai ki ye field ke **Data Type** ke hisaab se khud ko badal leta hai (Jaise Date field ke liye Calendar dikhana).
+3. **`<apex:commandButton>`**: Ye wo button hai jo "Save" ya "Cancel" jaisi actions ko trigger karta hai.
+
+---
+
+### 2. Validation aur Errors (`<apex:pageMessages>`)
+
+Jab user galat data bharta hai (jaise Email mein `@` nahi lagaya), toh Salesforce error generate karta hai. In errors ko page par dikhane ke liye hum `<apex:pageMessages/>` tag use karte hain. Ise hamesha form ke top par rakhna chahiye.
+
+---
+
+### 3. Global Actions (`$Action`)
+
+Aap Related Lists mein "Edit" ya "Delete" ke links bhi de sakte ho bina kisi lamba code likhe.
+`{! URLFOR($Action.Contact.Edit, contact.Id) }`
+Ye formula apne aap us contact ke standard edit page ka rasta (URL) bana deta hai.
+
+---
+
+### 4. Hands-on Challenge Guide (CreateContact)
+
+Aapko ek page banana hai `CreateContact` jo ek naya Contact record insert kare.
+
+**Requirement:**
+
+1. **Standard Controller:** Contact.
+2. **Form** hona chahiye.
+3. **Fields:** First Name, Last Name, Email.
+4. **Save Button** hona chahiye jo record save karke uske detail page par le jaye.
+
+**Steps:**
+
+1. Developer Console mein **File | New | Visualforce Page** banayein.
+2. Name: `CreateContact`.
+3. Niche diya gaya code paste karein:
+
+```html
+<apex:page standardController="Contact">
+    <apex:form>
+        <apex:pageBlock title="Create Contact">
+            
+            <apex:pageMessages/>
+            
+            <apex:pageBlockSection columns="1">
+                <apex:inputField value="{! Contact.FirstName }"/>
+                <apex:inputField value="{! Contact.LastName }"/>
+                <apex:inputField value="{! Contact.Email }"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons>
+                <apex:commandButton action="{! save }" value="Save" />
+            </apex:pageBlockButtons>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
+
+```
+
+### Is Challenge ko Samajhte Hain:
+
+* **`action="{! save }"`**: Ye Standard Controller ka built-in method hai. Jab aap ise click karenge, Salesforce data valid check karega aur save hone ke baad automatic us naye contact ke page par redirect kar dega.
+* **`columns="1"`**: Maine use kiya taaki form mobile-friendly aur saaf-suthra dikhe.
+
+**Ek Choti Tip:** Trailhead challenge check karne se pehle "Save" button par click karke dekhna ki kya naya contact ban raha hai. Agar naya page khul gaya, matlab aapka code 100% sahi hai!
+
+Aapke notes banane ke liye ye raha **Standard List Controller** ka poora nichod (Summary). Isme saari important technical details aur logic ko Hinglish mein simplify kiya gaya hai.
+
+---
+
+## 📘 Visualforce Standard List Controller Notes
+
+### 1. Introduction: Standard vs Standard List Controller
+
+* **Standard Controller:** Ek waqt mein sirf **ek record** (single record) par kaam karta hai.
+* **Standard List Controller:** Ye ek saath **multiple records** (collection of records) par kaam karne ke liye use hota hai.
+* **Key Attribute:** Isme `recordSetVar` attribute ka use hota hai, jo records ki list ko ek variable mein store karta hai.
+
+---
+
+### 2. Displaying a List (Iteration Components)
+
+Jab hamare paas records ki list hoti hai, toh hume unhe loop mein dikhane ke liye **Iteration Components** ki zaroorat hoti hai.
+
+* **`<apex:pageBlockTable>`:** Ye platform-styled table banata hai.
+* **Attributes:**
+* `value="{! contacts }"`: Ye wo list hai jo `recordSetVar` se aayi hai.
+* `var="ct"`: Ye ek temporary variable hai jo loop ke har ek record ko represent karta hai.
+
+
+
+**Example Code:**
+
+```html
+<apex:page standardController="Contact" recordSetVar="contacts">
+    <apex:pageBlock title="Contacts List">
+        <apex:pageBlockTable value="{! contacts }" var="ct">
+            <apex:column value="{! ct.FirstName }"/>
+            <apex:column value="{! ct.LastName }"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+---
+
+### 3. List View Filtering (Ajax Magic)
+
+Aap predefined list views (jaise "All Contacts", "Recently Viewed") ko page par filter ki tarah use kar sakte hain.
+
+* **`listViewOptions`:** Ye property saare available filters ki list deti hai.
+* **`filterId`:** Isse hum select kiya gaya filter set karte hain.
+* **`<apex:actionSupport>`:** Iska use karke hum **Ajax** effect create karte hain. `reRender` attribute ki wajah se poora page refresh nahi hota, sirf specified component update hota hai.
+
+---
+
+### 4. Pagination (Navigating Records)
+
+By default, list controller **20 records** dikhata hai. Baaki records dekhne ke liye pagination zaroori hai.
+
+**Important Actions & Properties:**
+| Action/Property | Description |
+| :--- | :--- |
+| `{! Next }` | Agle page par jaane ke liye (Action). |
+| `{! Previous }` | Pichle page par jaane ke liye (Action). |
+| `{! HasNext }` | Check karta hai ki aage records hain ya nahi (Boolean). |
+| `{! HasPrevious }` | Check karta hai ki peeche records hain ya nahi (Boolean). |
+| `{! PageNumber }` | Current page number batata hai. |
+
+**Logic for Page Indicator:**
+`Page: {!PageNumber} of {! CEILING(ResultSize / PageSize) }`
+*(Yahan CEILING function total pages calculate karne ke liye use hota hai taaki decimal value na aaye.)*
+
+---
+
+### 5. Hands-on Challenge Solution (Logic)
+
+Challenge mein aapko `apex:repeat` use karna hai. Ye ek "raw" iteration component hai jo koi styling apply nahi karta, sirf content ko repeat karta hai.
+
+**Step-by-Step Code for Challenge:**
+
+1. **Page Name:** `AccountList`
+2. **Controller:** `Account`
+3. **Variable:** `accounts`
+4. **Link Logic:** `/{!a.id}` use karke record page par redirect karte hain.
+
+```html
+<apex:page standardController="Account" recordSetVar="accounts">
+    <apex:pageBlock title="Accounts List">
+        <ul>
+            <apex:repeat value="{! accounts }" var="a">
+                <li>
+                    <apex:outputLink value="/{! a.Id }">
+                        {! a.Name }
+                    </apex:outputLink>
+                </li>
+            </apex:repeat>
+        </ul>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+---
+
+### 💡 Pro Tips for Exam/Interview:
+
+* **Sorting:** Visualforce markup se sorting directly nahi hoti, uske liye Custom Apex code (StandardSetController) chahiye hota hai.
+* **StandardSetController:** Back-end par Standard List Controller isi Apex class ka use karta hai.
+* **Pagination Limits:** Large data sets ke liye pagination user experience behtar banata hai.
+
+
+
+
