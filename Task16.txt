@@ -875,5 +875,204 @@ Challenge mein aapko `apex:repeat` use karna hai. Ye ek "raw" iteration componen
 * **Pagination Limits:** Large data sets ke liye pagination user experience behtar banata hai.
 
 
+Salesforce mein **Static Resources** ka matlab hai ek aisi jagah jahan aap apni files (jaise images, CSS, JavaScript, ya Zip folders) ko upload karke rakh dete ho taaki unhe Visualforce pages par use kiya ja sake.
+
+Iska sabse bada fayda ye hai ki Salesforce ise ek **CDN (Content Delivery Network)** ki tarah handle karta hai, jis se aapka page jaldi load hota hai.
+
+---
+
+## 1. Static Resources Kyu Use Karein? (Why use them?)
+
+Socho aap ek project bana rahe ho jisme aapko 50 alag-alag icons aur ek badi CSS file chahiye. Agar aap har baar code mein link daloge toh manage karna mushkil hoga.
+
+* **Centralized:** Ek hi jagah saari files rahengi.
+* **Caching:** Browser in files ko yaad rakhta hai, baar-baar download nahi karta.
+* **Version Control:** Agar aap jQuery file update karte ho, toh bas Static Resource badal do, saare 100 pages par khud change ho jayega.
+
+---
+
+## 2. Individual vs Zipped Resources
+
+Real-world project mein hum dono use karte hain:
+
+* **Individual:** Jab sirf ek single file ho (jaise `logo.png` ya `jquery.js`). Isse direct `$Resource.FileName` se access karte hain.
+* **Zipped (.zip):** Jab bahut saari related files hon (jaise ek pura theme jisme images, fonts, aur CSS ho). Isse access karne ke liye `URLFOR()` function ka use hota hai.
+
+---
+
+## 3. Visualforce Page mein kaise add karein?
+
+Iske liye hum `$Resource` variable use karte hain:
+
+* **JavaScript ke liye:** `<apex:includeScript value="{!$Resource.MyJSFile}"/>`
+* **CSS ke liye:** `<apex:stylesheet value="{!$Resource.MyCSSFile}"/>`
+* **Zip ke andar ki file ke liye:** `{!URLFOR($Resource.ZipName, 'folder/image.png')}`
+
+---
+
+## 4. Hands-on Challenge Guide (Step-by-Step)
+
+Aapko ek challenge mila hai jisme ek image dikhani hai. Isse aise solve karein:
+
+### Step 1: File Download Karein
+
+Pehle challenge mein di gayi [zip file](https://www.google.com/search?q=https://developer.salesforce.com/projects/assets/lightning-platform-dev-intermediate/cats.zip) download karein. Is zip ke andar ek `cats` naam ka folder hai aur usme `kitten1.jpg` hai.
+
+### Step 2: Static Resource Upload Karein
+
+1. Salesforce **Setup** mein jayein.
+2. Quick Find mein **Static Resources** search karein.
+3. **New** par click karein.
+4. **Name:** `vfimagetest` (Dhyan rahe, naam exact yahi hona chahiye).
+5. **File:** Jo zip download ki thi use select karein.
+6. **Cache Control:** Public (agar dikhe toh).
+7. **Save** kar dein.
+
+### Step 3: Visualforce Page Banayein
+
+1. Developer Console kholein (**File > New > Visualforce Page**).
+2. Page ka naam rakhein: `ShowImage`.
+3. Niche diya gaya code copy-paste karein:
+
+```html
+<apex:page >
+    <apex:image url="{!URLFOR($Resource.vfimagetest, 'cats/kitten1.jpg')}"/>
+</apex:page>
+
+```
+
+### Explanation of Code:
+
+* `$Resource.vfimagetest`: Ye hamari zip file ko refer kar raha hai.
+* `'cats/kitten1.jpg'`: Ye zip file ke andar ka sahi rasta (path) hai.
+* `URLFOR()`: Ye function zip file ke andar jhaankne (access karne) mein madad karta hai.
+
+Bilkul! Aapke prompt ke har ek point ko detail mein, production-level depth ke saath aur simple Hinglish mein explain karte hain. Yeh notes aapke interview aur real projects dono mein kaam aayenge.
+
+---
+
+## 1. Custom Controller: Kya aur Kyu? (The "Why")
+
+Standard Controller wahi kaam karta hai jo Salesforce ne pehle se fix kiya hai. Lekin real-world projects mein requirements complex hoti hain.
+
+* **Definition:** Ek Apex class jo Visualforce page ke logic ko control karti hai use **Custom Controller** kehte hain.
+* **Kyu use karein?**
+* Jab aapko **multiple objects** ka data ek hi page par dikhana ho (Standard controller sirf ek object handle karta hai).
+* Jab aapko **Custom Logic** lagana ho (jaise kisi button click par email bhejna ya data calculate karna).
+* Jab aapko **External API** se data lekar page par dikhana ho.
+
+
+* **Key Attribute:** Isse `<apex:page controller="MyControllerName">` se link kiya jata hai.
+
+---
+
+## 2. Controller ke Main Parts (Key Attributes)
+
+Custom Controller likhte waqt 3 cheezein sabse important hoti hain:
+
+### A. Getter Methods (Data Page par lane ke liye)
+
+Visualforce page direct database se baat nahi kar sakta. Woh controller se poochta hai.
+
+* **Rule:** Method ka naam `get` se shuru hona chahiye (e.g., `getContacts`).
+* **VF Access:** Page par hum sirf `{! contacts }` likhte hain. Visualforce apne aap `get` prefix ko pehchaan leta hai.
+
+### B. Action Methods (Buttons/Links ke liye)
+
+Jab user kisi button par click karta hai, toh jo logic execute hota hai use Action Method kehte hain.
+
+* **Example:** `sortByFirstName()`, `saveData()`.
+* **Return Type:** Yeh ya toh `void` hote hain (agar usi page par rehna ho) ya `PageReference` (agar dusre page par redirect karna ho).
+
+### C. Properties (`{ get; set; }`) - Production Standard
+
+Aaj kal getters/setters alag se likhne ke bajaye hum **Properties** use karte hain:
+`public List<Contact> contactList { get; set; }`
+Yeh ek hi line mein variable bhi bana deta hai aur use page par accessible bhi kar deta hai.
+
+---
+
+---
+
+## 3. Real-World Project: Sorting Example (Step-by-Step)
+
+Maan lo aapko ek list dikhani hai jise user column par click karke sort kar sake.
+
+### Apex Controller Logic:
+
+1. Ek variable banaya `sortOrder` jo default mein 'LastName' hai.
+2. `getContacts()` method mein query likhi jisme `ORDER BY :sortOrder` use kiya.
+3. Do action methods banaye jo `sortOrder` ki value badalte hain.
+
+### Visualforce Page UI:
+
+1. `<apex:commandLink>` use kiya column header mein.
+2. `reRender="tableId"` use kiya taaki poora page refresh na ho, sirf table update ho. (Ise **AJAX** functionality kehte hain).
+
+---
+
+## 4. Hands-on Challenge Guide (Step-by-Step)
+
+Hamein ek page banana hai jo "New" status waale Cases dikhaye aur unka clickable link de.
+
+### Step 1: Controller Banayein (`NewCaseListController`)
+
+1. Developer Console > File > New > Apex Class.
+2. Naam: `NewCaseListController`.
+
+```java
+public class NewCaseListController {
+    // 1. Public method jo List return karega
+    public List<Case> getNewCases() {
+        // 2. SOQL query filter ke saath (Status = 'New')
+        List<Case> results = [SELECT Id, CaseNumber FROM Case WHERE Status = 'New'];
+        
+        // 3. Data return kar rahe hain
+        return results;
+    }
+}
+
+```
+
+### Step 2: Visualforce Page Banayein (`NewCaseList`)
+
+1. Developer Console > File > New > Visualforce Page.
+2. Naam: `NewCaseList`.
+
+```html
+<apex:page controller="NewCaseListController">
+    <apex:pageBlock title="New Cases List">
+        <ul>
+            <apex:repeat value="{! newCases }" var="case">
+                <li>
+                    <apex:outputLink value="/{! case.Id }">
+                        {! case.CaseNumber }
+                    </apex:outputLink>
+                </li>
+            </apex:repeat>
+        </ul>
+    </apex:pageBlock>
+</apex:page>
+
+```
+
+---
+
+## 5. Notes for Production & Interview
+
+* **Sharing Keywords:** Production mein hamesha `public with sharing class` ya `without sharing` likhein. `with sharing` likhne se user wahi data dekh payega jiska uske paas access hai (Security Best Practice).
+* **Security (SOQL Injection):** Kabhi bhi query mein string concatenate na karein. Hamesha bind variables (`:variableName`) use karein.
+* **View State:** Custom controller ka saara data "View State" mein store hota hai jo 135KB tak ho sakta hai. Isliye unnecessary data store na karein, `transient` keyword ka use karein agar data refresh par nahi chahiye.
+* **Testing:** Production mein bhejne se pehle aapko is controller ke liye **Test Class** likhni hogi jisme kam se kam 75% code coverage ho.
+
+---
+
+### Summary Checklist for Notes:
+
+1. **Controller Attribute:** Page ko class se link karta hai.
+2. **Getter Pattern:** `getSomething()` in Apex = `{! something }` in VF.
+3. **Repeat Component:** List of records ko iterate (loop) karne ke liye.
+4. **OutputLink:** Dynamic navigation/URL banane ke liye.
+
 
 
