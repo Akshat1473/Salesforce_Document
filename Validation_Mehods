@@ -1,0 +1,55 @@
+
+//Method list of validation rules
+Validation rule System Validation ke baad aur Triggers se pehle chalta hai. Iska matlab agar Validation fail hua, toh Trigger chalne ki nobat hi nahi aayegi.
+
+Function,Description,Example (Error tab aayega jab...)
+AND(),Saari conditions true honi chahiye.,"AND(IsClosed, ISBLANK(Reason__c))"
+OR(),Koi bhi ek condition true ho jaye.,"OR(Amount < 10, Amount > 1000)"
+NOT(),"True ko False, False ko True kar deta hai.",NOT(ISNUMBER(PostalCode))
+IF(),"Agar aisa hai toh ye, warna wo.","IF(Amount > 100, True, False)"
+CASE(),Ek field ki alag-alag values check karna.,"CASE(Priority, ""High"", 1, ""Low"", 0, 0) = 1"
+
+
+Function,Description,Example
+ISBLANK(),Check karta hai field khali hai ya nahi.,ISBLANK(Phone)
+ISNUMBER(),Check karta hai sirf number hain ya nahi.,NOT(ISNUMBER(EmployeeID__c))
+ISPICKVAL(),Picklist value check karne ke liye.,"ISPICKVAL(Status, ""Open"")"
+INCLUDES(),Multi-select picklist mein value check karna.,"INCLUDES(Interests__c, ""Sports"")"
+TEXT(),Number/Picklist ko text mein badalna.,"TEXT(Quantity__c) = ""10"""
+REGEX(),Pattern matching (Email/Phone format).,"NOT(REGEX(Email, "".*@.*\.com""))"
+CONTAINS(),Check karta hai text mein wo word hai ya nahi.,"CONTAINS(Description, ""Free"")"
+BEGINS(),Kya text is word se shuru ho raha hai?,"BEGINS(AccountNumber, ""ACT"")"
+LEN(),Text ki length (lambai) batata hai.,LEN(Aadhar__c) != 12
+LOWER() / UPPER(),Chhoti ya badi ABC mein badalna.,"UPPER(Country) != ""INDIA"""
+MID() / LEFT() / RIGHT(),"Beech, shuru ya aakhiri se words nikalna.","LEFT(Phone, 3) = ""91"""
+TRIM(),Faltu ke spaces (khali jagah) hatana.,LEN(TRIM(Name)) < 3
+SUBSTITUTE(),Ek word ko dusre se badalna.,"SUBSTITUTE(Name, "" "", """")"
+VALUE(),Text ko number mein badalna.,VALUE(Text_Field__c) > 100
+
+
+Function,Description,Example
+DATE(),"Saal, Mahina, Din se date banana.","DATE(2025, 12, 31)"
+DATEVALUE(),Text ya Date/Time ko Date mein badalna.,DATEVALUE(CreatedDate) = TODAY()
+DATETIMEVALUE(),Kisi value ko Date/Time format mein lana.,"DATETIMEVALUE(""2025-01-01 12:00:00"")"
+TODAY(),Aaj ki date.,CloseDate < TODAY()
+NOW(),Abhi ka time aur date.,Expiry__c < NOW()
+DAY() / MONTH() / YEAR(),"Date mein se din, mahina ya saal nikalna.",MONTH(TODAY()) = 1
+WEEKDAY(),"Hafte ka kaunsa din hai (1=Sun, 7=Sat).",WEEKDAY(TODAY()) = 1 (Sunday block)
+
+
+Function,Description,Example
+ABS(),Negative number ko positive banana (-5 ko 5).,ABS(Balance__c) > 100
+CEILING() / FLOOR(),Round up ya Round down karna.,CEILING(10.2) = 11
+ROUND(),Pass wale number par round karna.,"ROUND(Amount, 2)"
+SQRT(),Square root nikalna.,SQRT(Area__c)
+MAX() / MIN(),Sabse bada ya sabse chhota dhoondna.,"MAX(Price1, Price2) > 500"
+MOD(),Bacha hua (Remainder) nikalna.,"MOD(Quantity, 2) != 0 (Odd check)"
+EXP() / LN() / LOG(),Advanced math (Exponential/Log).,LOG(Amount)
+
+Function,Description,Example
+ISCHANGED(),Check karta hai ki field ki value badli hai ya nahi.,ISCHANGED(Rating)
+PRIORVALUE(),Badalne se pehle purani value kya thi?,PRIORVALUE(Amount) > Amount
+VLOOKUP(),Dusre Custom Object se data match karna.,VLOOKUP(...)
+GETSESSIONID(),Current user ki session ID nikalna.,(Sirf Formula fields mein zyada use hota hai)
+ADDMONTHS(),Date mein mahine jodne ke liye.,"ADDMONTHS(StartDate, 12)"
+MCEILING / MFLOOR,Mathematical precision ke liye.,MCEILING(Value)

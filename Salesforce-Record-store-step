@@ -1,0 +1,21 @@
+Step #,Process Name,What Happens?
+1,Load Original Record,Database se purana record uthaya jata hai (sirf Update ke case mein).
+2,Load New Values,"User ne jo nayi values di hain, unhe purani values par overwrite kiya jata hai."
+3,System Validation,"Salesforce basic cheezein check karta hai (Required fields, field formats, length)."
+4,Before Record-Triggered Flow,"Sabse pehle ""Fast Field Updates"" wale flows chalte hain."
+5,Before Triggers,Aapka Apex Before Insert ya Before Update trigger chalta hai.
+6,Custom Validation Rules,"Aapne jo formulas banaye hain validation ke liye, wo yahan check hote hain."
+7,Duplicate Rules,System check karta hai ki koi duplicate record toh nahi ban raha.
+8,Save to Database,"Record save ho jata hai par ""Commit"" nahi hota. Is point par ID generate ho jati hai."
+9,After Triggers,Apex After Insert ya After Update triggers yahan chalte hain.
+10,Assignment Rules,Leads ya Cases ko unke sahi owners (users/queues) ko assign kiya jata hai.
+11,Auto-Response Rules,Customer ko apne aap automatic response email bheja jata hai.
+12,Workflow Rules,Purane workflow rules (agar koi active hain) yahan fire hote hain.
+13,Workflow Field Updates,"Agar workflow ne field badli, toh Before aur After Triggers ek baar phir se chalte hain."
+14,Escalation Rules,Case agar deadline mein solve nahi hua toh bade boss ke paas escalate hota hai.
+15,After Record-Triggered Flow,"""Actions and Related Records"" wale flows yahan execute hote hain."
+16,Entitlement Rules,Service Cloud ke agreements aur milestones check hote hain.
+17,Roll-up Summary Fields,"Parent record par calculation update hoti hai (Count, Sum, Min, Max)."
+18,Sharing Rules,Check hota hai ki record kis user ko dikhega aur kise nahi.
+19,COMMIT,Sab kuch final ho gaya! Data permanent database mein lock ho jata hai.
+20,Post-Commit Logic,"Commit ke baad Async jobs (Queueable, Future) aur Emails trigger hote hain."

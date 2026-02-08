@@ -103,10 +103,6 @@ Answer: Schedule-Triggered Flows. Ye tab chalte hain jab aap koi specific date a
 Tip: Aaj kal Salesforce mein sabse zyada focus Flow Builder par hai. Lagbhag har tarah ka automation ab Flow se ho sakta hai.
 
 //terms
- Salesforce Flow ek bahut hi powerful tool hai. Isse tum bina code likhe complex tasks automate kar sakte ho. Chalo isse ek fresher ke perspective se simple "Hinglish" mein samajhte hain.
-
----
-
 ## **1. Important Flowcabulary (Basic Terms)**
 
 Sabse pehle ye teen terms ka antar (difference) samajh lo:
@@ -118,7 +114,7 @@ Sabse pehle ye teen terms ka antar (difference) samajh lo:
 
 ## **2. Flows Are Friends (Flows kya kar sakte hain?)**
 
-Socho ek **Flowchart** ke baare mein jisme boxes aur arrows hote hain. Normal flowchart sirf rasta dikhata hai, lekin Salesforce Flow us raste par **khud chal kar kaam bhi karta hai.**
+Socho ek Flowchart ke baare mein jisme boxes aur arrows hote hain. Normal flowchart sirf rasta dikhata hai, lekin Salesforce Flow us raste par **khud chal kar kaam bhi karta hai.**
 
 **Fresher ke liye Key Points:**
 
@@ -182,10 +178,6 @@ Kya tum chahte ho main tumhe **Flow Builder ke interface** (Toolbox, Canvas, Ele
 
 
 //flow Builder
-Bilkul Akshat, ek MCA student ke liye ye notes aise hone chahiye ki logic aur implementation dono crystal clear ho jayein. Chalo, **Flow Builder** ko itne detail mein samajhte hain ki tumhe kisi aur tutorial ki zaroorat nahi padegi.
-
----
-
 ## **Part 1: Flow Builder ka Interface (The Workshop)**
 
 Jab tum Flow Builder kholte ho, toh tum ek "IDE" (Integrated Development Environment) mein hote ho. Iske teen main parts hain:
@@ -324,7 +316,7 @@ Flow mein bina variables ke kaam nahi chalta. Iske kuch bade reasons:
 
 ### 3. Variables mein hum kya-kya store kar sakte hain? (Data Types)
 
-Jab aap variable banate ho, to aapko batana padta hai ki usme kis tarah ka maal (data) aayega:
+Jab aap variable banate ho, to aapko batana padta hai ki usme kis tarah ka data aayega:
 
 * **Text:** Letters, numbers ya Salesforce ID (e.g., "Yes", "001XXXXXXXX").
 * **Number / Currency:** Sirf numerical values. Yaad rahe, isme `$` ya `€` ka symbol nahi lagate, sirf digits (e.g., 42 or 246.01).

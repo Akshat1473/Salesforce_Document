@@ -2,10 +2,6 @@
 
 ## **Unit: Navigate and Edit Source Code (Notes)**
 
-Is unit mein humne sikha ki Developer Console ka use karke **Apex Classes, Lightning Components,** aur **Visualforce Pages** kaise banate hain.
-
----
-
 ### **1. Apex Class (Backend Logic)**
 
 **Apex** ek programming language hai jo Java jaisi dikhti hai. Iska kaam hai Salesforce ke server par business logic chalana (jaise email bhejna ya data update karna).

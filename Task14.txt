@@ -404,5 +404,258 @@ for (String tea : teaTypes) {
 | **For** | Jab counting (1 to N) karni ho. |
 | **For-Each** | List ya Records ke saath kaam karne ke liye. |
 
+//OBJECTS AND CLASSES
+Ab hum Apex ke sabse main concept ki taraf badh rahe hain: **Object-Oriented Programming (OOP)**. Iska matlab hai ki hamara code "Objects" ke baare mein baat karta hai.
 
+Aaiye ise hinglish mein aur simple examples ke saath samajhte hain:
+
+---
+
+## 1. Class vs Object (Blueprint vs Ghar)
+
+In dono ka rishta ek **Blueprint** aur usse bane **Ghar** jaisa hai.
+
+* **Class (The Blueprint):** Ye ek naksha hai. Isme bataya jata hai ki ek object kaisa dikhega aur kya kaam karega. Jaise `Flower` class batati hai ki har phool ka ek `color` hoga aur wo `grow()` kar sakega.
+* **Object (The Instance):** Ye asli cheez hai jo blueprint se bani hai. Ek `Flower` class se aap `Rose`, `Tulip`, aur `Lily` naam ke alag-alag objects bana sakte hain.
+
+---
+
+## 2. Variables aur Methods
+
+Class ke andar do hi main cheezein hoti hain:
+
+1. **Variables (Characteristics):** Wo cheez jo object ko describe karti hai. (Example: `String color;`, `Integer height;`).
+2. **Methods (Behaviors):** Wo kaam jo object kar sakta hai. (Example: `void grow()`, `void wilt()`).
+
+---
+
+## 3. Parameters (Variable Placeholder)
+
+Kabhi-kabhi humein method ko batana padta hai ki use kaise kaam karna hai. **Parameter** ek khali jagah (placeholder) hoti hai jo kisi value ka intezar karti hai.
+
+**Example:**
+`public void wilt(Integer numberOfPetals)`
+Yahan `numberOfPetals` ek parameter hai. Jab aap method call karenge `wilt(4);`, toh wo 4 number is parameter mein chala jayega.
+
+---
+
+## 4. Return Types (Jawab Milna)
+
+Jab aap kisi method ko bulate hain, toh wo do kaam kar sakta hai:
+
+1. **Void:** Kaam karke chup baith jayega, kuch wapas nahi dega. (Jaise waiter ko pani lane bola, wo pani dekar chala gaya).
+2. **Data Type (Integer, String, etc.):** Kaam karne ke baad aapko ek **Value** wapas karega. Iske liye `return` keyword use hota hai.
+
+**Example:**
+
+```java
+public Integer getPetalCount() {
+    return 10; // Ye method 10 wapas karega
+}
+
+```
+
+---
+
+## 5. Object Kaise Banate Hain?
+
+Ek class se naya object banane ke liye hum `new` keyword ka use karte hain.
+
+```java
+// Syntax: ClassName objectName = new ClassName();
+Flower tulip = new Flower(); 
+
+// Dot notation se values dena
+tulip.color = 'Yellow';
+tulip.grow(); // Method call karna
+
+```
+## 6. Quiz Solutions (Logic)
+
+1. **Return Type:** Kaunsa return type value wapas karta hai?
+* **Logic:** `void` kuch wapas nahi karta. Agar method declaration mein `Integer`, `String`, ya `Boolean` likha hai, toh wo value return karega.
+
+
+2. **Parameter Syntax:** Parameter define karne ka sahi tarika kya hai?
+* **Logic:** Pehle **Data Type** likha jata hai, phir **Parameter Name**. Jaise: `(String colorName)` ya `(Integer count)`.
+---
+## 1. sObject Kya Hai? (Definition)
+
+sObject ka full form **Salesforce Object** hota hai. Yeh Apex ka ek complex data type hai jo Salesforce ke database ke ek single record ko represent karta hai.
+
+* **Relationship:** Har Salesforce object (jaise Account, Contact, ya Custom Object) Apex mein ek sObject type ki tarah behave karta hai.
+* **Container Concept:** Agar variables ko ek "container" mana jaye, toh sObject ek aisa bada container hai jisme kayi chhote containers (fields) hote hain.
+* **Data Types:** sObject ke andar alag-alag data types ke fields ho sakte hain, jaise String (Name), Date (Close Date), Integer (Number of Employees), ya Boolean (Active).
+
+### Example:
+
+`Account myAcct = new Account();`
+Yahan `myAcct` ek Account sObject hai jo abhi khali hai.
+
+---
+
+## 2. sObjects vs Other Data Types
+
+Apex ke normal data types (Primitive Types) aur sObjects mein bada farq hota hai:
+
+| Feature | Primitive Data Types (String, Integer, etc.) | sObjects (Account, Contact, etc.) |
+| --- | --- | --- |
+| **Capacity** | Ek variable mein sirf ek hi value store karta hai. | Ek variable mein poora database record (multiple fields) store karta hai. |
+| **Structure** | Iska koi internal structure nahi hota. | Iske properties (fields) hote hain jo database schema se match karte hain. |
+| **Assignment** | `Integer x = 5;` | `Account a = new Account(Name='Test');` |
+
+---
+
+## 3. sObject Properties (Field Values)
+
+Apex code mein Salesforce ke fields ko **Properties** kaha jata hai. Inhein handle karne ke liye **Dot Notation** ka use hota hai.
+
+* **Set Field Value:** Kisi field mein value dalne ke liye dot notation ka use karein.
+* `myAcct.Name = 'The Tea Factory';`
+
+
+* **Get Field Value:** Kisi field se value nikalne ke liye bhi dot notation kaam aata hai.
+* `String name = myAcct.Name;`
+
+
+
+---
+
+## 4. DML (Data Manipulation Language)
+
+Sirf code mein sObject banane se wo database mein save nahi hota. Database mein records create, update, ya delete karne ke liye **DML** ka istemal kiya jata hai.
+
+### Key DML Operations:
+
+1. **Insert:** Naya record database mein create karta hai.
+2. **Update:** Maujooda (existing) record mein badlav (changes) karta hai.
+3. **Delete:** Database se record ko mita deta hai.
+
+### Example Code:
+
+```java
+Account store = new Account();
+store.Name = 'The Tea Factory';
+insert store; // Yeh line database mein record create karegi
+
+```
+
+---
+
+## 5. Bulkification (Efficiency and Limits)
+
+Salesforce multi-tenant environment hai, isliye resource utilization par limits hoti hain. Ek execution context mein aap sirf **150 DML calls** kar sakte hain.
+
+* **Problem:** Agar aap loop ke andar `insert` statement likhte hain aur loop 200 baar chalta hai, toh code fail ho jayega.
+* **Solution (Bulkification):** Records ko pehle ek **List** mein jama (add) karein aur phir poori list ko ek hi DML statement se insert karein.
+* **Benefit:** Isse aap ek hi DML call mein hazaaron records process kar sakte hain.
+
+---
+
+## 6. Loop ke sath sObjects aur Lists ka Use
+
+Multiple records create karne ka sabse behtar tarika loop aur list ka combination hai:
+
+1. Ek empty list banayein: `List<Account> accList = new List<Account>();`
+2. Loop ke andar naya sObject banayein aur use list mein add karein: `accList.add(newAcct);`
+3. Loop ke bahar single DML chalayein: `insert accList;`
+
+---
+
+**Summary for Notes:**
+
+* **sObject:** Salesforce record ka Apex representation.
+* **Dot Notation:** Fields ko access karne ka tarika (`object.field`).
+* **DML:** Database interactions (`insert`, `update`, `delete`).
+* **Bulkification:** Records ko lists mein collect karke process karna taaki Governor Limits cross na hon.
+
+
+//SOQL
+Salesforce mein **Relationship Queries** ka matlab hai ek hi query se do aise objects ka data nikalna jo aapas mein jude hue (related) hain. Isse humein do alag-alag queries nahi likhni padti.
+
+---
+
+## 1. Relationship Queries Kya Hain?
+
+Normal SOQL query sirf ek object se data laati hai, lekin Relationship Query ka use karke hum related objects (jaise Account aur uske Contacts) ka data cross-object fetch kar sakte hain.
+
+Yeh do tarah ki hoti hain:
+
+1. **Child-to-Parent Query:** Child object se Parent ka data mangwana.
+2. **Parent-to-Child Query:** Parent object se uske saare Children ka data mangwana.
+
+---
+
+## 2. Objects ki Relationship Identify Karna
+
+Query likhne se pehle yeh pata hona chahiye ki Parent kaun hai aur Child kaun.
+
+* **Master-Detail/Lookup:** Jis object par Lookup field hoti hai, wo **Child** hota hai. Jise wo point karta hai, wo **Parent** hota hai.
+* **Example:** `Contact` par `AccountId` field hoti hai jo `Account` ko point karti hai. Iska matlab:
+* **Account** = Parent
+* **Contact** = Child
+
+
+
+---
+
+## 3. Child-to-Parent Query (Using Dot Notation)
+
+Jab hum Child object par khade ho kar Parent ki details mangwate hain, toh hum **Dot (.) Notation** ka use karte hain.
+
+* **Requirement:** "Saare Contacts ki list lao aur unke Account ka naam bhi dikhao."
+* **Logic:** Query `Contact` se shuru hogi.
+* **Syntax:** `SELECT Name, Account.Name FROM Contact`
+
+Yahan `Account.Name` ka matlab hai: Contact ke upar jo Account lookup hai, uske andar jao aur wahan se `Name` field lekar aao.
+
+---
+
+## 4. Parent-to-Child Query (Using Subquery)
+
+Jab hum Parent record ke saath uske saare related Children ki list chahte hain, toh hum **Subquery** ka use karte hain.
+
+* **Subquery:** Ek SELECT statement ke andar dusra SELECT statement (brackets mein).
+* **Important Rule:** Subquery mein hamesha **Child Relationship Name** (plural) ka use hota hai, object name ka nahi.
+* **Requirement:** "Har Account ka naam lao aur uske saare related Contacts ke naam bhi lao."
+* **Syntax:** `SELECT Name, (SELECT Name FROM Contacts) FROM Account`
+
+**Dhyan dein:** Humne `FROM Contact` ki jagah `FROM Contacts` (plural) likha hai kyunki standard relationship name plural hota hai.
+
+---
+
+## 5. Subquery Se Filter Karna (Filtering)
+
+Kabhi-kabhi humein Parent records ko filter karna hota hai unke Children ke data ke basis par. Ise **Semi-Join** bhi kehte hain.
+
+* **Requirement:** "Sirf wahi Accounts lao jinke kisi Contact ka Last Name 'Forbes' hai."
+* **Logic:** Hum `WHERE` clause mein ek subquery dalenge jo un Accounts ki IDs dhundegi jinke paas 'Forbes' wala contact hai.
+* **Syntax:** ```sql
+SELECT Name
+FROM Account
+WHERE Id IN (SELECT AccountId FROM Contact WHERE LastName = 'Forbes')
+
+```
+
+---
+
+## 6. Quiz Solutions & Logic
+
+### Question 1: Case aur uske related Contact ka naam laane ke liye query?
+* **Logic:** `Case` child hai aur `Contact` parent. Child-to-parent query mein dot notation use hota hai.
+* **Correct Answer:** **C (SELECT Contact.Name, Priority FROM Case)**
+
+### Question 2: Kya child se parent data laane ke liye subquery chahiye?
+* **Logic:** Nahi, child-to-parent ke liye **Dot Notation** chahiye. Subquery sirf parent-to-child ke liye hoti hai.
+* **Correct Answer:** **B (False)**
+
+---
+
+**Summary for your Notes:**
+* **Child $\rightarrow$ Parent:** Use `.` (Dot notation). Example: `Contact.Account.Name`.
+* **Parent $\rightarrow$ Child:** Use `(...)` (Subquery). Example: `(SELECT Name FROM Contacts)`.
+* **Standard Plural:** Standard objects ki subquery mein hamesha plural naam use karein (`Contacts`, `Opportunities`, `Cases`).
+
+
+```
 

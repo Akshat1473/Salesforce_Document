@@ -1,0 +1,24 @@
+यदि आपकी बिज़नेस रिक्वायरमेंट ऐसी है कि आपको एक ऑब्जेक्ट को 3 या उससे अधिक ऑब्जेक्ट्स से जोड़ना है, तो आपके पास ये विकल्प होते हैं:
+
+Lookup Relationship: बाकी के रिलेशनशिप्स के लिए Lookup फ़ील्ड का इस्तेमाल करें। आप बाद में 'Validation Rules' का उपयोग करके इसे Master-Detail की तरह "Required" बना सकते हैं।
+
+Junction Object: यदि आप "Many-to-Many" रिलेशनशिप बनाना चाहते हैं, तो आप एक नया ऑब्जेक्ट (Junction Object) बनाते हैं जिसमें दो Master-Detail फ़ील्ड्स होती हैं।
+
+Validation rule se create -> ISBLANK(Parent_Object_Lookup__c)
+
+2. रिकॉर्ड सेव होने के बाद Lookup फ़ील्ड को बदलने से रोकना
+Master-Detail में डिफ़ॉल्ट रूप से आप "Parent" को बदल नहीं सकते (जब तक 'Allow Reparenting' ऑन न हो)। अगर आप Lookup फ़ील्ड में भी यही लॉक लगाना चाहते हैं:
+
+Formula:
+AND(
+    NOT(ISNEW()),
+    ISCHANGED(Parent_Object_Lookup__c)
+)
+Error Message: "एक बार असाइन होने के बाद आप Parent Record को बदल नहीं सकते।"
+
+
+Note:
+Self parenting option we can change parent
+
+
+

@@ -1,0 +1,164 @@
+//Screen Flow
+## **Topic: Screen Flows Basics**
+1. Screen Flow ka Asli Matlab**
+
+Screen Flow basically ek **interactive tool** hai. Jahan baaki flows background mein chup-chaap kaam karte hain, Screen Flow user ke samne aakar **screens** dikhata hai.
+
+* Iska use tab karte hain jab humein user se koi input chahiye ya unhe koi info dikhani ho.
+* Isko hum buttons, Lightning pages, ya apps mein add kar sakte hain.
+
+### **2. Screen vs Components (Kya difference hai?)**
+
+* **Screen:** Yeh ek "element" hai jo Flow Builder mein dikhta hai. Ek screen matlab user ke samne khulne wala **ek pura page**.
+* **Components:** Ek screen ke andar jo choti-choti cheezein hoti hain (jaise textbox, buttons, dropdowns), unhe components kehte hain.
+
+**Components ki 3 Categories:**
+
+1. **Display Components:** Yeh sirf info dikhane ke liye hote hain (e.g., Display Text). User isme kuch type nahi kar sakta.
+2. **Input Components:** Yeh user se data lene ke liye hote hain (e.g., Name, Email, Date).
+3. **Record Fields:** Yeh directly Salesforce ke fields hote hain jo screen par use kiye jaate hain.
+
+---
+
+### **3. Super Important Point (Dhyan rakhne wali baat)**
+
+Screen flow mein user jo bhi data bharta hai, wo automatically Salesforce mein **save nahi hota**.
+
+* Screen sirf data ko temporary hold karti hai.
+* Data save karne ke liye aapko baad mein **Create Records** ya **Update Records** wala element use karna hi padega.
+
+---
+
+### **4. Requirement Checklist (Flo Smith ka Case)**
+
+Agar aapko ek Case create karne ka flow banana hai, toh aapka plan aisa hona chahiye:
+
+| Screen Component | Kyun chahiye? | Data Type |
+| --- | --- | --- |
+| **Long Text** | Problem ki puri detail ke liye | Description |
+| **Text** | Summary ke liye | Subject |
+| **Toggle** | Problem solve hui ya nahi? | Status (True/False) |
+
+**Pro Tip:** Toggle sirf `True` ya `False` batata hai. Isko Case ke Status (New/Closed) mein badalne ke liye humein ek **Formula** banana padta hai.
+
+---
+
+### **5. Quiz Quick Revision**
+
+**Q1: User se input lene ke liye kaunse components use hote hain?**
+
+* **Answer:** **Input components and record fields.** (D dono ka combo hai).
+
+**Q2: Screen par bhara hua data Salesforce record mein kaise save hota hai?**
+
+* **Answer:** **Add a Data element.** (Bina 'Create Records' element ke data save nahi hoga).
+
+---
+
+Bilkul! Trailhead ke is module ka maksad ek aisa **Screen Flow** banana hai jo support agents ki help kare naya Case create karne mein.
+
+## 1. Flow ka Maqsad (Goal)
+
+Humein ek aisa flow banana hai jo:
+
+* Agent ko customer se kya baat karni hai wo bataye (**Guiding Text**).
+* Customer ki problem aur subject pooche (**Input Fields**).
+* Ye pooche ki problem solve hui ya nahi (**Toggle**).
+* Aur last mein, in details ka use karke Salesforce mein ek **Case Record** create kar de.
+
+---
+
+## 2. Step 1: Screen Element aur Guiding Text
+
+Sabse pehle Flow Builder mein **Screen Flow** choose karein aur ek **Screen** element add karein.
+
+* **Screen Label:** `Questions` (Ye canvas par dikhega).
+* **Component 1: Display Text**
+* **API Name:** `SayThisText`
+* **Kaam:** Isme agent ke liye script likhni hai.
+* **Text:** "(Say this to the caller) Thank you for calling..."
+* **Formatting:** Font size **14** rakhein. Pehli line ko **Bold** aur **Bright Red** karein taaki agent ko turant dikhe.
+
+
+
+---
+
+## 3. Step 2: Questions (Input Components)
+
+Ab screen par user se data lene ke liye components add karein:
+
+1. **Long Text Area (Description ke liye):**
+* **Label:** `Problem Description`
+* **API Name:** `ScreenDescription`
+* **Required:** Yes (Iske bina flow aage nahi badhega).
+
+
+2. **Text (Subject ke liye):**
+* **Label:** `Case Subject`
+* **API Name:** `ScreenSubject`
+* **Required:** Yes.
+
+
+3. **Toggle (Status ke liye):**
+* **API Name:** `CloseCase`
+* **Label:** "Were you able to solve the customer's problem during this call?"
+* **Active Label:** "Yes, Solved"
+* **Inactive Label:** "No, Not Solved"
+
+
+
+---
+
+## 4. Step 3: Resources Create Karna (Logic & Variables)
+
+Data create karne se pehle kuch background kaam zaroori hai. **Manager tab** mein jaakar ye resources banayein:
+
+### A. Formula (Status decide karne ke liye)
+
+Humein Toggle ki "True/False" value ko Case ke "Closed/New" status mein badalna hai.
+
+* **API Name:** `frmStatus`
+* **Data Type:** Text
+* **Formula:** `IF({!CloseCase.value} = TRUE, "Closed", "New")`
+
+### B. Input Variables (ID receive karne ke liye)
+
+Flow ko pata hona chahiye ki ye Case kis Account aur Contact se juda hai.
+
+1. **Variable 1:** `inputContactId` (Data Type: Text, **Available for input: Checked**)
+2. **Variable 2:** `inputAccountId` (Data Type: Text, **Available for input: Checked**)
+
+---
+
+## 5. Step 4: Create Records Element
+
+Ab screen ke baad ek **Create Records** element add karein jo asli data save karega.
+
+* **Label:** `Create Case`
+* **How to set values:** Manually
+* **Object:** `Case`
+* **Field Mapping (Sabse Important):**
+* **Account ID** ← `inputAccountId`
+* **Contact ID** ← `inputContactId`
+* **Description** ← `ScreenDescription` (Screen component se)
+* **Status** ← `frmStatus` (Hamara banaya hua formula)
+* **Subject** ← `ScreenSubject` (Screen component se)
+
+
+
+---
+
+## 6. Step 5: Save aur Finish
+
+* Flow ko **Save** karein.
+* **Label:** `Create Case for Contact`.
+* Ab aapka flow ready hai! Jab ye chalega, agent se sawal poochega aur submit hote hi Case record ban jayega.
+
+---
+
+### Important Notes for your Exams/Interviews:
+
+* **Available for Input:** Jab humein bahar se (jaise Record Page se) ID flow ke andar laani ho, tab is box ko check karna zaroori hai.
+* **Toggle Value:** Toggle ki value hamesha `{!Toggle_API_Name.value}` format mein access hoti hai.
+* **Formulas:** Jab simple logic (If/Else) use karna ho, toh Decision element ki jagah Formula use karna zyada efficient hota hai.
+
