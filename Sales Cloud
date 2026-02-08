@@ -1,0 +1,269 @@
+Sales Cloud ke core objects ek dusre se kaise connected hote hain aur data kaise flow karta hai
+
+Chalo **Salesforce Sales Cloud** ko **detail + Hinglish** mein samajhte hain — **objects, fields, relations, aur end-to-end data flow** ke saath.
+Main pehle **objects explain** karunga, phir **data flow**, aur last mein **simple flowchart (ASCII)** dunga jo interview + real project dono ke kaam aaye.
+
+---
+
+## 1️⃣ Campaign (Marketing Side ka Boss)
+
+**Use:** Marketing activities track karna (Email, Ads, Events)
+
+**Important Fields:**
+
+* Campaign Name
+* Type (Email, Webinar, Event)
+* Status (Planned, In Progress, Completed)
+* Start Date / End Date
+* Budgeted Cost
+* Actual Cost
+
+**Relations:**
+
+* Campaign → **Leads**
+* Campaign → **Contacts**
+* Campaign Members (junction object)
+
+👉 Matlab ek campaign se multiple leads & contacts linked hote hain.
+
+---
+
+## 2️⃣ Campaign Member (Bridge Object)
+
+**Use:** Bataata hai kaunsa **Lead/Contact** kis **Campaign** ka part hai
+
+**Key Fields:**
+
+* Campaign
+* Lead OR Contact
+* Status (Sent, Responded, Attended)
+
+---
+
+## 3️⃣ Lead (Potential Customer – Unqualified)
+
+**Use:** Jab customer ka sirf interest pata ho
+
+**Important Fields:**
+
+* Lead Name
+* Company
+* Email
+* Phone
+* Lead Source (Campaign, Website)
+* Status (Open, Working, Qualified)
+
+**Relations:**
+
+* Lead → Campaign (via Campaign Member)
+
+👉 Jab lead **Qualified** hota hai → **Convert** hota hai
+
+---
+
+## 4️⃣ Lead Conversion (Auto Process)
+
+Lead convert hone par Salesforce automatically banata hai:
+
+✔ **Account**
+✔ **Contact**
+✔ **Opportunity** (optional)
+
+---
+
+## 5️⃣ Account (Company / Organization)
+
+**Use:** Customer ki company ka record
+
+**Important Fields:**
+
+* Account Name
+* Account Type (Customer, Partner)
+* Industry
+* Billing Address
+* Phone
+
+**Relations:**
+
+* Account → Contacts (1-to-Many)
+* Account → Opportunities
+* Account → Orders
+* Account → Cases
+
+---
+
+## 6️⃣ Contact (Person in Account)
+
+**Use:** Company ke individual log
+
+**Important Fields:**
+
+* First Name
+* Last Name
+* Email
+* Phone
+* Account (Lookup)
+
+---
+
+## 7️⃣ Opportunity (Deal / Sales Pipeline)
+
+**Use:** Actual revenue tracking
+
+**Important Fields:**
+
+* Opportunity Name
+* Account
+* Amount
+* Stage (Prospecting, Negotiation, Closed Won)
+* Close Date
+
+**Relations:**
+
+* Opportunity → Account
+* Opportunity → Products (via Opportunity Line Items)
+
+---
+
+## 8️⃣ Product (What you sell)
+
+**Use:** Actual item / service
+
+**Important Fields:**
+
+* Product Name
+* Product Code
+* Active
+
+---
+
+## 9️⃣ Price Book (Product Pricing Container)
+
+**Use:** Different pricing strategies
+
+**Types:**
+
+* Standard Price Book
+* Custom Price Book
+
+---
+
+## 🔟 Price Book Entry (Actual Price)
+
+**Use:** Product + Price Book ka combination
+
+**Important Fields:**
+
+* Product
+* Price Book
+* Unit Price
+* Active
+
+👉 **Product bina Price Book Entry ke sell nahi ho sakta**
+
+---
+
+## 1️⃣1️⃣ Opportunity Line Item (Products in Deal)
+
+**Use:** Opportunity ke andar kaunsa product kitni quantity mein sell ho raha hai
+
+**Fields:**
+
+* Opportunity
+* Product
+* Quantity
+* Sales Price
+
+---
+
+## 1️⃣2️⃣ Order (Confirmed Purchase)
+
+**Use:** Jab deal Closed Won ho jaaye
+
+**Important Fields:**
+
+* Order Number
+* Account
+* Order Status
+* Effective Date
+
+**Relation:**
+
+* Order → Account
+* Order → Order Products
+
+---
+
+## 1️⃣3️⃣ Case (Customer Support)
+
+**Use:** After-sales issues / support
+
+**Important Fields:**
+
+* Case Number
+* Account
+* Contact
+* Status (New, Working, Closed)
+* Priority
+
+---
+
+# 🔁 END-TO-END DATA FLOW (Step by Step)
+
+```
+Campaign
+   ↓
+Campaign Member
+   ↓
+Lead
+   ↓ (Lead Conversion)
+Account + Contact + Opportunity
+   ↓
+Opportunity
+   ↓
+Add Products
+   ↓
+Price Book Entry
+   ↓
+Opportunity Line Items
+   ↓
+Closed Won
+   ↓
+Order
+   ↓
+Post Sales Support
+   ↓
+Case
+```
+
+---
+
+# 🧠 Real-Life Example (Easy Samajhne ke liye)
+
+1️⃣ Company ne **Email Campaign** chalaya
+2️⃣ Customer ne response diya → **Lead** bana
+3️⃣ Sales ne lead qualify kiya → Convert
+4️⃣ **Account + Contact + Opportunity** create
+5️⃣ Opportunity mein **Product add** hua
+6️⃣ Deal **Closed Won**
+7️⃣ **Order** create hua
+8️⃣ Product issue aaya → **Case logged**
+
+---
+
+## 📌 Interview Tip (Important Line)
+
+> **Sales Cloud ka core flow hai:
+> Marketing → Lead → Account/Contact → Opportunity → Order → Case**
+
+---
+
+Agar tum chaho to main:
+
+* 🔹 **Real Salesforce ER Diagram**
+* 🔹 **Interview questions**
+* 🔹 **Scenario-based explanation**
+* 🔹 **Project-level data flow**
+
+bhi bana deta hoon.
+Bas bolo 👍
