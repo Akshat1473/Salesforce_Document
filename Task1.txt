@@ -34,6 +34,12 @@ Standard Objects: Jo Salesforce pehle se deta hai (e.g., Account, Contact, Lead)
 
 Custom Objects: Jo aap apni business need ke hisaab se banate hain (e.g., Property).
 
+Feature,Standard,Custom,External,Big Object
+Created by,Salesforce,User/Admin,User/Admin,User/Admin
+API Suffix,None,__c,__x,__b
+Storage,Salesforce,Salesforce,Outside Salesforce,Salesforce (Big Data)
+Best For,CRM Basics,Unique Business Data,Integrating legacy data,Massive data/History
+
 4. Development: No-Code vs. Programmatic
 Salesforce mein develop karne ke do tarike hain:
 
