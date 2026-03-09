@@ -150,7 +150,10 @@ Validation Rule Functions – Easy Hinglish (With Example Explanation)
 ---
 
 ## 🏆 FINAL INTERVIEW LINE
+Use ISBLANK instead of ISNULL in new formulas. ISBLANK has the same functionality as ISNULL, but also supports text fields. Salesforce will continue to support ISNULL, 
+so you do not need to change any existing formulas.
 
+Text fields are never null, so using ISNULL() with a text field always returns false
 > **Validation Rule hamesha TRUE hone par ERROR dikhata hai, FALSE par record save hota hai.**
 
 

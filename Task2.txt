@@ -77,7 +77,7 @@ Yahan do options hain:
 
 **Next Step for You:**
 Kya tum chahte ho main tumhe **"Profile vs Permission Set"** ka difference samjhau? Ye agla logical step hai jo Salesforce Admin mein aana chahiye.
-
+NOTE: IF WE ACTIVATE THEN WE HAVE TO DO AGAIN ALL CONFIGURATION THATS WHY FREEZE USE SO THAT IF USER DON'T LEAVE COMPANY WE DON'T HAVE TO AGAIN CONFIGURE ALL.
 //Security work or accessibilty to user
 Akshat, yeh unit **Data Security** ka sabse important part hai. Interviewer ka favourite sawaal hota hai: *"Salesforce mein Security kaise kaam karti hai?"*
 
