@@ -1,0 +1,562 @@
+Below is a **clean, easy-to-read table set** you can paste directly into **VS Code (Markdown)**.
+It covers the **key parts architects/admins usually memorize** in Salesforce:
+
+1️⃣ **Top Core Objects (Admin/Developer must know)**
+2️⃣ **All major Junction Objects**
+3️⃣ **Polymorphic Fields & Objects using WhoId / WhatId**
+
+---
+
+# 1. Top Salesforce Core Objects (Admin/Developer Must Know)
+
+| #  | Object                  | Type     | Cloud           | Key Relationships            | Purpose                   |
+| -- | ----------------------- | -------- | --------------- | ---------------------------- | ------------------------- |
+| 1  | Account                 | Standard | Sales           | ParentAccountId              | Company or organization   |
+| 2  | Contact                 | Standard | Sales/Service   | AccountId                    | Person related to account |
+| 3  | Lead                    | Standard | Sales           | Converted to Account/Contact | Prospect                  |
+| 4  | Opportunity             | Standard | Sales           | AccountId                    | Sales deal                |
+| 5  | OpportunityLineItem     | Junction | Sales           | Opportunity ↔ Product        | Products in deal          |
+| 6  | OpportunityContactRole  | Junction | Sales           | Opportunity ↔ Contact        | Contact role in deal      |
+| 7  | Campaign                | Standard | Sales/Marketing | CampaignMember               | Marketing campaign        |
+| 8  | CampaignMember          | Junction | Sales/Marketing | Campaign ↔ Lead/Contact      | Tracks participation      |
+| 9  | Product2                | Standard | Sales           | PricebookEntry               | Product catalog           |
+| 10 | Pricebook2              | Standard | Sales           | PricebookEntry               | Product price list        |
+| 11 | PricebookEntry          | Junction | Sales           | Product ↔ Pricebook          | Product pricing           |
+| 12 | Quote                   | Standard | Sales           | Opportunity                  | Customer quote            |
+| 13 | QuoteLineItem           | Junction | Sales           | Quote ↔ Product              | Quote products            |
+| 14 | Order                   | Standard | Sales           | Account                      | Confirmed order           |
+| 15 | OrderItem               | Junction | Sales           | Order ↔ Product              | Products in order         |
+| 16 | Contract                | Standard | Service         | Account                      | Customer agreement        |
+| 17 | Case                    | Standard | Service         | Account Contact              | Customer support ticket   |
+| 18 | CaseComment             | Standard | Service         | Case                         | Case discussion           |
+| 19 | Entitlement             | Standard | Service         | Account Case                 | Support entitlement       |
+| 20 | Asset                   | Standard | Service         | Account Product              | Customer owned product    |
+| 21 | WorkOrder               | Standard | Field Service   | Asset Account                | Service job               |
+| 22 | ServiceAppointment      | Standard | Field Service   | WorkOrder                    | Technician visit          |
+| 23 | User                    | Standard | All Clouds      | Profile Role                 | System user               |
+| 24 | Profile                 | Setup    | All Clouds      | User                         | User permissions          |
+| 25 | PermissionSet           | Setup    | All Clouds      | User                         | Additional permissions    |
+| 26 | PermissionSetAssignment | Junction | All Clouds      | User ↔ PermissionSet         | Permission assignment     |
+| 27 | AccountTeamMember       | Junction | Sales           | Account ↔ User               | Account team              |
+| 28 | OpportunityTeamMember   | Junction | Sales           | Opportunity ↔ User           | Deal team                 |
+| 29 | CaseTeamMember          | Junction | Service         | Case ↔ User                  | Case team                 |
+| 30 | AccountContactRelation  | Junction | Sales           | Account ↔ Contact            | Many-to-many relation     |
+
+---
+
+# 2. Important Junction Objects in Salesforce
+
+These objects **manage many-to-many relationships**.
+
+| #  | Junction Object         | Parent Object 1 | Parent Object 2 | Use Case                    |
+| -- | ----------------------- | --------------- | --------------- | --------------------------- |
+| 1  | CampaignMember          | Campaign        | Lead / Contact  | Campaign participants       |
+| 2  | OpportunityContactRole  | Opportunity     | Contact         | Contact role in opportunity |
+| 3  | OpportunityLineItem     | Opportunity     | Product         | Products in opportunity     |
+| 4  | QuoteLineItem           | Quote           | Product         | Products in quote           |
+| 5  | OrderItem               | Order           | Product         | Products in order           |
+| 6  | PricebookEntry          | Pricebook       | Product         | Product pricing             |
+| 7  | AccountContactRelation  | Account         | Contact         | Many accounts per contact   |
+| 8  | AccountTeamMember       | Account         | User            | Account team                |
+| 9  | OpportunityTeamMember   | Opportunity     | User            | Opportunity team            |
+| 10 | CaseTeamMember          | Case            | User            | Case team                   |
+| 11 | PermissionSetAssignment | PermissionSet   | User            | Assign permissions          |
+| 12 | ContentDocumentLink     | File            | Record          | Attach files                |
+| 13 | ServiceResourceSkill    | ServiceResource | Skill           | Technician skills           |
+| 14 | ServiceCrewMember       | ServiceCrew     | ServiceResource | Technician crew             |
+| 15 | ServiceTerritoryMember  | Territory       | Resource        | Technician territory        |
+| 16 | GroupMember             | Group           | User            | Public group membership     |
+| 17 | EmailMessageRelation    | EmailMessage    | Contact/Lead    | Email participants          |
+| 18 | EventRelation           | Event           | Record          | Extra event attendees       |
+| 19 | TaskRelation            | Task            | Record          | Additional task relations   |
+| 20 | OpportunitySplit        | Opportunity     | User            | Revenue split               |
+
+---
+
+# 3. Polymorphic Fields in Salesforce
+
+A **polymorphic field can reference multiple object types**.
+
+| Field            | Used In Object      | Can Reference                                        |
+| ---------------- | ------------------- | ---------------------------------------------------- |
+| WhoId            | Task, Event         | Lead, Contact                                        |
+| WhatId           | Task, Event         | Account, Opportunity, Case, Campaign, Custom Objects |
+| OwnerId          | Most objects        | User, Queue                                          |
+| CreatedById      | All objects         | User                                                 |
+| LastModifiedById | All objects         | User                                                 |
+| ParentId         | Various objects     | Multiple record types                                |
+| RelatedRecordId  | FeedItem            | Any record                                           |
+| LinkedEntityId   | ContentDocumentLink | Any record                                           |
+| UserOrGroupId    | Sharing objects     | User, Public Group                                   |
+| WhoCount         | Task/Event          | Contact/Lead counts                                  |
+
+---
+
+Got it 👍
+Earlier I gave **1–30 core objects**, so here are the **remaining objects from 31–120** in a **clean, easy-to-read Markdown table** that works well in **VS Code** for Salesforce.
+
+---
+
+# Salesforce Core Objects (31–120)
+
+| #  | Object                 | Type     | Cloud         | Key Relationship   | Purpose                           |
+| -- | ---------------------- | -------- | ------------- | ------------------ | --------------------------------- |
+| 31 | CaseTeamMember         | Junction | Service Cloud | Case ↔ User        | Case team members                 |
+| 32 | AccountContactRelation | Junction | Sales Cloud   | Account ↔ Contact  | Many-to-many contact relationship |
+| 33 | CaseComment            | Standard | Service Cloud | CaseId             | Comments on cases                 |
+| 34 | ContentDocument        | Standard | All Clouds    | ContentVersion     | File record                       |
+| 35 | ContentVersion         | Standard | All Clouds    | ContentDocument    | File version                      |
+| 36 | ContentDocumentLink    | Junction | All Clouds    | File ↔ Record      | Attach files to records           |
+| 37 | Attachment             | Standard | All Clouds    | ParentId           | Legacy file storage               |
+| 38 | Note                   | Standard | All Clouds    | ParentId           | Notes attached to records         |
+| 39 | ActivityHistory        | System   | All Clouds    | Task/Event         | Completed activities              |
+| 40 | OpenActivity           | System   | All Clouds    | Task/Event         | Pending activities                |
+| 41 | TaskRelation           | Junction | All Clouds    | Task ↔ Record      | Additional relationships          |
+| 42 | EventRelation          | Junction | All Clouds    | Event ↔ Record     | Extra attendees                   |
+| 43 | AccountShare           | System   | All Clouds    | Account ↔ User     | Record sharing                    |
+| 44 | OpportunityShare       | System   | Sales Cloud   | Opportunity ↔ User | Sharing access                    |
+| 45 | CaseShare              | System   | Service Cloud | Case ↔ User        | Case sharing                      |
+| 46 | LeadShare              | System   | Sales Cloud   | Lead ↔ User        | Lead sharing                      |
+| 47 | ContactShare           | System   | Sales Cloud   | Contact ↔ User     | Contact sharing                   |
+| 48 | OpportunitySplit       | Junction | Sales Cloud   | Opportunity ↔ User | Revenue split                     |
+| 49 | OpportunitySplitType   | Setup    | Sales Cloud   | OpportunitySplit   | Split category                    |
+| 50 | ForecastingType        | Setup    | Sales Cloud   | Opportunity        | Forecast type                     |
+
+---
+
+## Collaboration / Chatter Objects
+
+| #  | Object                   | Type     | Cloud      | Relationship    | Purpose               |
+| -- | ------------------------ | -------- | ---------- | --------------- | --------------------- |
+| 51 | CollaborationGroup       | Standard | All Clouds | User            | Chatter group         |
+| 52 | CollaborationGroupMember | Junction | All Clouds | User ↔ Group    | Group membership      |
+| 53 | FeedItem                 | Standard | All Clouds | Parent Record   | Chatter post          |
+| 54 | FeedComment              | Standard | All Clouds | FeedItem        | Comment on post       |
+| 55 | FeedLike                 | Junction | All Clouds | User ↔ FeedItem | Likes                 |
+| 56 | Topic                    | Standard | All Clouds | FeedItem        | Topic tagging         |
+| 57 | TopicAssignment          | Junction | All Clouds | Topic ↔ Record  | Assign topic          |
+| 58 | FeedTrackedChange        | System   | All Clouds | FeedItem        | Field change tracking |
+| 59 | CollaborationInvitation  | Standard | All Clouds | User            | Invite user           |
+| 60 | UserStatus               | Standard | All Clouds | User            | User status message   |
+
+---
+
+# Email / Communication Objects
+
+| #  | Object               | Type     | Cloud         | Relationship    | Purpose               |
+| -- | -------------------- | -------- | ------------- | --------------- | --------------------- |
+| 61 | EmailMessage         | Standard | Service Cloud | CaseId          | Email conversation    |
+| 62 | EmailMessageRelation | Junction | Service Cloud | Email ↔ Contact | Email participants    |
+| 63 | EmailTemplate        | Standard | All Clouds    | Folder          | Email template        |
+| 64 | OrgWideEmailAddress  | Setup    | All Clouds    | User            | Org-wide email        |
+| 65 | EmailStatus          | System   | All Clouds    | EmailMessage    | Email delivery status |
+
+---
+
+# Service Cloud Objects
+
+| #  | Object             | Type     | Cloud         | Relationship          | Purpose              |
+| -- | ------------------ | -------- | ------------- | --------------------- | -------------------- |
+| 66 | CaseMilestone      | Standard | Service Cloud | Case ↔ Entitlement    | SLA milestone        |
+| 67 | EntitlementContact | Junction | Service Cloud | Entitlement ↔ Contact | Entitlement coverage |
+| 68 | ServiceContract    | Standard | Service Cloud | Account               | Service agreement    |
+| 69 | ContractLineItem   | Junction | Service Cloud | Contract ↔ Product    | Products in contract |
+| 70 | AssetRelationship  | Junction | Service Cloud | Asset ↔ Asset         | Product hierarchy    |
+
+---
+
+# Field Service Objects
+
+| #  | Object              | Type     | Cloud         | Relationship     | Purpose                  |
+| -- | ------------------- | -------- | ------------- | ---------------- | ------------------------ |
+| 71 | Location            | Standard | Field Service | Asset            | Service location         |
+| 72 | MaintenancePlan     | Standard | Field Service | Asset            | Maintenance schedule     |
+| 73 | MaintenanceAsset    | Junction | Field Service | Plan ↔ Asset     | Assets under maintenance |
+| 74 | WorkType            | Standard | Field Service | WorkOrder        | Work category            |
+| 75 | WorkTypeGroup       | Standard | Field Service | WorkType         | Group work types         |
+| 76 | WorkTypeGroupMember | Junction | Field Service | Group ↔ WorkType | Membership               |
+| 77 | ServiceResource     | Standard | Field Service | User             | Technician               |
+| 78 | ServiceCrew         | Standard | Field Service | ServiceResource  | Technician crew          |
+| 79 | ServiceCrewMember   | Junction | Field Service | Crew ↔ Resource  | Crew membership          |
+| 80 | Shift               | Standard | Field Service | ServiceResource  | Work shift               |
+
+---
+
+# Field Service Skill / Territory Objects
+
+| #  | Object                 | Type     | Cloud         | Relationship         | Purpose          |
+| -- | ---------------------- | -------- | ------------- | -------------------- | ---------------- |
+| 81 | ShiftPattern           | Standard | Field Service | Shift                | Shift pattern    |
+| 82 | Skill                  | Standard | Field Service | ResourceSkill        | Skill catalog    |
+| 83 | ServiceResourceSkill   | Junction | Field Service | Resource ↔ Skill     | Technician skill |
+| 84 | OperatingHours         | Standard | Field Service | Territory            | Business hours   |
+| 85 | ServiceTerritory       | Standard | Field Service | Resource             | Service region   |
+| 86 | ServiceTerritoryMember | Junction | Field Service | Territory ↔ Resource | Assignment       |
+
+---
+
+# Knowledge & Survey Objects
+
+| #  | Object                  | Type     | Cloud         | Relationship            | Purpose           |
+| -- | ----------------------- | -------- | ------------- | ----------------------- | ----------------- |
+| 87 | KnowledgeArticle        | Standard | Service Cloud | KnowledgeArticleVersion | Knowledge article |
+| 88 | KnowledgeArticleVersion | Standard | Service Cloud | KnowledgeArticle        | Article version   |
+| 89 | Survey                  | Standard | Service Cloud | SurveyInvitation        | Survey            |
+| 90 | SurveyInvitation        | Standard | Service Cloud | SurveyResponse          | Survey invite     |
+| 91 | SurveyResponse          | Standard | Service Cloud | SurveyQuestion          | Survey answers    |
+| 92 | SurveyQuestion          | Standard | Service Cloud | SurveyQuestionChoice    | Survey question   |
+| 93 | SurveyQuestionChoice    | Junction | Service Cloud | Question ↔ Choice       | Choice options    |
+
+---
+
+# Analytics / Reporting Objects
+
+| #  | Object             | Type     | Cloud      | Relationship       | Purpose          |
+| -- | ------------------ | -------- | ---------- | ------------------ | ---------------- |
+| 94 | Report             | Setup    | All Clouds | Dashboard          | Report data      |
+| 95 | Dashboard          | Setup    | All Clouds | DashboardComponent | Dashboard        |
+| 96 | DashboardComponent | Junction | All Clouds | Dashboard ↔ Report | Dashboard widget |
+| 97 | Folder             | Setup    | All Clouds | Report/Dashboard   | Folder storage   |
+
+---
+
+# Metadata / Setup Objects
+
+| #   | Object               | Type     | Cloud         | Relationship       | Purpose             |
+| --- | -------------------- | -------- | ------------- | ------------------ | ------------------- |
+| 98  | RecordType           | Setup    | All Clouds    | Object             | Business process    |
+| 99  | BusinessProcess      | Setup    | Sales/Service | Opportunity/Case   | Stage control       |
+| 100 | QueueSobject         | Junction | Service Cloud | Queue ↔ Object     | Queue assignment    |
+| 101 | Group                | Standard | All Clouds    | GroupMember        | Public group        |
+| 102 | GroupMember          | Junction | All Clouds    | Group ↔ User       | Group membership    |
+| 103 | LoginHistory         | System   | All Clouds    | User               | Login records       |
+| 104 | SetupAuditTrail      | System   | All Clouds    | User               | Admin changes       |
+| 105 | CustomObject         | Metadata | Platform      | Fields             | Custom object       |
+| 106 | CustomField          | Metadata | Platform      | Object             | Custom field        |
+| 107 | ApexClass            | Setup    | Platform      | Trigger/Code       | Custom code         |
+| 108 | ApexTrigger          | Setup    | Platform      | Object             | Automation          |
+| 109 | FlowDefinition       | Setup    | Platform      | Flow               | Flow version        |
+| 110 | FlowInterview        | System   | Platform      | Flow               | Flow runtime        |
+| 111 | StaticResource       | Setup    | Platform      | Apps               | Static files        |
+| 112 | CustomTab            | Setup    | Platform      | Object             | Navigation tab      |
+| 113 | AppDefinition        | Setup    | Platform      | Tabs               | Salesforce app      |
+| 114 | ConnectedApplication | Setup    | Platform      | OAuth              | External app        |
+| 115 | ExternalDataSource   | Setup    | Platform      | External Object    | External connection |
+| 116 | ExternalObject       | Standard | Platform      | ExternalDataSource | External data       |
+| 117 | NamedCredential      | Setup    | Platform      | API                | Secure endpoint     |
+| 118 | AsyncApexJob         | System   | Platform      | ApexClass          | Async job           |
+| 119 | DuplicateRecordSet   | Standard | Platform      | Record             | Duplicate detection |
+| 120 | DuplicateRecordItem  | Junction | Platform      | Record ↔ Set       | Duplicate record    |
+
+---
+
+✅ Now you have:
+
+* **Top 120 Salesforce objects**
+* **Junction objects**
+* **Service Cloud objects**
+* **Field Service objects**
+* **Platform / Dev objects**
+
+---
+
+
+
+# 4. Objects Using **WhoId / WhatId**
+
+| Object          | WhoId | WhatId | Purpose                   |
+| --------------- | ----- | ------ | ------------------------- |
+| Task            | Yes   | Yes    | Activity task             |
+| Event           | Yes   | Yes    | Meeting or calendar event |
+| ActivityHistory | Yes   | Yes    | Past activity records     |
+| OpenActivity    | Yes   | Yes    | Upcoming activities       |
+
+---
+
+# 5. Simple Activity Relationship Diagram
+
+```
+Contact / Lead
+      │
+      │ (WhoId)
+      │
+     Task / Event
+      │
+      │ (WhatId)
+      │
+Account / Opportunity / Case / Campaign / Custom Object
+```
+
+Meaning:
+
+**WhoId → Person involved**
+**WhatId → Business record involved**
+
+---
+
+✅ **Salesforce Interview Tip**
+
+The **top junction objects most asked in interviews**:
+
+* CampaignMember
+* OpportunityLineItem
+* OpportunityContactRole
+* AccountContactRelation
+* ContentDocumentLink
+* PermissionSetAssignment
+
+---
+
+✅ If you want, I can also create a **SUPER ARCHITECT LEVEL TABLE** including:
+
+* **150+ Salesforce objects**
+* **Complete ER diagram of Salesforce**
+* **All polymorphic fields**
+* **All activity relationships**
+* **All objects used in Sales Cloud vs Service Cloud**
+
+Below is an **extended Salesforce object reference** (continuation) that adds **more widely used objects across Sales, Service, Field Service, Experience Cloud, Analytics, and Platform** in Salesforce.
+Format is **clean Markdown** so you can paste it directly into **VS Code (`.md` file)** and read easily.
+
+---
+
+# Additional Salesforce Objects (Extended Reference)
+
+| #   | Object                      | Type     | Cloud            | Key Relationships                  | Purpose                        |
+| --- | --------------------------- | -------- | ---------------- | ---------------------------------- | ------------------------------ |
+| 121 | ContactRequest              | Standard | Experience Cloud | Contact, User                      | Request access to community    |
+| 122 | UserLogin                   | System   | All Clouds       | User                               | Tracks login sessions          |
+| 123 | LoginIp                     | System   | All Clouds       | UserLogin                          | Login IP records               |
+| 124 | LoginGeo                    | System   | All Clouds       | UserLogin                          | Login geographic info          |
+| 125 | ConnectedApplication        | Setup    | Platform         | OAuth apps                         | External app integration       |
+| 126 | ExternalDataSource          | Setup    | Platform         | External Object                    | External system connection     |
+| 127 | ExternalObject              | Standard | Platform         | ExternalDataSource                 | External system data           |
+| 128 | AuthProvider                | Setup    | Platform         | ConnectedApp                       | Authentication provider        |
+| 129 | NamedCredential             | Setup    | Platform         | External system                    | Secure API credentials         |
+| 130 | CredentialStuffingEvent     | Security | Platform         | UserLogin                          | Security monitoring            |
+| 131 | IdentityProviderEvent       | Security | Platform         | AuthProvider                       | SSO events                     |
+| 132 | PermissionSetGroup          | Setup    | Platform         | PermissionSet                      | Group multiple permission sets |
+| 133 | PermissionSetGroupComponent | Junction | Platform         | PermissionSetGroup ↔ PermissionSet | Links permission sets          |
+| 134 | UserPermissionAccess        | System   | Platform         | User                               | Permission tracking            |
+| 135 | DataCategoryGroup           | Setup    | Knowledge        | KnowledgeArticle                   | Knowledge categories           |
+| 136 | DataCategory                | Setup    | Knowledge        | DataCategoryGroup                  | Knowledge category             |
+| 137 | KnowledgeArticleVersion     | Standard | Service Cloud    | KnowledgeArticle                   | Versioned article              |
+| 138 | KnowledgeArticleViewStat    | System   | Service Cloud    | KnowledgeArticle                   | Article analytics              |
+| 139 | KnowledgeArticleVoteStat    | System   | Service Cloud    | KnowledgeArticle                   | Article ratings                |
+| 140 | ContentWorkspace            | Standard | Platform         | ContentDocument                    | Library of files               |
+| 141 | ContentWorkspaceMember      | Junction | Platform         | Workspace ↔ User                   | Library membership             |
+| 142 | ContentDistribution         | Standard | Platform         | ContentDocument                    | Public file link               |
+| 143 | ContentFolder               | Standard | Platform         | ContentDocument                    | File folder                    |
+| 144 | ContentFolderMember         | Junction | Platform         | Folder ↔ File                      | Folder membership              |
+| 145 | ContentAsset                | Standard | Experience Cloud | ContentDocument                    | CMS content                    |
+| 146 | CMSContent                  | Standard | Experience Cloud | ContentAsset                       | CMS content storage            |
+| 147 | Network                     | Standard | Experience Cloud | Community                          | Community record               |
+| 148 | NetworkMember               | Junction | Experience Cloud | Network ↔ User                     | Community members              |
+| 149 | NetworkMemberGroup          | Junction | Experience Cloud | Network ↔ Group                    | Community groups               |
+| 150 | CollaborationInvitation     | Standard | Chatter          | User                               | Invite user to collaboration   |
+| 151 | FeedTrackedChange           | System   | Chatter          | FeedItem                           | Tracks record changes          |
+| 152 | Topic                       | Standard | Chatter          | FeedItem                           | Chatter topic                  |
+| 153 | TopicAssignment             | Junction | Chatter          | Topic ↔ Record                     | Topic tagging                  |
+| 154 | TopicUserEvent              | System   | Chatter          | User                               | Topic interactions             |
+| 155 | StreamingChannel            | Standard | Platform         | PushTopic                          | Streaming API channel          |
+| 156 | PushTopic                   | Standard | Platform         | Object query                       | Real-time event streaming      |
+| 157 | PlatformEventUsageMetric    | System   | Platform         | PlatformEvent                      | Event usage tracking           |
+| 158 | PlatformEventChannelMember  | Junction | Platform         | Channel ↔ Event                    | Platform event channel         |
+| 159 | EventBusSubscriber          | System   | Platform         | PlatformEvent                      | Event subscriber               |
+| 160 | ChangeEventHeader           | System   | Platform         | CDC events                         | Change Data Capture            |
+| 161 | AsyncApexJob                | System   | Platform         | ApexClass                          | Async job status               |
+| 162 | ApexTestQueueItem           | System   | Platform         | ApexTestRun                        | Test execution queue           |
+| 163 | ApexTestResult              | System   | Platform         | ApexClass                          | Test result record             |
+| 164 | ApexTestRunResult           | System   | Platform         | ApexTestQueueItem                  | Overall test result            |
+| 165 | BulkApiEventLog             | System   | Platform         | BulkJob                            | Bulk API monitoring            |
+| 166 | BulkDataLoadJob             | System   | Platform         | Object                             | Bulk data job                  |
+| 167 | DataImportBatch             | System   | Platform         | Lead/Account                       | Data import wizard             |
+| 168 | DuplicateRecordItem         | Standard | Platform         | DuplicateRecordSet                 | Duplicate record               |
+| 169 | DuplicateRecordSet          | Standard | Platform         | Record                             | Duplicate detection            |
+| 170 | MatchingRule                | Setup    | Platform         | Object                             | Duplicate detection rule       |
+| 171 | DuplicateRule               | Setup    | Platform         | MatchingRule                       | Duplicate rule                 |
+| 172 | PlatformCachePartition      | Setup    | Platform         | Cache                              | Cache partition                |
+| 173 | PlatformCachePartitionType  | Setup    | Platform         | Cache                              | Cache type                     |
+| 174 | AppDefinition               | Setup    | Platform         | Objects                            | Salesforce app                 |
+| 175 | AppMenuItem                 | Setup    | Platform         | AppDefinition                      | App menu item                  |
+| 176 | CustomApplication           | Setup    | Platform         | Tabs                               | Custom app                     |
+| 177 | CustomTab                   | Setup    | Platform         | Object                             | Navigation tab                 |
+| 178 | CustomNotificationType      | Setup    | Platform         | Notification                       | Custom notifications           |
+| 179 | Notification                | Standard | Platform         | User                               | In-app notification            |
+| 180 | UserNotification            | Junction | Platform         | User ↔ Notification                | User notification record       |
+
+---
+
+# Additional Polymorphic Fields
+
+| Field           | Objects Using It           | Can Reference      |
+| --------------- | -------------------------- | ------------------ |
+| OwnerId         | Most standard objects      | User, Queue        |
+| ParentId        | Attachment, Note, FeedItem | Multiple objects   |
+| RelatedRecordId | FeedItem                   | Any record         |
+| UserOrGroupId   | Share objects              | User, Public Group |
+| LinkedEntityId  | ContentDocumentLink        | Any record         |
+| RecordId        | DuplicateRecordItem        | Multiple records   |
+| EntityId        | EventRelation              | Any object         |
+| SubscriberId    | EventBusSubscriber         | User/Process       |
+
+---
+
+# Additional Junction Objects
+
+| Junction Object             | Parent 1           | Parent 2        | Use Case                  |
+| --------------------------- | ------------------ | --------------- | ------------------------- |
+| ContentDocumentLink         | ContentDocument    | Record          | Attach file               |
+| TopicAssignment             | Topic              | Record          | Topic tagging             |
+| ContentWorkspaceMember      | Workspace          | User            | Library members           |
+| PermissionSetGroupComponent | PermissionSetGroup | PermissionSet   | Permission grouping       |
+| NetworkMember               | Network            | User            | Community membership      |
+| ContentFolderMember         | ContentFolder      | ContentDocument | Folder file membership    |
+| UserNotification            | Notification       | User            | User notification mapping |
+| PlatformEventChannelMember  | EventChannel       | PlatformEvent   | Event subscriptions       |
+
+---
+
+# Example Activity Relationship Reminder
+
+```
+Lead / Contact
+     │
+   WhoId
+     │
+ Task / Event
+     │
+   WhatId
+     │
+Account / Opportunity / Case / Campaign / Custom Object
+```
+
+---
+
+Below is **another extended set of Salesforce objects (181–260)** that are commonly encountered in **Sales Cloud, Service Cloud, Experience Cloud, Analytics, and Platform development** in Salesforce.
+The format remains **clean Markdown**, so you can paste it directly into **VS Code**.
+
+---
+
+# Additional Salesforce Objects (181–260)
+
+| #   | Object                         | Type     | Cloud         | Key Relationship    | Purpose                         |
+| --- | ------------------------------ | -------- | ------------- | ------------------- | ------------------------------- |
+| 181 | ReportType                     | Setup    | Analytics     | Object              | Defines custom report structure |
+| 182 | ReportSubscription             | Standard | Analytics     | Report              | Scheduled report delivery       |
+| 183 | ReportEvent                    | System   | Analytics     | Report              | Report run event tracking       |
+| 184 | DashboardComponentSnapshot     | System   | Analytics     | Dashboard           | Dashboard snapshot data         |
+| 185 | AnalyticSnapshot               | Setup    | Analytics     | Report              | Stores report data into object  |
+| 186 | AnalyticSnapshotResult         | System   | Analytics     | AnalyticSnapshot    | Snapshot results                |
+| 187 | Dataflow                       | Standard | CRM Analytics | Dataset             | ETL process                     |
+| 188 | Dataset                        | Standard | CRM Analytics | Dataflow            | Analytics dataset               |
+| 189 | DatasetExport                  | System   | CRM Analytics | Dataset             | Dataset export                  |
+| 190 | Lens                           | Standard | CRM Analytics | Dataset             | Analytics visualization         |
+| 191 | WaveApplication                | Standard | CRM Analytics | Dataset             | Analytics app                   |
+| 192 | WaveDashboard                  | Standard | CRM Analytics | Dataset             | Analytics dashboard             |
+| 193 | WaveDashboardComponent         | Junction | CRM Analytics | Dashboard ↔ Dataset | Dashboard component             |
+| 194 | Flow                           | Setup    | Platform      | Object              | Automation flow                 |
+| 195 | FlowVersion                    | System   | Platform      | Flow                | Flow version                    |
+| 196 | FlowInterviewLog               | System   | Platform      | Flow                | Flow execution logs             |
+| 197 | FlowTestResult                 | System   | Platform      | Flow                | Flow test result                |
+| 198 | FlowError                      | System   | Platform      | Flow                | Flow runtime error              |
+| 199 | CustomObjectTranslation        | Setup    | Platform      | CustomObject        | Object translation              |
+| 200 | CustomFieldTranslation         | Setup    | Platform      | Field               | Field translation               |
+| 201 | CustomMetadata                 | Metadata | Platform      | CustomMetadataType  | Configuration metadata          |
+| 202 | CustomMetadataType             | Metadata | Platform      | CustomMetadata      | Metadata schema                 |
+| 203 | CustomSetting                  | Metadata | Platform      | Object              | Configuration setting           |
+| 204 | HierarchyCustomSetting         | Metadata | Platform      | User/Profile        | Hierarchical setting            |
+| 205 | ListCustomSetting              | Metadata | Platform      | Org                 | List setting                    |
+| 206 | InstalledSubscriberPackage     | System   | Platform      | Package             | Installed package               |
+| 207 | SubscriberPackageVersion       | System   | Platform      | Package             | Package version                 |
+| 208 | PackageLicense                 | System   | Platform      | User                | Package license                 |
+| 209 | PackageSubscriber              | System   | Platform      | Org                 | Installed package subscriber    |
+| 210 | SandboxInfo                    | System   | Platform      | Org                 | Sandbox details                 |
+| 211 | SandboxProcess                 | System   | Platform      | Sandbox             | Sandbox refresh                 |
+| 212 | DeploymentRequest              | System   | Platform      | Metadata            | Deployment tracking             |
+| 213 | DeploymentDetail               | System   | Platform      | DeploymentRequest   | Deployment details              |
+| 214 | MetadataComponentDependency    | System   | Platform      | Metadata            | Dependency tracking             |
+| 215 | MetadataComponent              | System   | Platform      | Object              | Metadata component              |
+| 216 | OrgWideEmailAddress            | Setup    | Platform      | User                | Org-wide email                  |
+| 217 | EmailTemplate                  | Standard | Platform      | Folder              | Email template                  |
+| 218 | EmailTemplateFolder            | Standard | Platform      | EmailTemplate       | Template folder                 |
+| 219 | Letterhead                     | Setup    | Platform      | EmailTemplate       | Email branding                  |
+| 220 | Holiday                        | Setup    | Service       | BusinessHours       | Holiday calendar                |
+| 221 | BusinessHours                  | Setup    | Service       | Case                | Service working hours           |
+| 222 | Queue                          | Setup    | Service/Sales | Group               | Queue for records               |
+| 223 | QueueRoutingConfig             | Setup    | Service       | Queue               | Routing configuration           |
+| 224 | RoutingConfiguration           | Setup    | Service       | Queue               | Omni-channel routing            |
+| 225 | PendingServiceRouting          | Standard | Service       | Case                | Omni-channel routing record     |
+| 226 | AgentWork                      | Standard | Service       | User                | Agent workload                  |
+| 227 | ServicePresenceStatus          | Setup    | Service       | User                | Agent presence                  |
+| 228 | PresenceUserConfig             | Setup    | Service       | User                | Presence configuration          |
+| 229 | PresenceStatus                 | Setup    | Service       | User                | Online status                   |
+| 230 | LiveChatTranscript             | Standard | Service       | Case                | Chat conversation               |
+| 231 | LiveChatTranscriptEvent        | System   | Service       | LiveChatTranscript  | Chat events                     |
+| 232 | LiveChatVisitor                | Standard | Service       | LiveChatTranscript  | Website visitor                 |
+| 233 | MessagingSession               | Standard | Service       | Contact             | Messaging conversation          |
+| 234 | MessagingEndUser               | Standard | Service       | Contact             | Messaging user                  |
+| 235 | MessagingSessionMetrics        | System   | Service       | MessagingSession    | Chat metrics                    |
+| 236 | SocialPost                     | Standard | Service       | Case                | Social media post               |
+| 237 | SocialPersona                  | Standard | Service       | Contact             | Social identity                 |
+| 238 | SocialPersonaRelation          | Junction | Service       | Persona ↔ Contact   | Social mapping                  |
+| 239 | Recommendation                 | Standard | Service       | Case                | Service recommendation          |
+| 240 | RecommendationResponse         | Standard | Service       | Recommendation      | Recommendation result           |
+| 241 | SurveySubject                  | Standard | Service       | Survey              | Survey target                   |
+| 242 | SurveyParticipant              | Standard | Service       | SurveyInvitation    | Survey participant              |
+| 243 | SurveyEngagementContext        | System   | Service       | Survey              | Survey context                  |
+| 244 | SurveyVersion                  | Standard | Service       | Survey              | Survey version                  |
+| 245 | ChannelProgram                 | Standard | Partner Cloud | Account             | Partner program                 |
+| 246 | ChannelProgramMember           | Junction | Partner Cloud | Program ↔ Account   | Partner membership              |
+| 247 | PartnerRole                    | Standard | Partner Cloud | Account             | Partner role                    |
+| 248 | PartnerNetworkConnection       | Standard | Partner Cloud | Account             | Partner network                 |
+| 249 | PartnerNetworkRecordConnection | Junction | Partner Cloud | Record ↔ Partner    | Shared record                   |
+| 250 | PartnerFundRequest             | Standard | Partner Cloud | Account             | Partner funding request         |
+| 251 | PartnerFundClaim               | Standard | Partner Cloud | PartnerFundRequest  | Claim request                   |
+| 252 | Territory                      | Standard | Sales Cloud   | Account             | Sales territory                 |
+| 253 | Territory2                     | Standard | Sales Cloud   | Account             | Enterprise territory            |
+| 254 | Territory2Model                | Standard | Sales Cloud   | Territory2          | Territory model                 |
+| 255 | Territory2Type                 | Standard | Sales Cloud   | Territory2Model     | Territory type                  |
+| 256 | UserTerritory2Association      | Junction | Sales Cloud   | User ↔ Territory2   | User territory                  |
+| 257 | AccountTerritoryAssignmentRule | Standard | Sales Cloud   | Account             | Territory assignment            |
+| 258 | ForecastingAdjustment          | Standard | Sales Cloud   | Opportunity         | Forecast adjustment             |
+| 259 | ForecastingQuota               | Standard | Sales Cloud   | User                | Sales quota                     |
+| 260 | ForecastingOwnerAdjustment     | Standard | Sales Cloud   | User                | Forecast adjustment             |
+
+---
+
+# Objects Count So Far
+
+You now have approximately:
+
+* **260+ Salesforce objects**
+* **Core CRM objects**
+* **Junction objects**
+* **Analytics objects**
+* **Service Cloud objects**
+* **Partner Cloud objects**
+* **Platform / Dev objects**
+
+---
+
+# Tip for VS Code
+
+Save as:
+
+```
+salesforce_full_object_reference.md
+```
+
+Then open preview:
+
+```
+Ctrl + Shift + V
+```
+
+This will show a **nice readable table format**.
+
+---
+
+
+
+
