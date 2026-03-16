@@ -1,0 +1,1051 @@
+Neeचे **ek single Apex example script** diya hai jo **end-to-end Salesforce sales cycle** ko simulate karta hai. Isme Campaign → Lead → Conversion → Account/Contact → Product/Pricebook → Opportunity → OpportunityLineItem → Quote → Order ke saath **Task + Files + Attachment** bhi create kiye gaye hain.
+Ye flow typical **Salesforce Sales Cloud** implementation ko represent karta hai.
+
+---
+
+# Complete Apex Example (Full Sales Cycle + Files + Task + Attachment)
+
+```apex
+// ==========================
+// 1. CREATE CAMPAIGN
+// ==========================
+Campaign camp = new Campaign(
+    Name = 'Laptop Marketing Campaign',
+    IsActive = true
+);
+insert camp;
+
+
+// ==========================
+// 2. CREATE LEAD
+// ==========================
+Lead lead = new Lead(
+    LastName = 'Sharma',
+    Company = 'ABC Pvt Ltd',
+    Status = 'Open - Not Contacted'
+);
+insert lead;
+
+
+// ==========================
+// 3. CREATE TASK FOR LEAD
+// ==========================
+Task leadTask = new Task(
+    Subject = 'Initial Lead Call',
+    Status = 'Not Started',
+    Priority = 'Normal',
+    WhoId = lead.Id
+);
+insert leadTask;
+
+
+// ==========================
+// 4. CONVERT LEAD
+// ==========================
+Database.LeadConvert lc = new Database.LeadConvert();
+lc.setLeadId(lead.Id);
+lc.setConvertedStatus('Qualified');
+
+Database.LeadConvertResult lcr = Database.convertLead(lc);
+
+Id accId = lcr.getAccountId();
+Id conId = lcr.getContactId();
+
+
+// ==========================
+// 5. CREATE PRODUCT
+// ==========================
+Product2 prod = new Product2(
+    Name = 'Laptop',
+    ProductCode = 'LP100',
+    IsActive = true
+);
+insert prod;
+
+
+// ==========================
+// 6. GET STANDARD PRICEBOOK
+// ==========================
+Pricebook2 stdPB = [
+    SELECT Id
+    FROM Pricebook2
+    WHERE IsStandard = true
+    LIMIT 1
+];
+
+
+// ==========================
+// 7. STANDARD PRICE ENTRY
+// ==========================
+PricebookEntry stdEntry = new PricebookEntry(
+    Pricebook2Id = stdPB.Id,
+    Product2Id = prod.Id,
+    UnitPrice = 50000,
+    IsActive = true
+);
+insert stdEntry;
+
+
+// ==========================
+// 8. CUSTOM PRICEBOOK
+// ==========================
+Pricebook2 customPB = new Pricebook2(
+    Name = 'Dealer Price Book',
+    IsActive = true
+);
+insert customPB;
+
+
+// ==========================
+// 9. CUSTOM PRICE ENTRY
+// ==========================
+PricebookEntry customEntry = new PricebookEntry(
+    Pricebook2Id = customPB.Id,
+    Product2Id = prod.Id,
+    UnitPrice = 45000,
+    IsActive = true
+);
+insert customEntry;
+
+
+// ==========================
+// 10. CREATE OPPORTUNITY
+// ==========================
+Opportunity opp = new Opportunity(
+    Name = 'Laptop Deal',
+    StageName = 'Prospecting',
+    CloseDate = Date.today().addDays(30),
+    AccountId = accId,
+    Pricebook2Id = customPB.Id
+);
+insert opp;
+
+
+// ==========================
+// 11. OPPORTUNITY PRODUCT
+// ==========================
+OpportunityLineItem oli = new OpportunityLineItem(
+    OpportunityId = opp.Id,
+    PricebookEntryId = customEntry.Id,
+    Quantity = 2,
+    UnitPrice = 45000
+);
+insert oli;
+
+
+// ==========================
+// 12. CREATE QUOTE
+// ==========================
+Quote q = new Quote(
+    Name = 'Laptop Quote',
+    OpportunityId = opp.Id,
+    Pricebook2Id = customPB.Id
+);
+insert q;
+
+
+// ==========================
+// 13. QUOTE LINE ITEM
+// ==========================
+QuoteLineItem qli = new QuoteLineItem(
+    QuoteId = q.Id,
+    PricebookEntryId = customEntry.Id,
+    Quantity = 2,
+    UnitPrice = 45000
+);
+insert qli;
+
+
+// ==========================
+// 14. CREATE ORDER
+// ==========================
+Order ord = new Order(
+    AccountId = accId,
+    EffectiveDate = Date.today(),
+    Status = 'Draft',
+    Pricebook2Id = customPB.Id
+);
+insert ord;
+
+
+// ==========================
+// 15. ORDER ITEM
+// ==========================
+OrderItem oi = new OrderItem(
+    OrderId = ord.Id,
+    PricebookEntryId = customEntry.Id,
+    Quantity = 2,
+    UnitPrice = 45000
+);
+insert oi;
+
+
+// ==========================
+// 16. ADD FILE TO OPPORTUNITY
+// ==========================
+ContentVersion file = new ContentVersion(
+    Title = 'Laptop Proposal',
+    PathOnClient = 'LaptopProposal.pdf',
+    VersionData = Blob.valueOf('Sample Proposal File')
+);
+insert file;
+
+ContentVersion cv = [
+    SELECT Id, ContentDocumentId
+    FROM ContentVersion
+    WHERE Id = :file.Id
+];
+
+ContentDocumentLink cdl = new ContentDocumentLink(
+    ContentDocumentId = cv.ContentDocumentId,
+    LinkedEntityId = opp.Id,
+    ShareType = 'V'
+);
+insert cdl;
+
+
+// ==========================
+// 17. ADD ATTACHMENT
+// ==========================
+Attachment att = new Attachment(
+    Name = 'Contract.txt',
+    ParentId = opp.Id,
+    Body = Blob.valueOf('Sample Contract Data')
+);
+insert att;
+
+
+// ==========================
+// 18. CREATE TASK FOR OPPORTUNITY
+// ==========================
+Task oppTask = new Task(
+    Subject = 'Follow up with customer',
+    Status = 'Not Started',
+    Priority = 'High',
+    WhatId = opp.Id
+);
+insert oppTask;
+
+System.debug('Complete Salesforce Sales Cycle Created');
+```
+
+---
+
+# Relationship Flow (Simplified)
+
+```
+Campaign
+   ↓
+CampaignMember
+   ↓
+Lead
+   ↓
+LeadConvert
+   ↓
+Account
+   ↓
+Contact
+   ↓
+Opportunity
+   ↓
+Product + PriceBook
+   ↓
+OpportunityLineItem
+   ↓
+Quote
+   ↓
+QuoteLineItem
+   ↓
+Contract
+   ↓
+Order
+   ↓
+OrderItem
+   ↓
+Case (Support)
+```
+
+Additional objects:
+
+```
+Task → Lead / Opportunity
+File (ContentDocument) → Opportunity
+Attachment → Opportunity
+```
+
+---
+
+💡 **Important Relationship Fields**
+
+| Object              | Relationship Field              |
+| ------------------- | ------------------------------- |
+| Lead                | CampaignId                      |
+| Opportunity         | AccountId                       |
+| OpportunityLineItem | OpportunityId, PricebookEntryId |
+| Quote               | OpportunityId                   |
+| Order               | AccountId                       |
+| Task                | WhoId / WhatId                  |
+| ContentDocumentLink | LinkedEntityId                  |
+| Attachment          | ParentId                        |
+
+---
+
+✅ Agar chaho to main tumhe **ek aur powerful version** bhi de sakta hoon jo:
+
+* **bulk-safe production level code**
+* **error handling**
+* **test class**
+* **trigger compatible**
+* **diagram with 25+ objects**
+
+Samjhata hai (ye real Salesforce project architecture hota hai).
+//DEEP code
+public class FullSalesCycleDemo {
+
+public static void runFlow(){
+
+/* -------------------------
+CAMPAIGN
+------------------------- */
+
+Campaign camp = new Campaign(
+    Name='Architect Campaign',
+    IsActive=true
+);
+insert camp;
+
+
+/* -------------------------
+LEAD
+------------------------- */
+
+Lead ld = new Lead(
+    FirstName='Rahul',
+    LastName='Sharma',
+    Company='ABC Pvt Ltd',
+    Status='Open - Not Contacted'
+);
+insert ld;
+
+
+/* -------------------------
+CAMPAIGN MEMBER
+------------------------- */
+
+CampaignMember cm = new CampaignMember(
+    CampaignId = camp.Id,
+    LeadId = ld.Id,
+    Status='Sent'
+);
+insert cm;
+
+
+/* -------------------------
+TASK ON LEAD
+------------------------- */
+
+Task t = new Task(
+    Subject='Lead Followup',
+    Status='Not Started',
+    Priority='Normal',
+    WhoId = ld.Id
+);
+insert t;
+
+
+/* -------------------------
+LEAD CONVERT
+------------------------- */
+
+Database.LeadConvert lc = new Database.LeadConvert();
+lc.setLeadId(ld.Id);
+lc.setConvertedStatus('Qualified');
+
+Database.LeadConvertResult lcr = Database.convertLead(lc);
+
+Id accId = lcr.getAccountId();
+Id conId = lcr.getContactId();
+
+
+/* -------------------------
+PRODUCT
+------------------------- */
+
+Product2 prod = new Product2(
+    Name='Architect Laptop',
+    ProductCode='ARC100',
+    IsActive=true
+);
+insert prod;
+
+
+/* -------------------------
+STANDARD PRICEBOOK
+------------------------- */
+
+Pricebook2 stdPB = [
+SELECT Id
+FROM Pricebook2
+WHERE IsStandard=true
+LIMIT 1
+];
+
+
+/* -------------------------
+PRICEBOOK ENTRY
+------------------------- */
+
+PricebookEntry pbe = new PricebookEntry(
+Pricebook2Id = stdPB.Id,
+Product2Id = prod.Id,
+UnitPrice = 60000,
+IsActive = true
+);
+insert pbe;
+
+
+/* -------------------------
+OPPORTUNITY
+------------------------- */
+
+Opportunity opp = new Opportunity(
+Name='Enterprise Deal',
+StageName='Prospecting',
+CloseDate=Date.today().addDays(30),
+AccountId=accId,
+Pricebook2Id = stdPB.Id
+);
+insert opp;
+
+
+/* -------------------------
+OPPORTUNITY LINE ITEM
+------------------------- */
+
+OpportunityLineItem oli = new OpportunityLineItem(
+OpportunityId=opp.Id,
+PricebookEntryId=pbe.Id,
+Quantity=2,
+UnitPrice=60000
+);
+insert oli;
+
+
+/* -------------------------
+QUOTE
+------------------------- */
+
+Quote qt = new Quote(
+Name='Enterprise Quote',
+OpportunityId=opp.Id,
+Pricebook2Id = stdPB.Id
+);
+insert qt;
+
+
+/* -------------------------
+QUOTE LINE ITEM
+------------------------- */
+
+QuoteLineItem qli = new QuoteLineItem(
+QuoteId = qt.Id,
+PricebookEntryId = pbe.Id,
+Quantity = 2,
+UnitPrice = 60000
+);
+insert qli;
+
+
+/* -------------------------
+CONTRACT
+------------------------- */
+
+Contract con = new Contract(
+AccountId = accId,
+StartDate = Date.today(),
+Status = 'Draft'
+);
+insert con;
+
+
+/* -------------------------
+ORDER
+------------------------- */
+
+Order ord = new Order(
+AccountId = accId,
+EffectiveDate = Date.today(),
+Status='Draft',
+Pricebook2Id = stdPB.Id
+);
+insert ord;
+
+
+/* -------------------------
+ORDER ITEM
+------------------------- */
+
+OrderItem oi = new OrderItem(
+OrderId = ord.Id,
+PricebookEntryId = pbe.Id,
+Quantity = 2,
+UnitPrice = 60000
+);
+insert oi;
+
+
+/* -------------------------
+CASE (SUPPORT)
+------------------------- */
+
+Case cs = new Case(
+AccountId = accId,
+ContactId = conId,
+Subject='Product Support',
+Status='New',
+Origin='Phone'
+);
+insert cs;
+
+
+/* -------------------------
+NOTE
+------------------------- */
+
+Note note = new Note(
+Title='Deal Notes',
+Body='Customer interested in enterprise license',
+ParentId = opp.Id
+);
+insert note;
+
+
+/* -------------------------
+FILE
+------------------------- */
+
+ContentVersion cv = new ContentVersion(
+Title='Proposal',
+PathOnClient='proposal.txt',
+VersionData = Blob.valueOf('Proposal File')
+);
+insert cv;
+
+ContentVersion cv2 = [
+SELECT ContentDocumentId
+FROM ContentVersion
+WHERE Id=:cv.Id
+];
+
+ContentDocumentLink link = new ContentDocumentLink(
+ContentDocumentId = cv2.ContentDocumentId,
+LinkedEntityId = opp.Id,
+ShareType='V'
+);
+insert link;
+
+
+/* -------------------------
+ATTACHMENT
+------------------------- */
+
+Attachment att = new Attachment(
+Name='Contract.txt',
+ParentId=opp.Id,
+Body=Blob.valueOf('Contract Content')
+);
+insert att;
+
+}
+
+}
+
+
+
+Theek hai 👍
+Ab main tumhe **proper architect-style Apex code** dunga jisme:
+
+* **Profile query**
+* **User creation**
+* **UserInfo class usage**
+* **OwnerId usage**
+* **Permission Set**
+* **Permission Set Assignment**
+
+Ye sab correctly use hota hai **Salesforce Sales Cloud** aur Apex development me.
+
+---
+
+# 1️⃣ Profile Query (Best Practice)
+
+⚠️ **Profile Apex se create nahi kar sakte**, isliye existing profile query karte hain.
+
+```apex
+Profile p = [
+    SELECT Id, Name
+    FROM Profile
+    WHERE Name = 'Standard User'
+    LIMIT 1
+];
+```
+
+Required field: `Name`
+
+---
+
+# 2️⃣ Create User (Correct Required Fields)
+
+```apex
+User u = new User(
+
+    FirstName = 'Rahul',
+    LastName = 'Sharma',
+
+    Email = 'rahul@testorg.com',
+
+    Username = 'rahul'+DateTime.now().getTime()+'@testorg.com',
+
+    Alias = 'rshrm',
+
+    TimeZoneSidKey = 'Asia/Kolkata',
+
+    LocaleSidKey = 'en_US',
+
+    EmailEncodingKey = 'UTF-8',
+
+    LanguageLocaleKey = 'en_US',
+
+    ProfileId = p.Id
+
+);
+
+insert u;
+```
+
+### Required Fields for User
+
+| Field             | Description            |
+| ----------------- | ---------------------- |
+| Username          | Unique login           |
+| Alias             | 8 character short name |
+| Email             | User email             |
+| ProfileId         | Security profile       |
+| TimeZoneSidKey    | Timezone               |
+| LocaleSidKey      | Locale                 |
+| EmailEncodingKey  | Encoding               |
+| LanguageLocaleKey | Language               |
+
+---
+
+# 3️⃣ Permission Set Create
+
+```apex
+PermissionSet ps = new PermissionSet(
+
+    Name = 'Sales_Access',
+
+    Label = 'Sales Access Permission'
+
+);
+
+insert ps;
+```
+
+---
+
+# 4️⃣ Assign Permission Set to User
+
+```apex
+PermissionSetAssignment psa = new PermissionSetAssignment(
+
+    AssigneeId = u.Id,
+
+    PermissionSetId = ps.Id
+
+);
+
+insert psa;
+```
+
+Relationship:
+
+```
+User
+  ↓
+PermissionSetAssignment
+  ↓
+PermissionSet
+```
+
+---
+
+# 5️⃣ Using UserInfo Class (Current User Info)
+
+`UserInfo` class runtime user details deti hai.
+
+Example:
+
+```apex
+System.debug('Current User Id: ' + UserInfo.getUserId());
+
+System.debug('User Name: ' + UserInfo.getUserName());
+
+System.debug('User Profile Id: ' + UserInfo.getProfileId());
+
+System.debug('User TimeZone: ' + UserInfo.getTimeZone());
+```
+
+Common methods:
+
+| Method                       | Description      |
+| ---------------------------- | ---------------- |
+| UserInfo.getUserId()         | Current user id  |
+| UserInfo.getUserName()       | Current username |
+| UserInfo.getProfileId()      | Current profile  |
+| UserInfo.getOrganizationId() | Org id           |
+
+---
+
+# 6️⃣ OwnerId Usage Example
+
+Salesforce me almost sab objects me **OwnerId** hota hai.
+
+Example: Opportunity owner set karna.
+
+```apex
+Opportunity opp = new Opportunity(
+
+    Name = 'Enterprise Deal',
+
+    StageName = 'Prospecting',
+
+    CloseDate = Date.today().addDays(30),
+
+    OwnerId = u.Id
+
+);
+
+insert opp;
+```
+
+Agar current user owner banana ho:
+
+```apex
+OwnerId = UserInfo.getUserId();
+```
+
+---
+
+# 7️⃣ Query Owner Information
+
+```apex
+Opportunity opp = [
+
+SELECT Id, Name, OwnerId, Owner.Name
+
+FROM Opportunity
+
+LIMIT 1
+];
+
+System.debug(opp.Owner.Name);
+```
+
+---
+
+# 8️⃣ Full Security Relationship
+
+```
+Profile
+   ↓
+User
+   ↓
+PermissionSetAssignment
+   ↓
+PermissionSet
+```
+
+Aur records me:
+
+```
+User
+  ↓
+OwnerId
+  ↓
+Record Owner
+```
+
+---
+
+# 9️⃣ Example (Create Account with Owner)
+
+```apex
+Account acc = new Account(
+
+    Name = 'Tech Corp',
+
+    OwnerId = u.Id
+
+);
+
+insert acc;
+```
+
+---
+
+# 🔥 Architect Tip (Very Important)
+
+Enterprise orgs me security hierarchy aise hoti hai:
+
+```
+Role
+   ↓
+Profile
+   ↓
+User
+   ↓
+Permission Set
+   ↓
+Permission Set Group
+```
+
+Aur access control hota hai:
+
+```
+OwnerId
+Role Hierarchy
+Sharing Rules
+Manual Sharing
+```
+
+---
+
+✅ Agar chaho to main tumhe **Salesforce ka full 50+ object architect diagram** bhi dikha sakta hoon jisme:
+
+* Sales Cloud
+* Service Cloud
+* CPQ
+* Order Management
+* Security Model
+* Data Model
+
+Ek hi diagram me clear ho jata hai jo **Salesforce Architect interview** me pucha jata hai.
+Salesforce me **Role create karna Apex se technically possible hai** using the **Role object: UserRole**.
+Role ka use **record access via role hierarchy** me hota hai (Owner → Manager → VP etc.).
+
+Neeche **proper Apex examples** diye gaye hain:
+
+---
+
+# 1️⃣ Create Role by Apex
+
+```apex
+UserRole salesManagerRole = new UserRole(
+
+    Name = 'Sales Manager',
+    DeveloperName = 'Sales_Manager',
+
+    // Parent role (optional)
+    ParentRoleId = null
+
+);
+
+insert salesManagerRole;
+```
+
+### Important Fields
+
+| Field         | Required | Description    |
+| ------------- | -------- | -------------- |
+| Name          | ✅        | Role name      |
+| DeveloperName | ✅        | API name       |
+| ParentRoleId  | ❌        | Role hierarchy |
+
+---
+
+# 2️⃣ Create Child Role (Hierarchy)
+
+```apex
+UserRole salesRepRole = new UserRole(
+
+    Name = 'Sales Representative',
+
+    DeveloperName = 'Sales_Rep',
+
+    ParentRoleId = salesManagerRole.Id
+
+);
+
+insert salesRepRole;
+```
+
+Hierarchy ban jayega:
+
+```
+Sales Manager
+      ↓
+Sales Representative
+```
+
+---
+
+# 3️⃣ Assign Role to User
+
+Role **User object ke `UserRoleId` field se assign hota hai**.
+
+```apex
+User u = new User(
+
+FirstName='Rahul',
+LastName='Sharma',
+
+Email='rahul@test.com',
+
+Username='rahul'+DateTime.now().getTime()+'@test.com',
+
+Alias='rshrm',
+
+TimeZoneSidKey='Asia/Kolkata',
+
+LocaleSidKey='en_US',
+
+EmailEncodingKey='UTF-8',
+
+LanguageLocaleKey='en_US',
+
+ProfileId=p.Id,
+
+UserRoleId = salesRepRole.Id
+
+);
+
+insert u;
+```
+
+---
+
+# 4️⃣ Query Role Hierarchy
+
+```apex
+List<UserRole> roles = [
+
+SELECT Id, Name, ParentRoleId
+
+FROM UserRole
+
+];
+
+System.debug(roles);
+```
+
+---
+
+# 5️⃣ Check Current User Role
+
+```apex
+System.debug(UserInfo.getUserRoleId());
+```
+
+Example:
+
+```apex
+User u = [
+
+SELECT Id, Name, UserRole.Name
+
+FROM User
+
+WHERE Id = :UserInfo.getUserId()
+
+];
+
+System.debug(u.UserRole.Name);
+```
+
+---
+
+# 6️⃣ Role Hierarchy Architecture
+
+```
+CEO
+  ↓
+VP Sales
+  ↓
+Sales Manager
+  ↓
+Sales Rep
+```
+
+Record access:
+
+```
+Sales Rep owns Opportunity
+       ↓
+Manager can see it
+```
+
+---
+
+# 7️⃣ Example: Create Account with Role Owner
+
+```apex
+Account acc = new Account(
+
+Name = 'Tech Corp',
+
+OwnerId = u.Id
+
+);
+
+insert acc;
+```
+
+Access via hierarchy:
+
+```
+Owner → Role → Manager visibility
+```
+
+---
+
+# 8️⃣ Full Security Model
+
+Salesforce security layers:
+
+```
+Organization
+   ↓
+Role Hierarchy
+   ↓
+Profile
+   ↓
+Permission Set
+   ↓
+Sharing Rules
+   ↓
+Record Ownership
+```
+
+---
+
+💡 **Architect Insight**
+
+Roles mainly control **record visibility**, not permissions.
+
+Permissions come from:
+
+* Profile
+* Permission Set
+
+---
+
+✅ Agar chaho to main tumhe **Salesforce ka FULL Security Architecture Code** bhi bana ke de sakta hoon jisme:
+
+* Role hierarchy
+* Profiles
+* Permission sets
+* Sharing rules
+* Manual sharing
+* Apex sharing
+
+
