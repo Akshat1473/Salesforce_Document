@@ -1,0 +1,811 @@
+Below is an **improved, MAP-optimized Salesforce Trigger Pattern Table**.
+Goal: design **handler logic that uses `Map` wherever possible**, because in **Salesforce Apex** this gives:
+
+* O(1) lookup
+* cleaner bulk processing
+* fewer nested loops
+* safer governor-limit usage
+
+This version still **covers all 97 problems**, but the **logic prefers Map-driven flows** used by senior developers.
+
+You can **copy-paste this text for notes**.
+
+---
+
+# Salesforce Trigger Pattern Table (Map-Optimized Handler Design)
+
+---
+
+PATTERN 1 — FIELD AUTO POPULATION
+Problems
+1, 2, 9, 12, 22, 25, 61
+
+Trigger Event
+before insert / before update
+
+Handler Method
+beforeInsert(Map<Id,SObject> newMap)
+
+Data Structures
+Map + List
+
+Map Usage
+Use `Trigger.newMap` so lookup is easier if related data is needed.
+
+Flow
+
+1 Loop records from map.values()
+2 Apply field rule
+3 Save values before DML
+
+Example
+
+Trigger
+
+```
+trigger LeadTrigger on Lead (before insert){
+    LeadHandler.setRating(Trigger.newMap);
+}
+```
+
+Handler
+
+```
+public class LeadHandler{
+
+    public static void setRating(Map<Id,Lead> newMap){
+
+        for(Lead l : newMap.values()){
+
+            if(l.LeadSource == 'Web'){
+                l.Rating = 'Cold';
+            }else{
+                l.Rating = 'Hot';
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+PATTERN 2 — VALIDATION / PREVENT ACTION
+Problems
+7,16,17,18,19,20,65,66,85,89,97
+
+Trigger Event
+before insert / before update / before delete
+
+Handler Method
+validateRecords(Map<Id,SObject> records)
+
+Data Structures
+Map
+
+Flow
+
+1 Loop map.values()
+2 Check rule
+3 addError()
+
+Example
+
+```
+public static void validateDelete(Map<Id,Account> oldMap){
+
+    for(Account acc : oldMap.values()){
+
+        if(acc.Active__c){
+            acc.addError('Active Account cannot be deleted');
+        }
+
+    }
+
+}
+```
+
+Map Advantage
+Direct access to records by Id if needed.
+
+---
+
+PATTERN 3 — CREATE CHILD RECORDS
+Problems
+3,10,11,35,38,41,55,58,59,61,69,76,86
+
+Trigger Event
+after insert
+
+Handler Method
+createChildren(Map<Id,Parent> parentMap)
+
+Data Structures
+Map + List
+
+Flow
+
+1 Loop parentMap.values()
+2 Build child list
+3 Insert list
+
+Example
+
+```
+public static void createContacts(Map<Id,Account> newMap){
+
+    List<Contact> cons = new List<Contact>();
+
+    for(Account acc : newMap.values()){
+
+        cons.add(new Contact(
+            LastName = acc.Name,
+            AccountId = acc.Id
+        ));
+
+    }
+
+    insert cons;
+
+}
+```
+
+---
+
+PATTERN 4 — UPDATE PARENT FROM CHILD
+Problems
+4,13,28,42,43,46,53,54,73,88
+
+Trigger Event
+after insert / update / delete / undelete
+
+Handler Method
+updateParent(Map<Id,Child> newMap)
+
+Data Structures
+Map + Set
+
+Flow
+
+1 Collect parent IDs
+2 Query parent records into Map
+3 Aggregate child data
+4 Update parent list
+
+Example
+
+```
+public static void updateAccountTotals(Map<Id,Opportunity> oppMap){
+
+    Set<Id> accIds = new Set<Id>();
+
+    for(Opportunity o : oppMap.values()){
+        accIds.add(o.AccountId);
+    }
+
+    Map<Id,Account> accMap =
+        new Map<Id,Account>(
+        [SELECT Id,Total_Opportunity_Amount__c
+         FROM Account
+         WHERE Id IN :accIds]
+    );
+
+}
+```
+
+---
+
+PATTERN 5 — UPDATE CHILD FROM PARENT
+Problems
+8,14,15,29,39,47,70
+
+Trigger Event
+after update
+
+Handler Method
+syncChildren(Map<Id,Parent> newMap, Map<Id,Parent> oldMap)
+
+Data Structures
+Map + Set
+
+Flow
+
+1 Detect field change
+2 Collect parentIds
+3 Query children
+4 Use parent map for lookup
+
+Example
+
+```
+for(Contact c : contacts){
+
+    Account acc = newMap.get(c.AccountId);
+    c.Phone = acc.Phone;
+
+}
+```
+
+Map Benefit
+No nested loops.
+
+---
+
+PATTERN 6 — DUPLICATE CHECK
+Problems
+16,20,33,75,83,97
+
+Trigger Event
+before insert / before update
+
+Handler Method
+checkDuplicates(Map<Id,SObject> newMap)
+
+Data Structures
+Set + Map
+
+Flow
+
+1 Collect unique values
+2 Query existing records into Map
+3 Compare quickly
+
+Example
+
+```
+Map<String,Lead> emailLeadMap =
+    new Map<String,Lead>();
+
+for(Lead l : existingLeads){
+    emailLeadMap.put(l.Email,l);
+}
+
+if(emailLeadMap.containsKey(newLead.Email)){
+    newLead.addError('Duplicate email');
+}
+```
+
+---
+
+PATTERN 7 — EMAIL NOTIFICATION
+Problems
+6,27,34,36,37,39,52
+
+Trigger Event
+after insert / update / delete
+
+Handler Method
+sendEmails(Map<Id,SObject> records)
+
+Data Structures
+List
+
+Flow
+
+1 Loop map.values()
+2 Create email
+3 Send batch
+
+---
+
+PATTERN 8 — AGGREGATE CALCULATION
+Problems
+13,28,42,46,53,73,77,79
+
+Trigger Event
+after insert/update/delete
+
+Handler Method
+calculateTotals()
+
+Data Structures
+Set + Map
+
+Flow
+
+1 Collect parent IDs
+2 Aggregate SOQL
+3 Map<Id,value>
+4 Update parent
+
+Example
+
+```
+Map<Id,Decimal> accTotals = new Map<Id,Decimal>();
+```
+
+---
+
+PATTERN 9 — FIELD CHANGE DETECTION
+Problems
+12,24,26,39,60
+
+Trigger Event
+after update
+
+Handler Method
+handleFieldChange(Map newMap, Map oldMap)
+
+Data Structures
+Map
+
+Flow
+
+1 Compare values
+
+```
+if(newAcc.Phone != oldMap.get(newAcc.Id).Phone)
+```
+
+---
+
+PATTERN 10 — CASCADE UPDATE / DELETE
+Problems
+40,45,67
+
+Trigger Event
+after delete
+
+Data Structures
+Set + Map
+
+Flow
+
+1 Collect related IDs
+2 Query records
+3 Update/Delete
+
+---
+
+PATTERN 11 — BUSINESS RULE ACROSS OBJECTS
+Problems
+21,56,57,71,72
+
+Trigger Event
+after insert/update
+
+Data Structures
+Map + Set
+
+Flow
+
+1 Collect related IDs
+2 Query objects into maps
+3 Apply business rules
+
+---
+
+PATTERN 12 — DOCUMENT / ATTACHMENT EMAIL
+Problems
+34
+
+Trigger Event
+after insert
+
+Data Structures
+Map + List
+
+Flow
+
+1 Query document
+2 Attach to email
+
+---
+
+PATTERN 13 — CUSTOM OBJECT RELATIONSHIP
+Problems
+30,31,68
+
+Trigger Event
+after insert/delete/undelete
+
+Data Structures
+Map + Set
+
+Flow
+
+1 Collect parentIds
+2 Query parentMap
+3 Update fields
+
+---
+
+PATTERN 14 — OPPORTUNITY LINE ITEM LOGIC
+Problems
+32,37,40,41,56,57,77,79
+
+Trigger Event
+after insert / delete
+
+Data Structures
+Map + Set
+
+Flow
+
+1 Collect OpportunityId
+2 Query OLI records
+3 Update Opportunity / Account
+
+---
+
+# MAP-CENTRIC TRIGGER TEMPLATE (BEST PRACTICE)
+
+```
+trigger AccountTrigger on Account(
+before insert,
+before update,
+before delete,
+after insert,
+after update,
+after delete,
+after undelete
+){
+
+    AccountHandler handler = new AccountHandler();
+
+    if(Trigger.isBefore){
+
+        if(Trigger.isInsert)
+            handler.beforeInsert(Trigger.newMap);
+
+        if(Trigger.isUpdate)
+            handler.beforeUpdate(Trigger.newMap,Trigger.oldMap);
+
+        if(Trigger.isDelete)
+            handler.beforeDelete(Trigger.oldMap);
+
+    }
+
+    if(Trigger.isAfter){
+
+        if(Trigger.isInsert)
+            handler.afterInsert(Trigger.newMap);
+
+        if(Trigger.isUpdate)
+            handler.afterUpdate(Trigger.newMap,Trigger.oldMap);
+
+        if(Trigger.isDelete)
+            handler.afterDelete(Trigger.oldMap);
+
+    }
+
+}
+```
+
+---
+
+# MAP-FIRST DATA FLOW (Senior Apex Pattern)
+
+```
+Trigger.newMap
+        ↓
+Collect Parent IDs (Set)
+        ↓
+Query Records → Map<Id,Object>
+        ↓
+Business Logic
+        ↓
+Prepare List for DML
+```
+
+---
+
+# KEY INTERVIEW INSIGHT
+
+Your **97 questions reduce to 14 patterns**, and **all 14 can be implemented using a Map-first handler design**.
+
+Maps help because they:
+
+• avoid nested loops
+• reduce SOQL calls
+• simplify parent-child lookup
+• scale for bulk triggers
+
+---
+
+If you want, I can also build **a single advanced Salesforce Trigger Framework (like used in real companies) that automatically handles all 14 patterns with reusable handler classes**, which makes solving those **97 problems almost trivial.**
+Below is a **clear, professional explanation of Opportunity Line Item trigger patterns** used in **Salesforce Apex**.
+Your list contains several **OpportunityLineItem (OLI)** problems (32, 37, 40, 41, 56, 57, 77, 79).
+All of them follow **4 core patterns**.
+
+I’ll show them in a **table + handler approach + Map-optimized flow** so it’s easy to reuse.
+
+---
+
+# Opportunity Line Item Trigger Patterns
+
+| Pattern                      | Problems | Trigger Event              | Main Objects            | Purpose                   |
+| ---------------------------- | -------- | -------------------------- | ----------------------- | ------------------------- |
+| Sequence / Serial Generation | 32       | after insert               | OpportunityLineItem     | Generate serial numbers   |
+| Parent Update from OLI       | 77,79    | after insert/delete/update | Account / Opportunity   | Update totals/count       |
+| Product Inventory Update     | 57       | after insert/update/delete | Product2                | Deduct available quantity |
+| Related Record Creation      | 37,41    | after insert               | Quote / Email / Contact | Create related records    |
+
+---
+
+# MASTER TRIGGER (OLI)
+
+```apex id="oli_trigger_01"
+trigger OpportunityLineItemTrigger on OpportunityLineItem(
+    after insert,
+    after update,
+    after delete
+){
+
+    OLIHandler handler = new OLIHandler();
+
+    if(Trigger.isAfter){
+
+        if(Trigger.isInsert){
+            handler.handleAfterInsert(Trigger.newMap);
+        }
+
+        if(Trigger.isUpdate){
+            handler.handleAfterUpdate(Trigger.newMap,Trigger.oldMap);
+        }
+
+        if(Trigger.isDelete){
+            handler.handleAfterDelete(Trigger.oldMap);
+        }
+
+    }
+
+}
+```
+
+---
+
+# Pattern 1 — Serial Number Generation (Problem 32)
+
+Goal
+If 3 products added → serial numbers **1,2,3**
+If product deleted → next product should still be **4**
+
+### Logic Flow
+
+1 Collect OpportunityIds
+2 Query existing OLI count
+3 Generate serial number
+4 Update new records
+
+### Handler Example
+
+```apex id="oli_handler_serial"
+public static void assignSerialNumbers(
+    Map<Id,OpportunityLineItem> newMap
+){
+
+    Set<Id> oppIds = new Set<Id>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+        oppIds.add(oli.OpportunityId);
+    }
+
+    Map<Id,Integer> countMap = new Map<Id,Integer>();
+
+    for(AggregateResult ar :
+        [SELECT OpportunityId oppId, COUNT(Id) cnt
+         FROM OpportunityLineItem
+         WHERE OpportunityId IN :oppIds
+         GROUP BY OpportunityId]){
+
+        countMap.put(
+            (Id)ar.get('oppId'),
+            (Integer)ar.get('cnt')
+        );
+    }
+
+    List<OpportunityLineItem> updates =
+        new List<OpportunityLineItem>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+
+        Integer seq = countMap.get(oli.OpportunityId);
+
+        oli.Serial_No__c = String.valueOf(seq);
+
+        updates.add(oli);
+    }
+
+    update updates;
+}
+```
+
+---
+
+# Pattern 2 — Update Parent Totals (Problems 77,79)
+
+Example
+Update **Total Products / Total Opportunity Amount on Account**
+
+### Flow
+
+1 Collect OpportunityIds
+2 Query Opportunity → AccountId
+3 Query OLIs
+4 Calculate totals
+5 Update Account
+
+### Handler Example
+
+```apex id="oli_handler_totals"
+public static void updateAccountTotals(
+    Map<Id,OpportunityLineItem> newMap
+){
+
+    Set<Id> oppIds = new Set<Id>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+        oppIds.add(oli.OpportunityId);
+    }
+
+    Map<Id,Opportunity> oppMap =
+        new Map<Id,Opportunity>(
+        [SELECT Id,AccountId
+         FROM Opportunity
+         WHERE Id IN :oppIds]);
+
+    Set<Id> accIds = new Set<Id>();
+
+    for(Opportunity opp : oppMap.values()){
+        accIds.add(opp.AccountId);
+    }
+
+    Map<Id,Decimal> totalMap = new Map<Id,Decimal>();
+
+    for(AggregateResult ar :
+        [SELECT Opportunity.AccountId accId,
+         SUM(TotalPrice) total
+         FROM OpportunityLineItem
+         WHERE Opportunity.AccountId IN :accIds
+         GROUP BY Opportunity.AccountId]){
+
+        totalMap.put(
+            (Id)ar.get('accId'),
+            (Decimal)ar.get('total')
+        );
+    }
+
+    List<Account> updates = new List<Account>();
+
+    for(Id accId : totalMap.keySet()){
+
+        updates.add(new Account(
+            Id = accId,
+            Total_Opportunity_Amount__c = totalMap.get(accId)
+        ));
+
+    }
+
+    update updates;
+}
+```
+
+---
+
+# Pattern 3 — Product Inventory Deduction (Problem 57)
+
+Goal
+Reduce **Available Quantity** in Product2 when product sold.
+
+### Flow
+
+1 Collect ProductIds
+2 Query Product2 records
+3 Deduct quantity
+4 Update products
+
+### Handler Example
+
+```apex id="oli_handler_inventory"
+public static void updateInventory(
+    Map<Id,OpportunityLineItem> newMap
+){
+
+    Set<Id> productIds = new Set<Id>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+        productIds.add(oli.PricebookEntry.Product2Id);
+    }
+
+    Map<Id,Product2> productMap =
+        new Map<Id,Product2>(
+        [SELECT Id,Available_Quantity__c
+         FROM Product2
+         WHERE Id IN :productIds]);
+
+    List<Product2> updates = new List<Product2>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+
+        Product2 prod =
+            productMap.get(oli.PricebookEntry.Product2Id);
+
+        prod.Available_Quantity__c -= oli.Quantity;
+
+        updates.add(prod);
+    }
+
+    update updates;
+}
+```
+
+---
+
+# Pattern 4 — Create Related Records (Problems 37,41)
+
+Example
+Create **Quote when OLI created**
+
+### Flow
+
+1 Collect OpportunityIds
+2 Query opportunities
+3 Create quotes
+
+### Handler Example
+
+```apex id="oli_handler_quote"
+public static void createQuotes(
+    Map<Id,OpportunityLineItem> newMap
+){
+
+    Set<Id> oppIds = new Set<Id>();
+
+    for(OpportunityLineItem oli : newMap.values()){
+        oppIds.add(oli.OpportunityId);
+    }
+
+    List<Quote> quotes = new List<Quote>();
+
+    for(Id oppId : oppIds){
+
+        quotes.add(new Quote(
+            OpportunityId = oppId,
+            Name = 'Auto Quote'
+        ));
+
+    }
+
+    insert quotes;
+}
+```
+
+---
+
+# OLI Data Structure Flow (Important)
+
+Most **OpportunityLineItem triggers follow this structure**
+
+```
+Trigger.newMap
+     ↓
+Collect OpportunityIds
+     ↓
+Query Opportunity → Map
+     ↓
+Query OLIs / Products
+     ↓
+Process Logic
+     ↓
+Update Parent / Product
+```
+
+---
+
+# Interview Insight
+
+Almost every **OpportunityLineItem trigger question** falls into **these 4 categories**:
+
+1️⃣ Serial numbering
+2️⃣ Parent aggregation
+3️⃣ Inventory deduction
+4️⃣ Related record creation
+
+Once you recognize the **pattern**, the code becomes easy.
+
+---
+
+✅ If you want, I can also show the **ULTIMATE OLI trigger framework used by senior Salesforce developers** (with recursion control, service classes, and reusable utilities).
