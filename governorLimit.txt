@@ -1,0 +1,155 @@
+Here’s a **clean, interview-ready table** summarizing the **Apex Governor Limits** from the data you provided, along with a simple explanation of how to use this table in practice.
+
+---
+
+# 📊 Apex Governor Limits Table
+
+## 🔹 1. Per-Transaction Apex Limits
+
+| Description                            | Synchronous Limit             | Asynchronous Limit |
+| -------------------------------------- | ----------------------------- | ------------------ |
+| SOQL queries                           | 100                           | 200                |
+| Records retrieved by SOQL              | 50,000                        | 50,000             |
+| Records via `Database.getQueryLocator` | 10,000                        | 10,000             |
+| SOSL queries                           | 20                            | 20                 |
+| SOSL records                           | 2,000                         | 2,000              |
+| DML statements                         | 150                           | 150                |
+| DML processed records                  | 10,000                        | 10,000             |
+| Callouts                               | 100                           | 100                |
+| Callout timeout                        | 120 sec                       | 120 sec            |
+| Future methods                         | 50                            | 0 (batch/future)   |
+| Queueable jobs                         | 50                            | 1                  |
+| SendEmail methods                      | 10                            | 10                 |
+| Heap size                              | 6 MB                          | 12 MB              |
+| CPU time                               | 10,000 ms                     | 60,000 ms          |
+| Transaction time limit                 | 10 minutes                    | 10 minutes         |
+| Push notifications                     | 10 calls / 2000 notifications | Same               |
+| EventBus.publish                       | 150                           | 150                |
+
+---
+
+## 🔹 2. Batch Apex Limits (Important for interviews)
+
+| Description                    | Limit                  |
+| ------------------------------ | ---------------------- |
+| Active/Queued batch jobs       | 5                      |
+| Batch start method concurrency | 1                      |
+| Batch job queue (Holding)      | 100                    |
+| Max records per `QueryLocator` | 50 million             |
+| Batch size                     | 1 – 2000 (default 200) |
+
+---
+
+## 🔹 3. Lightning Platform Limits (Org-level)
+
+| Description               | Limit                              |
+| ------------------------- | ---------------------------------- |
+| Async Apex executions/day | 250,000 OR (licenses × 200)        |
+| Scheduled Apex jobs       | 100 (Dev org: 5)                   |
+| Long-running transactions | Based on licenses (min 10, max 50) |
+| Batch jobs queued/active  | 5                                  |
+| Batch jobs in holding     | 100                                |
+| Test classes per day      | 500+ (depends on org)              |
+
+---
+
+## 🔹 4. Static Apex Limits
+
+| Description               | Limit                        |
+| ------------------------- | ---------------------------- |
+| Apex trigger batch size   | 200                          |
+| Platform event batch size | 2000                         |
+| Max class size            | 1 million characters         |
+| Max trigger size          | 1 million characters         |
+| Code size per org         | 6 MB                         |
+| Method size               | 65,535 bytecode instructions |
+| Callout timeout           | 10 sec                       |
+| Callout size              | 6 MB (sync) / 12 MB (async)  |
+
+---
+
+## 🔹 5. Miscellaneous Limits
+
+| Area                         | Limit                       |
+| ---------------------------- | --------------------------- |
+| Email recipients/day         | 5,000 external              |
+| Push notifications/hour      | 20,000 iOS / 10,000 Android |
+| Event reports                | 20k (user) / 100k (admin)   |
+| SOQL per batch (Data.com)    | 200 queries                 |
+| Future calls per transaction | 10                          |
+| Recursion depth              | 16                          |
+
+---
+
+# 🧠 How to Use This Table (Very Important)
+
+### ✅ 1. In Coding (Real Use Case)
+
+* If you write Apex:
+
+  * Always check **SOQL ≤ 100**
+  * Always check **DML ≤ 150**
+* Use:
+
+  ```apex
+  Limits.getQueries()
+  Limits.getLimitDmlStatements()
+  ```
+
+  to monitor limits in code.
+
+---
+
+### ✅ 2. In Batch Apex
+
+* Each batch chunk = **new transaction**
+* Limits reset for each `execute()` method
+
+👉 Example:
+
+```apex
+global void execute(Database.BatchableContext bc, List<Account> scope) {
+    // SOQL, DML limits apply per chunk
+}
+```
+
+---
+
+### ✅ 3. In Interview Questions
+
+You can answer like this:
+
+👉 **Q: How many SOQL queries allowed?**
+→ 100 synchronous, 200 asynchronous
+
+👉 **Q: Batch Apex limits?**
+→ 5 active jobs, 200 batch size default
+
+👉 **Q: Why governor limits exist?**
+→ To prevent one user from consuming all shared resources in multi-tenant system
+
+---
+
+### ✅ 4. In Debugging Errors
+
+If you see errors like:
+
+* `Too many SOQL queries: 101`
+* `Too many DML statements`
+
+👉 Check this table → identify which limit is exceeded
+
+---
+
+# 🔥 Pro Tip (Most Important for Interviews)
+
+👉 **Salesforce is multi-tenant → Governor limits ensure fair usage**
+
+---
+
+If you want, I can also:
+✅ Convert this into a **1-page cheat sheet PDF**
+✅ Give **top 20 interview questions on governor limits**
+✅ Explain **real scenarios where limits are hit**
+
+Just tell me 👍
