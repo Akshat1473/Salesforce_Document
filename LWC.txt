@@ -1,0 +1,512 @@
+ 🔥 LWC COMPLETE BEGINNER SHEET (WITH PROPERTIES)
+
+## 🔷 1. TEMPLATE & DIRECTIVES
+
+| Tag                      | Important Properties          | HTML Example                                                                                    | JS                              | Hinglish Use                   |
+| ------------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- | ------------------------------ |
+| `<template>`             | root                          | `html<br><template><h1>Hello</h1></template>`                                                   | ❌                               | Har component ka base hota hai |
+| `<template lwc:if>`      | `lwc:if={condition}`          | `html<br><template lwc:if={show}><p>Visible</p></template>`                                     | `js<br>show=true;`              | Condition true ho tab show     |
+| `<template lwc:elseif>`  | `lwc:elseif={cond}`           | `html<br><template lwc:elseif={alt}></template>`                                                | `js<br>alt=false;`              | Multiple conditions            |
+| `<template lwc:else>`    | no property                   | `html<br><template lwc:else>Else</template>`                                                    | ❌                               | Default fallback               |
+| `<template for:each>`    | `for:each`, `for:item`, `key` | `html<br><template for:each={list} for:item="item"><p key={item.id}>{item.name}</p></template>` | `js<br>list=[{id:1,name:'A'}];` | Loop chalana                   |
+| `<template iterator:it>` | `iterator:name`               | `html<br><template iterator:it={list}><p key={it.value.id}>{it.value.name}</p></template>`      | ❌                               | First/last detect karna        |
+| `<slot>`                 | `name`                        | `html<br><slot name="header"></slot>`                                                           | ❌                               | Parent se content lana         |
+
+---
+
+## 🔷 2. LIGHTNING BASE COMPONENTS
+
+| Tag                       | Important Properties                 | HTML Example                                                                                    | JS                                             | Hinglish Use          |
+| ------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------- |
+| `<lightning-button>`      | `label`, `variant`, `onclick`        | `html<br><lightning-button label="Save" variant="brand"></lightning-button>`                    | ❌                                              | Button banana         |
+| `<lightning-input>`       | `label`, `value`, `type`, `onchange` | `html<br><lightning-input label="Name" onchange={handle}></lightning-input>`                    | `js<br>handle(e){console.log(e.target.value)}` | User input lena       |
+| `<lightning-card>`        | `title`, `icon-name`                 | `html<br><lightning-card title="Account"></lightning-card>`                                     | ❌                                              | UI ko card me dikhana |
+| `<lightning-datatable>`   | `data`, `columns`, `key-field`       | `html<br><lightning-datatable data={data} columns={cols} key-field="Id"></lightning-datatable>` | `js<br>data=[]; cols=[];`                      | Table view            |
+| `<lightning-layout>`      | `multiple-rows`                      | `html<br><lightning-layout></lightning-layout>`                                                 | ❌                                              | Layout banana         |
+| `<lightning-layout-item>` | `size`, `padding`                    | `html<br><lightning-layout-item size="6"></lightning-layout-item>`                              | ❌                                              | Grid system           |
+
+---
+
+## 🔷 3. LDS (DATA SERVICE TAGS)
+
+| Tag                            | Important Properties                   | HTML Example                                                                                  | JS                        | Hinglish Use   |
+| ------------------------------ | -------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------- | -------------- |
+| `<lightning-record-form>`      | `record-id`, `object-api-name`, `mode` | `html<br><lightning-record-form object-api-name="Account"></lightning-record-form>`           | ❌                         | Quick form     |
+| `<lightning-record-edit-form>` | `object-api-name`, `onsuccess`         | `html<br><lightning-record-edit-form object-api-name="Account"></lightning-record-edit-form>` | `js<br>handleSuccess(){}` | Custom form    |
+| `<lightning-record-view-form>` | `record-id`                            | `html<br><lightning-record-view-form record-id={id}></lightning-record-view-form>`            | ❌                         | Read only view |
+
+---
+
+## 🔷 4. LWC SPECIAL DIRECTIVES
+
+| Directive    | Property           | HTML Example                                           | JS                        | Hinglish Use      |
+| ------------ | ------------------ | ------------------------------------------------------ | ------------------------- | ----------------- |
+| `lwc:ref`    | `lwc:ref="name"`   | `html<br><div lwc:ref="box"></div>`                    | `js<br>this.refs.box`     | DOM access        |
+| `lwc:spread` | `lwc:spread={obj}` | `html<br><c-child lwc:spread={props}></c-child>`       | `js<br>props={name:'A'};` | Dynamic props     |
+| `lwc:is`     | `lwc:is={cmp}`     | `html<br><lwc:component lwc:is={cmp}></lwc:component>` | `js<br>cmp='c-child';`    | Dynamic component |
+
+---
+
+## 🔷 5. CUSTOM COMPONENT TAGS
+
+| Tag         | Properties        | HTML Example                                   | JS                                                   | Hinglish Use        |
+| ----------- | ----------------- | ---------------------------------------------- | ---------------------------------------------------- | ------------------- |
+| `<c-child>` | custom attributes | `html<br><c-child name="John"></c-child>`      | `js<br>@api name;`                                   | Parent → child data |
+| Event       | `onclick`, custom | `html<br><c-child onevent={handle}></c-child>` | `js<br>this.dispatchEvent(new CustomEvent('event'))` | Child → parent data |
+
+---
+
+## 🔷 6. HTML TAGS (USED IN LWC)
+
+| Tag       | Use       | Example            | Hinglish      |
+| --------- | --------- | ------------------ | ------------- |
+| `<div>`   | container | `<div>Hello</div>` | Layout banana |
+| `<p>`     | text      | `<p>Hi</p>`        | Text show     |
+| `<h1>`    | heading   | `<h1>Title</h1>`   | Heading       |
+| `<table>` | table     | `<table></table>`  | Data show     |
+
+---
+
+# 🔥 FULL BEGINNER PROJECT EXAMPLE
+
+### HTML
+
+```html id="example1"
+<template>
+    <lightning-card title="User Form">
+
+        <lightning-input label="Name" onchange={handleChange}></lightning-input>
+
+        <lightning-button label="Show" onclick={handleClick}></lightning-button>
+
+        <template lwc:if={name}>
+            <p>Hello {name}</p>
+        </template>
+
+    </lightning-card>
+</template>
+```
+
+---
+
+### JS
+
+```javascript id="example2"
+import { LightningElement } from 'lwc';
+
+export default class Demo extends LightningElement {
+    name = '';
+
+    handleChange(event) {
+        this.name = event.target.value;
+    }
+
+    handleClick() {
+        console.log('Clicked');
+    }
+}
+```
+
+---
+
+### 🧠 Hinglish Explanation
+
+* Input → user se data le raha hai
+* Button → click event handle kar raha hai
+* `lwc:if` → condition check
+* `{name}` → dynamic binding
+
+---
+
+# 🔥 FINAL UNDERSTANDING (VERY IMPORTANT)
+
+👉 LWC = 3 main parts:
+
+1. **HTML (Tags)** → UI
+2. **JS** → Logic
+3. **XML** → Config
+
+👉 Most used tags (learn first):
+
+* `lightning-input`
+* `lightning-button`
+* `lightning-card`
+* `template lwc:if`
+* `template for:each`
+
+---
+
+# 🚀 Next Step (I recommend)
+
+If you're beginner, next learn:
+
+1. Data binding (`{}`)
+2. Events
+3. Apex integration
+4. LDS
+
+---
+
+If you want, I can make:
+✅ **Step-by-step roadmap (0 → job ready)**
+✅ **Real project (CRM app like mini Salesforce)**
+✅ **Interview preparation (fresher + experienced)**
+
+Perfect 👍 — now let’s build a **complete beginner → advanced JavaScript (JS) sheet for LWC** in **Salesforce**.
+
+This will include:
+✔ Syntax
+✔ Examples
+✔ When to use
+✔ Hinglish explanation
+
+---
+
+# 🔥 LWC JAVASCRIPT COMPLETE SHEET
+
+---
+
+# 🔷 1. BASIC STRUCTURE
+
+### JS File Structure
+
+```javascript
+import { LightningElement } from 'lwc';
+
+export default class MyComponent extends LightningElement {
+
+}
+```
+
+### 🧠 Hinglish
+
+👉 Ye har LWC ka starting point hota hai
+
+---
+
+# 🔷 2. VARIABLES (PROPERTIES)
+
+| Type    | Example              | Hinglish             |
+| ------- | -------------------- | -------------------- |
+| Normal  | `name = 'John';`     | Simple variable      |
+| Number  | `count = 0;`         | Counter              |
+| Boolean | `isVisible = true;`  | True/false condition |
+| Array   | `list = [];`         | Multiple data        |
+| Object  | `user = {name:'A'};` | Structured data      |
+
+---
+
+# 🔷 3. DATA BINDING
+
+### JS
+
+```javascript
+name = 'Rahul';
+```
+
+### HTML
+
+```html
+<p>{name}</p>
+```
+
+### 🧠 Hinglish
+
+👉 `{}` use karke JS data HTML me dikhate hain
+
+---
+
+# 🔷 4. EVENT HANDLING
+
+### HTML
+
+```html
+<lightning-button onclick={handleClick}></lightning-button>
+```
+
+### JS
+
+```javascript
+handleClick() {
+    console.log('Clicked');
+}
+```
+
+### 🧠 Hinglish
+
+👉 User action handle karne ke liye
+
+---
+
+# 🔷 5. INPUT HANDLING
+
+```javascript
+handleChange(event) {
+    this.name = event.target.value;
+}
+```
+
+👉 HTML:
+
+```html
+<lightning-input onchange={handleChange}></lightning-input>
+```
+
+### 🧠 Hinglish
+
+👉 Input ka value lene ke liye
+
+---
+
+# 🔷 6. CONDITIONAL LOGIC
+
+```javascript
+isVisible = true;
+```
+
+👉 HTML:
+
+```html
+<template lwc:if={isVisible}>
+    <p>Show</p>
+</template>
+```
+
+---
+
+# 🔷 7. LOOP DATA
+
+```javascript
+accounts = [
+    { Id: 1, Name: 'A' },
+    { Id: 2, Name: 'B' }
+];
+```
+
+---
+
+# 🔷 8. GETTERS (IMPORTANT)
+
+```javascript
+get upperName() {
+    return this.name.toUpperCase();
+}
+```
+
+👉 HTML:
+
+```html
+<p>{upperName}</p>
+```
+
+### 🧠 Hinglish
+
+👉 Dynamic calculation ke liye
+
+---
+
+# 🔷 9. @api (PARENT → CHILD)
+
+```javascript
+import { api } from 'lwc';
+
+@api name;
+```
+
+### 🧠 Hinglish
+
+👉 Parent component se data lene ke liye
+
+---
+
+# 🔷 10. @track (OLD BUT IMPORTANT)
+
+```javascript
+import { track } from 'lwc';
+
+@track user = { name: 'A' };
+```
+
+### 🧠 Hinglish
+
+👉 Object changes detect karne ke liye (ab mostly automatic hai)
+
+---
+
+# 🔷 11. @wire (DATA FETCH)
+
+```javascript
+import { wire } from 'lwc';
+import { getRecord } from 'lightning/uiRecordApi';
+
+@wire(getRecord, { recordId: '$recordId', fields: ['Account.Name'] })
+account;
+```
+
+### 🧠 Hinglish
+
+👉 Automatically data fetch karta hai
+
+---
+
+# 🔷 12. IMPERATIVE CALL (MANUAL)
+
+```javascript
+getData() {
+    getRecord({ recordId: this.recordId })
+        .then(result => console.log(result))
+        .catch(error => console.error(error));
+}
+```
+
+### 🧠 Hinglish
+
+👉 Button click pe data lana ho
+
+---
+
+# 🔷 13. CREATE / UPDATE / DELETE (LDS)
+
+```javascript
+import { createRecord } from 'lightning/uiRecordApi';
+
+createRecord({
+    apiName: 'Account',
+    fields: { Name: 'Test' }
+});
+```
+
+---
+
+# 🔷 14. CUSTOM EVENTS (CHILD → PARENT)
+
+```javascript
+this.dispatchEvent(
+    new CustomEvent('myevent', {
+        detail: { name: 'Rahul' }
+    })
+);
+```
+
+### 🧠 Hinglish
+
+👉 Child component parent ko data bhejta hai
+
+---
+
+# 🔷 15. LIFECYCLE HOOKS
+
+| Hook                     | Use          | Hinglish               |
+| ------------------------ | ------------ | ---------------------- |
+| `constructor()`          | init         | Start me run           |
+| `connectedCallback()`    | load         | Component load hone pe |
+| `renderedCallback()`     | after render | UI render ke baad      |
+| `disconnectedCallback()` | destroy      | Remove hone pe         |
+
+---
+
+### Example
+
+```javascript
+connectedCallback() {
+    console.log('Loaded');
+}
+```
+
+---
+
+# 🔷 16. NAVIGATION
+
+```javascript
+import { NavigationMixin } from 'lightning/navigation';
+```
+
+👉 Use for:
+
+* Record page
+* Object page
+* URL
+
+---
+
+# 🔷 17. ERROR HANDLING
+
+```javascript
+try {
+    // code
+} catch(error) {
+    console.error(error);
+}
+```
+
+---
+
+# 🔷 18. FULL MINI PROJECT
+
+### JS
+
+```javascript
+import { LightningElement } from 'lwc';
+
+export default class Demo extends LightningElement {
+
+    name = '';
+
+    handleChange(event) {
+        this.name = event.target.value;
+    }
+
+    handleClick() {
+        alert(this.name);
+    }
+
+    get upperName() {
+        return this.name.toUpperCase();
+    }
+
+}
+```
+
+---
+
+### HTML
+
+```html
+<template>
+
+    <lightning-input onchange={handleChange}></lightning-input>
+
+    <lightning-button label="Show" onclick={handleClick}></lightning-button>
+
+    <p>{upperName}</p>
+
+</template>
+```
+
+---
+
+# 🧠 FINAL UNDERSTANDING
+
+👉 LWC JS me 3 main cheeze hoti hain:
+
+1. **Variables (Data)**
+2. **Functions (Logic)**
+3. **Decorators (@api, @wire)**
+
+---
+
+# 🚀 NEXT STEP (VERY IMPORTANT)
+
+Ab aapko ye learn karna chahiye:
+
+1. Apex integration
+2. LDS deep
+3. Datatable
+4. Real project
+
+---
+
+If you want next:
+✅ Full **project (Account CRUD + search + UI)**
+✅ **Interview questions + answers**
+✅ **Daily practice roadmap (beginner to pro)**
