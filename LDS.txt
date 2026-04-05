@@ -1,0 +1,359 @@
+LIGHTNING DATA SERVICE
+
+---
+
+# 🔷 1. UI Record API kya hai?
+
+Ye Salesforce ka ek set hai jo LWC me use hota hai:
+
+* Record **fetch (get)**
+* Record **create**
+* Record **update**
+* Record **delete**
+
+👉 Direct UI layer se kaam hota hai (Apex ki zarurat nahi hoti)
+
+📦 Import:
+
+```js id="cp6646"
+import { 
+    getRecord, 
+    createRecord, 
+    updateRecord, 
+    deleteRecord 
+} from 'lightning/uiRecordApi';
+```
+
+---
+
+# 🔷 2. Record Fetch karna (getRecord)
+
+## ✅ Use Case:
+
+* Record ka data UI me dikhana
+* Account, Contact details show karna
+
+---
+
+### 📌 Example:
+
+#### JS:
+
+```js id="k2mv31"
+import { LightningElement, wire, api } from 'lwc';
+import { getRecord } from 'lightning/uiRecordApi';
+
+const FIELDS = [
+    'Account.Name',
+    'Account.Industry',
+    'Account.Phone'
+];
+
+export default class AccountViewer extends LightningElement {
+    @api recordId;
+
+    @wire(getRecord, { recordId: '$recordId', fields: FIELDS })
+    account;
+
+    get name() {
+        return this.account.data ? this.account.data.fields.Name.value : '';
+    }
+}
+```
+
+---
+
+#### HTML:
+
+```html id="tukctt"
+<template>
+    <lightning-card title="Account Info">
+        <p>Name: {name}</p>
+    </lightning-card>
+</template>
+```
+
+---
+
+## 🔥 Important:
+
+* `@wire` automatically data fetch karta hai
+* `$recordId` reactive hota hai
+* `fields` me field API names dene hote hain
+
+---
+
+# 🔷 3. Field API Import (Best Practice)
+
+Hardcoded string ke bajaye import use karo:
+
+```js id="40b51m"
+import ACCOUNT_NAME from '@salesforce/schema/Account.Name';
+import ACCOUNT_PHONE from '@salesforce/schema/Account.Phone';
+```
+
+---
+
+# 🔷 4. Record Create karna (createRecord)
+
+## ✅ Use Case:
+
+* New Account / Contact create karna
+* Form submit
+
+---
+
+### 📌 Example:
+
+```js id="mmmqoe"
+import { LightningElement } from 'lwc';
+import { createRecord } from 'lightning/uiRecordApi';
+
+export default class CreateAccount extends LightningElement {
+
+    handleCreate() {
+        const fields = {
+            Name: 'New Account',
+            Industry: 'Technology'
+        };
+
+        const recordInput = { apiName: 'Account', fields };
+
+        createRecord(recordInput)
+            .then(result => {
+                console.log('Record created: ', result.id);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+```
+
+---
+
+## 🔥 Important:
+
+* `apiName` = object ka API name
+* `fields` = key-value pairs
+* Return me `recordId` milta hai
+
+---
+
+# 🔷 5. Record Update karna (updateRecord)
+
+## ✅ Use Case:
+
+* Edit form
+* Inline editing
+
+---
+
+### 📌 Example:
+
+```js id="i1b8n7"
+import { updateRecord } from 'lightning/uiRecordApi';
+
+const fields = {
+    Id: '001XXXXXXXXXXXX',
+    Name: 'Updated Account Name'
+};
+
+const recordInput = { fields };
+
+updateRecord(recordInput)
+    .then(() => {
+        console.log('Updated successfully');
+    })
+    .catch(error => {
+        console.error(error);
+    });
+```
+
+---
+
+## 🔥 Important:
+
+* `Id` mandatory hai
+* Sirf updated fields bhejo
+
+---
+
+# 🔷 6. Record Delete karna (deleteRecord)
+
+## ✅ Use Case:
+
+* Delete button
+
+---
+
+### 📌 Example:
+
+```js id="1sg8zr"
+import { deleteRecord } from 'lightning/uiRecordApi';
+
+deleteRecord('001XXXXXXXXXXXX')
+    .then(() => {
+        console.log('Deleted successfully');
+    })
+    .catch(error => {
+        console.error(error);
+    });
+```
+
+---
+
+# 🔷 7. UI me Data Show karna (Best Practice)
+
+## ✅ Use Case:
+
+* Conditional rendering
+* Loading check
+
+---
+
+### Example:
+
+```js id="ohv33p"
+get isLoaded() {
+    return this.account.data !== undefined;
+}
+```
+
+```html id="jfqamq"
+<template if:true={isLoaded}>
+    <p>{name}</p>
+</template>
+```
+
+---
+
+# 🔷 8. getFieldValue helper
+
+## ✅ Use Case:
+
+Safe way to access fields
+
+---
+
+### Example:
+
+```js id="1mne6w"
+import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
+import NAME_FIELD from '@salesforce/schema/Account.Name';
+
+get name() {
+    return getFieldValue(this.account.data, NAME_FIELD);
+}
+```
+
+---
+
+# 🔷 9. Dynamic Fields
+
+## ✅ Use Case:
+
+* Fields runtime pe decide hote hain
+
+---
+
+```js id="78vqp2"
+const fields = ['Account.Name', 'Account.Phone'];
+```
+
+---
+
+# 🔷 10. Error Handling
+
+```js id="uggqwx"
+.catch(error => {
+    if (error.body) {
+        console.error(error.body.message);
+    }
+});
+```
+
+---
+
+# 🔷 11. Real Life Use Cases
+
+### 🔹 1. Account Detail Page
+
+* `getRecord` use hota hai
+
+### 🔹 2. Contact Form
+
+* `createRecord`
+
+### 🔹 3. Edit Screen
+
+* `updateRecord`
+
+### 🔹 4. Delete Button
+
+* `deleteRecord`
+
+### 🔹 5. Dynamic UI
+
+* Field values ke basis pe UI change
+
+---
+
+# 🔷 12. getRecord vs Apex
+
+| Feature     | UI API   | Apex    |
+| ----------- | -------- | ------- |
+| Code        | Less     | More    |
+| Performance | Fast     | Depends |
+| Security    | Built-in | Manual  |
+| Flexibility | Limited  | Full    |
+
+---
+
+# 🔷 13. Best Practices
+
+✅ `@wire` use karo
+✅ Schema imports use karo
+✅ Error handle karo
+✅ Hardcoding avoid karo
+✅ `getFieldValue` use karo
+
+---
+
+# 🔷 14. Common Mistakes ❌
+
+❌ Galat field API name
+❌ `Id` missing in update
+❌ Null data handle nahi karna
+❌ Galat object API name
+❌ Schema import na karna
+
+---
+
+# 🔷 15. Advanced Concepts
+
+* UI API caching
+* Partial data updates
+* Field-level security auto handle
+* Cross-object fields
+* Reactive wiring
+
+---
+
+# 🚀 Final Summary
+
+UI Record API tumhe LWC me bina Apex ke:
+
+* **Read → getRecord**
+* **Create → createRecord**
+* **Update → updateRecord**
+* **Delete → deleteRecord**
+
+---
+
+Agar tum chaho to main tumhe:
+✅ Real project example
+✅ Interview questions
+✅ Complex form + validation
+✅ Debugging scenarios
+
