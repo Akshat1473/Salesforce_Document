@@ -1,3 +1,592 @@
+Absolutely. Think of **Apex Governor Limits** as Salesforce putting a **speed limit and resource budget** on every Apex transaction.
+
+The main reason is simple: Salesforce is a shared cloud platform, so one piece of Apex code shouldn't consume all the available resources and slow down everyone else.
+
+## Apex Governor Limits — In Simple Language
+
+### 1. SOQL Queries
+
+**SOQL = a query used to fetch Salesforce records.**
+
+| Limit                    | Synchronous Apex | Asynchronous Apex |
+| ------------------------ | ---------------: | ----------------: |
+| Number of SOQL queries   |          **100** |           **200** |
+| Records returned by SOQL |       **50,000** |        **50,000** |
+
+**Simple example:**
+
+```apex
+for (Account acc : [SELECT Id, Name FROM Account]) {
+    // Do something
+}
+```
+
+You can run up to **100 SOQL queries** in normal/synchronous Apex.
+
+In asynchronous Apex, you get **200 queries**.
+
+### 🚨 Important
+
+Don't do this:
+
+```apex
+for (Account acc : accounts) {
+    Contact c = [SELECT Id FROM Contact WHERE AccountId = :acc.Id];
+}
+```
+
+If you have 100 Accounts, you could run 100 SOQL queries.
+
+Instead, use **one query outside the loop**.
+
+This is called **bulkification**.
+
+---
+
+## 2. SOQL Records
+
+Even though you can run 100 SOQL queries, you can't retrieve unlimited records.
+
+Across the transaction, SOQL can retrieve a maximum of:
+
+**50,000 records**
+
+For example:
+
+```sql
+SELECT Id FROM Account
+```
+
+If this query and your other queries together try to retrieve more than 50,000 records, you'll hit a governor limit.
+
+---
+
+## 3. SOSL Queries
+
+**SOSL = Salesforce Object Search Language**, mainly used for searching across multiple objects.
+
+You can execute:
+
+**20 SOSL queries per transaction**
+
+And a single SOSL query can return up to:
+
+**2,000 records**
+
+---
+
+# 4. DML Statements
+
+**DML = operations that modify Salesforce data.**
+
+Examples:
+
+* `insert`
+* `update`
+* `delete`
+* `upsert`
+* `undelete`
+* `merge`
+
+You can perform a maximum of:
+
+**150 DML statements per transaction**
+
+### Example
+
+```apex
+insert account1;
+insert account2;
+insert account3;
+```
+
+That's **3 DML statements**.
+
+Better:
+
+```apex
+insert accounts;
+```
+
+That's only **1 DML statement**, even if `accounts` contains many records.
+
+### Remember:
+
+> **Don't perform DML inside loops.**
+
+Bad:
+
+```apex
+for (Account acc : accounts) {
+    update acc;
+}
+```
+
+Good:
+
+```apex
+update accounts;
+```
+
+---
+
+# 5. Total Records Processed by DML
+
+Salesforce allows a maximum of:
+
+**10,000 records processed by DML in one transaction.**
+
+For example:
+
+```apex
+update accounts;
+```
+
+If `accounts` contains 5,000 records, that's fine.
+
+But trying to process more than **10,000 records** through DML in the same transaction can hit the limit.
+
+---
+
+# 6. Callouts
+
+A **callout** means Apex communicates with an external system/API.
+
+For example:
+
+```text
+Salesforce → Payment API
+Salesforce → Google API
+Salesforce → External Database
+```
+
+You can make up to:
+
+**100 callouts per transaction**
+
+The total waiting time for all callouts cannot exceed:
+
+**120 seconds**
+
+---
+
+# 7. Future Methods
+
+A `@future` method allows certain Apex work to run asynchronously.
+
+For a normal synchronous transaction, you can make up to:
+
+**50 future method calls**
+
+But you can't call future methods from:
+
+* another future method
+* Batch Apex context
+
+Queueable Apex has different rules.
+
+---
+
+# 8. Queueable Jobs
+
+With:
+
+```apex
+System.enqueueJob(...)
+```
+
+you can add:
+
+| Context      | Jobs you can enqueue |
+| ------------ | -------------------: |
+| Synchronous  |               **50** |
+| Asynchronous |                **1** |
+
+So if you're already inside asynchronous Apex, you generally can enqueue only **one** Queueable job from that transaction.
+
+---
+
+# 9. Heap Size
+
+**Heap = memory used by your Apex code.**
+
+Imagine your Apex program has a limited-size backpack.
+
+You can put only a certain amount of data into that backpack.
+
+| Context      | Heap limit |
+| ------------ | ---------: |
+| Synchronous  |  **10 MB** |
+| Asynchronous |  **25 MB** |
+
+Email services have a higher limit of **50 MB**.
+
+Large lists, maps, strings, JSON responses, etc. can consume heap memory.
+
+---
+
+# 10. CPU Time
+
+Salesforce also limits how much **CPU processing time** your Apex can use.
+
+| Context      |                  CPU limit |
+| ------------ | -------------------------: |
+| Synchronous  | **10,000 ms (10 seconds)** |
+| Asynchronous | **60,000 ms (60 seconds)** |
+
+For example, code with:
+
+* huge loops
+* complicated calculations
+* inefficient processing
+* excessive automation
+
+can consume too much CPU.
+
+You might then get:
+
+```text
+System.LimitException: Apex CPU time limit exceeded
+```
+
+---
+
+# 11. Maximum Transaction Time
+
+Regardless of synchronous or asynchronous Apex, an individual Apex transaction can run for a maximum of:
+
+**10 minutes**
+
+---
+
+# 12. Recursive Trigger Calls
+
+Salesforce limits recursive trigger execution.
+
+The maximum stack depth for recursive trigger execution is:
+
+**16**
+
+This prevents situations like:
+
+```text
+Account updated
+     ↓
+Trigger runs
+     ↓
+Contact updated
+     ↓
+Another trigger runs
+     ↓
+Account updated again
+     ↓
+Trigger runs again
+     ↓
+...
+```
+
+If this continues excessively, Salesforce stops the transaction.
+
+---
+
+# 13. Email
+
+A transaction can call the email-sending methods up to:
+
+**10 times**
+
+For example, repeatedly calling:
+
+```apex
+Messaging.sendEmail(...)
+```
+
+can eventually hit the limit.
+
+---
+
+# 14. Platform Events
+
+For Platform Events configured to publish immediately, you can make up to:
+
+**150 `EventBus.publish` calls per transaction**
+
+---
+
+# 15. Apex Cursors
+
+Apex Cursors allow you to work with very large amounts of data without loading everything into memory at once.
+
+The important limits are:
+
+| Limit                          |        Maximum |
+| ------------------------------ | -------------: |
+| Rows across Apex cursors       | **50 million** |
+| `Cursor.fetch()` calls         |        **100** |
+| Rows across pagination cursors |    **100,000** |
+| Pagination cursor instances    |         **50** |
+| Rows per pagination page       |      **2,000** |
+
+These are more advanced features, so you usually don't need to worry about them when learning basic Apex.
+
+---
+
+# 16. Batch Apex — Important Concept
+
+Batch Apex works differently from normal Apex.
+
+Suppose you have:
+
+**1,000,000 records**
+
+and Batch Apex processes them in batches of:
+
+**200 records**
+
+Each execution of the `execute()` method gets its **own set of governor limits**.
+
+Conceptually:
+
+```text
+1,000,000 records
+       ↓
+Batch
+       ↓
+200 records → Limits reset
+       ↓
+200 records → Limits reset
+       ↓
+200 records → Limits reset
+       ↓
+...
+```
+
+That's one of the major reasons Batch Apex is useful for processing large amounts of data.
+
+---
+
+# 17. Synchronous vs Asynchronous Apex
+
+The easiest way to remember the difference is:
+
+### Synchronous Apex
+
+Runs immediately.
+
+Examples:
+
+* Trigger
+* Controller action
+* Anonymous Apex
+
+Generally has **smaller limits**.
+
+### Asynchronous Apex
+
+Runs separately/in the background.
+
+Examples:
+
+* Future Apex
+* Queueable Apex
+* Batch Apex
+
+Some limits are higher.
+
+For example:
+
+```text
+SOQL queries
+
+Synchronous     → 100
+Asynchronous    → 200
+```
+
+and:
+
+```text
+CPU time
+
+Synchronous     → 10 seconds
+Asynchronous    → 60 seconds
+```
+
+and:
+
+```text
+Heap
+
+Synchronous     → 10 MB
+Asynchronous    → 25 MB
+```
+
+---
+
+# 18. Scheduled Apex Is a Little Different
+
+Even though Scheduled Apex is considered asynchronous, it uses **synchronous governor limits**.
+
+So don't assume:
+
+> "Scheduled Apex = asynchronous limits."
+
+Instead:
+
+> **Scheduled Apex uses synchronous limits.**
+
+---
+
+# 19. Bulk API Has a Special Rule
+
+For Bulk API and Bulk API 2.0, Salesforce uses the **higher applicable limit** when synchronous and asynchronous limits differ.
+
+For example, `System.enqueueJob`:
+
+```text
+Synchronous limit     = 50
+Asynchronous limit    = 1
+```
+
+Bulk API uses the higher value:
+
+**50**
+
+---
+
+# 20. Parent-Child SOQL Queries
+
+There's a slightly tricky rule with relationship queries.
+
+For example:
+
+```sql
+SELECT Id, Name,
+       (SELECT Id, LastName FROM Contacts)
+FROM Account
+```
+
+The parent query and the child relationship query both contribute to the query count.
+
+So you shouldn't think:
+
+> "I wrote only one SOQL statement, therefore it always counts as exactly one query."
+
+Relationship subqueries have additional query-count implications.
+
+---
+
+# 21. Limits Can Be Checked From Apex
+
+Salesforce provides the `Limits` class to see how much of your governor limit you've already used.
+
+For example:
+
+```apex
+System.debug(Limits.getDMLStatements());
+```
+
+This tells you how many DML statements you've used.
+
+And:
+
+```apex
+System.debug(Limits.getLimitDMLStatements());
+```
+
+tells you the maximum DML statements allowed.
+
+So you can think of it as:
+
+```text
+Used:
+25 DML statements
+
+Maximum:
+150 DML statements
+
+Remaining:
+125
+```
+
+---
+
+# ⭐ The Most Important Limits to Memorize
+
+If you're preparing for an **Apex interview**, start with these:
+
+| Governor Limit     | Synchronous |       Asynchronous |
+| ------------------ | ----------: | -----------------: |
+| **SOQL queries**   |         100 |                200 |
+| **SOQL records**   |      50,000 |             50,000 |
+| **DML statements** |         150 |                150 |
+| **DML records**    |      10,000 |             10,000 |
+| **Callouts**       |         100 |                100 |
+| **Heap**           |       10 MB |              25 MB |
+| **CPU time**       |      10 sec |             60 sec |
+| **Queueable jobs** |          50 |                  1 |
+| **Future calls**   |          50 | Depends on context |
+
+### 🧠 Easy memory trick
+
+Think:
+
+**SOQL → 100 / 200**
+**DML → 150**
+**Records → 50,000**
+**DML records → 10,000**
+**Callouts → 100**
+**CPU → 10 sec / 60 sec**
+**Heap → 10 MB / 25 MB**
+
+---
+
+## One-line explanation of Governor Limits
+
+> **Governor limits are Salesforce's way of making sure one Apex transaction doesn't consume too many shared resources.**
+
+And the biggest Apex coding rule that follows from these limits is:
+
+> **Never put SOQL queries or DML statements inside loops when you can bulkify the operation.**
+
+For example:
+
+```text
+❌ Loop
+   ↓
+   SOQL
+   ↓
+   DML
+   ↓
+   SOQL
+   ↓
+   DML
+```
+
+Instead:
+
+```text
+✅ SOQL
+   ↓
+   Process records in a loop
+   ↓
+   DML
+```
+
+This **bulkification concept** is one of the most important things to understand in Apex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Here’s a **clean, interview-ready table** summarizing the **Apex Governor Limits** from the data you provided, along with a simple explanation of how to use this table in practice.
 
 ---
