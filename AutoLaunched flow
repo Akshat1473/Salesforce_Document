@@ -1,0 +1,345 @@
+Absolutely — here’s the same Salesforce lesson in **very simple, layman-friendly language**, with the important points and quiz answers.
+
+# Salesforce Autolaunched Flows — Simple Explanation
+
+## 1. What is an Autolaunched Flow?
+
+An **Autolaunched Flow** is a Salesforce automation that:
+
+* Runs **in the background**
+* Does **not show screens to the user**
+* Does **not have its own trigger**
+* Starts when **something else tells it to run**
+
+Think of it like a **machine**:
+
+> Someone presses the start button → the machine starts → it does its work automatically.
+
+The important thing is that the **Autolaunched Flow itself doesn't decide when to start**.
+
+---
+
+## 2. What does "Autolaunched" mean?
+
+"Autolaunched" simply means:
+
+> **Once started, the flow runs automatically without asking the user for input.**
+
+For example:
+
+A salesperson clicks a **custom button** called "Create Follow-Up".
+
+That button starts an Autolaunched Flow.
+
+The flow then automatically:
+
+1. Finds the customer's information
+2. Creates a follow-up task
+3. Updates some fields
+4. Finishes
+
+The salesperson doesn't have to interact with screens during the flow.
+
+---
+
+# 3. Different Types of Flows
+
+Salesforce has several types of flows.
+
+| Flow Type                          | How does it start?                | User interaction? |
+| ---------------------------------- | --------------------------------- | ----------------- |
+| **Screen Flow**                    | User starts it                    | ✅ Yes             |
+| **Record-Triggered Flow**          | Record is created/updated/deleted | ❌ No              |
+| **Schedule-Triggered Flow**        | At a scheduled time               | ❌ No              |
+| **Platform Event-Triggered Flow**  | Platform event occurs             | ❌ No              |
+| **Autolaunched Flow (No Trigger)** | Something else starts it          | ❌ No              |
+
+### Easy way to remember:
+
+**Screen Flow = User interacts**
+
+**Record-Triggered = Record changes**
+
+**Schedule-Triggered = Time arrives**
+
+**Platform Event-Triggered = Event happens**
+
+**Autolaunched = Someone/something tells it to run**
+
+---
+
+# 4. What makes Autolaunched Flow special?
+
+The biggest difference is:
+
+> **An Autolaunched Flow has NO trigger inside the flow.**
+
+For example:
+
+### Record-Triggered Flow
+
+You tell Salesforce:
+
+> "Whenever an Opportunity is created, run this flow."
+
+The **record change is the trigger**.
+
+### Schedule-Triggered Flow
+
+You tell Salesforce:
+
+> "Run this flow every Monday at 9 AM."
+
+The **schedule is the trigger**.
+
+### Autolaunched Flow
+
+You tell Salesforce:
+
+> "Don't automatically decide when to run. I'll tell you when to run."
+
+So the flow waits until something else starts it.
+
+---
+
+# 5. Real-Life Example
+
+Imagine a sales team.
+
+A salesperson is talking to a customer and decides:
+
+> "This customer needs a follow-up task."
+
+You don't necessarily want Salesforce to create a task every time an Opportunity changes.
+
+Instead, the salesperson can click a **custom button**:
+
+**Create Follow-Up**
+
+That button starts an **Autolaunched Flow**.
+
+The flow can then:
+
+* Create a Task
+* Update the Opportunity
+* Update the Account
+* Send information somewhere else
+* Perform other background automation
+
+No screen is required.
+
+---
+
+# 6. How can an Autolaunched Flow be started?
+
+An Autolaunched Flow cannot start itself. Something else must start it.
+
+Common ways include:
+
+### 1. Custom Button
+
+A user clicks a button on a Salesforce page.
+
+**Example:**
+
+`Create Follow-Up` → Autolaunched Flow starts
+
+---
+
+### 2. Another Flow
+
+One flow can call another flow using a **Subflow**.
+
+Think:
+
+> Flow A → calls → Flow B
+
+Flow B can be an Autolaunched Flow.
+
+---
+
+### 3. Apex Code
+
+A developer can write Apex code that starts the flow.
+
+---
+
+### 4. API
+
+An external application can call Salesforce and start the flow.
+
+For example:
+
+`External System → Salesforce API → Autolaunched Flow`
+
+---
+
+### 5. Agentforce
+
+An Agentforce agent can use an action that calls the flow.
+
+---
+
+# 7. Important Difference: Button vs Action
+
+This can be confusing.
+
+Salesforce has **Actions** and **Custom Buttons**.
+
+According to this lesson:
+
+* **Actions** can call **Screen Flows**
+* If your flow **doesn't have screens**, use an **Autolaunched Flow + Custom Button**
+
+So remember:
+
+> **No screens → Autolaunched Flow**
+
+> **Screens/user interaction → Screen Flow**
+
+---
+
+# 8. How do I identify an Autolaunched Flow?
+
+There are two places you can check.
+
+## Option 1: Automation App
+
+Go to:
+
+**App Launcher → Automation → Flows → All Flows**
+
+Look at the **Flow Type** column.
+
+This is the easiest way to identify the type of flow.
+
+---
+
+# 9. Finding it in Setup
+
+This is slightly tricky.
+
+In **Setup → Flows**, Salesforce may show:
+
+**Process Type = Autolaunched Flow**
+
+But here's the problem:
+
+> Record-triggered, schedule-triggered, and platform-event-triggered flows can also show as "Autolaunched Flow."
+
+So **Process Type alone isn't enough**.
+
+You need to look at the **Trigger** field.
+
+---
+
+# 10. The Most Important Trick
+
+In Setup's Flow list:
+
+### Process Type = Autolaunched Flow
+
+Now check the **Trigger** column.
+
+| Process Type      | Trigger                | Actual Flow Type                 |
+| ----------------- | ---------------------- | -------------------------------- |
+| Autolaunched Flow | **Blank**              | ⭐ Autolaunched Flow (No Trigger) |
+| Autolaunched Flow | Record—Run Before Save | Record-Triggered Flow            |
+| Autolaunched Flow | Record—Run After Save  | Record-Triggered Flow            |
+| Autolaunched Flow | Schedule               | Schedule-Triggered Flow          |
+| Autolaunched Flow | Platform Event         | Platform Event-Triggered Flow    |
+
+### Easy rule:
+
+> **Autolaunched Flow + Blank Trigger = True Autolaunched Flow**
+
+This is probably the **most important point in the entire lesson**.
+
+---
+
+# 11. Super Simple Memory Trick
+
+Remember this:
+
+### **Screen Flow**
+
+👤 User interacts
+
+### **Record-Triggered Flow**
+
+📝 Record changes
+
+### **Schedule-Triggered Flow**
+
+⏰ Time arrives
+
+### **Platform Event Flow**
+
+📢 Event happens
+
+### **Autolaunched Flow**
+
+🔘 Something else tells it to start
+
+---
+
+# Quiz Answers
+
+## Question 1
+
+**Which use case requires an Autolaunched flow?**
+
+A. Launching interactive automation automatically when a page loads
+B. Launching automation automatically when a trigger happens in Salesforce
+C. **Running noninteractive automation from a button** ✅
+D. Running interactive automation from an action button
+
+### Answer: **C**
+
+Why?
+
+Because an Autolaunched Flow:
+
+* Doesn't require user interaction
+* Can be started by a button
+* Runs in the background
+
+---
+
+## Question 2
+
+**In Setup’s Flows list view, which field helps to differentiate a true Autolaunched flow from other autolaunched flows?**
+
+A. Process Type
+B. Flow Type
+C. Process Trigger
+D. **Trigger** ✅
+
+### Answer: **D — Trigger**
+
+Why?
+
+Because several flow types can have:
+
+**Process Type = Autolaunched Flow**
+
+But a **true Autolaunched Flow (No Trigger)** has:
+
+> **Trigger = Blank**
+
+---
+
+# ⭐ Final Cheat Sheet
+
+If you remember only these 5 things, you're good:
+
+1. **Autolaunched Flow runs in the background.**
+2. **It doesn't have a trigger of its own.**
+3. **It doesn't require user interaction.**
+4. **Something else must start it** — button, another flow, Apex, API, Agentforce, etc.
+5. In Setup, **Process Type = Autolaunched Flow + Trigger = Blank** means it's a **true Autolaunched Flow**.
+
+### Quiz:
+
+**1 → C**
+**2 → D**
