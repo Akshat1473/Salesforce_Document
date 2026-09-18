@@ -1,0 +1,3207 @@
+Sure. This documentation is basically explaining **SOSL as Salesforce’s “search engine”**.
+
+If SOQL is like asking:
+
+> “Go to the Account table and give me Accounts where Name = 'Acme'.”
+
+Then SOSL is more like:
+
+> **“Search Salesforce for the word ‘Acme’ wherever it appears.”**
+
+Let's break the whole thing down.
+
+---
+
+# 1. What is SOSL?
+
+**SOSL = Salesforce Object Search Language.**
+
+It is used when you want to **search for text across Salesforce data**.
+
+For example, suppose Salesforce contains:
+
+### Account
+
+| Name             |
+| ---------------- |
+| ABC Technologies |
+| Acme Corporation |
+
+### Contact
+
+| Name        | Email                                     |
+| ----------- | ----------------------------------------- |
+| John Smith  | [john@acme.com](mailto:john@acme.com)     |
+| Sarah Jones | [sarah@gmail.com](mailto:sarah@gmail.com) |
+
+### Lead
+
+| Name | Company          |
+| ---- | ---------------- |
+| Mike | Acme Corporation |
+
+Now you want to find everything related to:
+
+```text
+Acme
+```
+
+You don't necessarily know whether `Acme` exists in:
+
+* Account Name
+* Contact Email
+* Lead Company
+* another searchable field
+
+This is where **SOSL** is useful.
+
+---
+
+# 2. SOSL is like Google Search inside Salesforce
+
+This is the easiest way to understand it.
+
+Imagine Salesforce contains millions of records.
+
+Instead of saying:
+
+> "Search only the Account object and only the Name field."
+
+you can say:
+
+> **"Search Salesforce for the word Acme."**
+
+Salesforce uses its **search index** to find matching records.
+
+So:
+
+```text
+SOQL
+  ↓
+"I know WHERE my data is."
+
+SOSL
+  ↓
+"I know WHAT I'm looking for,
+but I don't necessarily know WHERE it is."
+```
+
+---
+
+# 3. What does "search index" mean?
+
+This sounds complicated, but the idea is simple.
+
+Google doesn't read every webpage from scratch every time you search.
+
+It maintains a huge **search index** that helps it find relevant information quickly.
+
+Salesforce does something similar.
+
+It creates a **search index** containing searchable Salesforce information.
+
+So when you search for:
+
+```text
+Acme
+```
+
+Salesforce can quickly find records containing relevant matches.
+
+That's why SOSL is designed for **text-based searching**.
+
+---
+
+# 4. What does "text-based search" mean?
+
+It means you're searching for words or terms.
+
+For example:
+
+```text
+Acme
+John
+Delhi
+Software
+@gmail.com
+98765
+```
+
+SOSL can search fields such as:
+
+* Text
+* Email
+* Phone
+
+across multiple objects.
+
+---
+
+# 5. What does "multiple objects" mean?
+
+This is one of the biggest advantages of SOSL.
+
+Suppose you have:
+
+```text
+Account
+Contact
+Lead
+Opportunity
+```
+
+You can search across several of them in one SOSL query.
+
+For example, conceptually:
+
+```text
+Search "Acme"
+
+    ↓
+
+Account
+Contact
+Lead
+Opportunity
+```
+
+You don't have to write a separate search query for every object.
+
+---
+
+# 6. SOQL vs SOSL — important difference
+
+Let's make this extremely simple.
+
+### SOQL
+
+You know where the data is.
+
+> "Find Accounts whose Name is Acme."
+
+```sql
+SELECT Id, Name
+FROM Account
+WHERE Name = 'Acme'
+```
+
+You're specifically saying:
+
+```text
+Object = Account
+Field = Name
+Condition = Acme
+```
+
+---
+
+### SOSL
+
+You don't necessarily know where the data is.
+
+> "Find Acme anywhere in the searchable Salesforce data."
+
+SOSL is designed for this type of search.
+
+### Remember:
+
+**SOQL → specific data retrieval**
+
+**SOSL → broad text search**
+
+---
+
+# 7. What does "top 2,000 matched records" mean?
+
+This part is important.
+
+Suppose you search:
+
+```text
+Sales
+```
+
+Salesforce might find:
+
+```text
+50,000 records
+```
+
+But Salesforce doesn't simply return all 50,000 records at once.
+
+By default, the search returns the **top 2,000 matching records**, based on relevance.
+
+Think of Google again.
+
+If you search:
+
+```text
+Salesforce
+```
+
+Google doesn't show every webpage containing the word Salesforce on the first page.
+
+It shows the results it considers most relevant first.
+
+SOSL works similarly.
+
+```text
+Search term
+     ↓
+Search index
+     ↓
+50,000 matches
+     ↓
+Most relevant matches
+     ↓
+Top 2,000 returned
+```
+
+---
+
+# 8. What does "based on relevancy" mean?
+
+Suppose you search:
+
+```text
+Acme
+```
+
+Salesforce finds 5,000 records.
+
+Some records might have `Acme` as the actual Account Name.
+
+Others might mention `Acme` somewhere in a description.
+
+The search system determines which results are more relevant.
+
+So the returned records are ordered based on **search relevance**, rather than simply being random records.
+
+---
+
+# 9. What is pagination?
+
+Suppose Salesforce finds:
+
+```text
+5,000 matching records
+```
+
+But the first response gives you:
+
+```text
+2,000 records
+```
+
+You may want to get the next set.
+
+That's where **pagination** comes in.
+
+Think of Google search pages:
+
+```text
+Page 1 → results 1–100
+Page 2 → results 101–200
+Page 3 → results 201–300
+```
+
+Similarly, Salesforce provides mechanisms such as `OFFSET` to work with multiple pages of results.
+
+So:
+
+```text
+Pagination = getting large search results in smaller batches/pages.
+```
+
+---
+
+# 10. What is "search crowding"?
+
+This is one of the more confusing parts of the documentation.
+
+Imagine you search for a very common word:
+
+```text
+the
+```
+
+or:
+
+```text
+company
+```
+
+or:
+
+```text
+Sales
+```
+
+Maybe Salesforce finds:
+
+```text
+100,000 records
+```
+
+There are so many matching records that the search results can become dominated by similar records or records from particular sources.
+
+Salesforce calls this situation **search crowding**.
+
+The important lesson is:
+
+> **Don't make your SOSL searches unnecessarily broad.**
+
+Instead of searching:
+
+```text
+Sales
+```
+
+try to make the search more specific when possible.
+
+---
+
+# 11. What does "selective filters" mean?
+
+A **selective filter** is simply a filter that narrows down your search.
+
+Imagine:
+
+```text
+Search: "John"
+```
+
+Maybe you get:
+
+```text
+20,000 matches
+```
+
+But if you can restrict your search to a particular type of field or object, you might get fewer results.
+
+For example:
+
+```text
+Search John
+    ↓
+Only search Name fields
+    ↓
+Fewer matches
+    ↓
+Faster/more useful results
+```
+
+So:
+
+> **Selective = narrow and specific**
+
+> **Non-selective = broad and generic**
+
+---
+
+# 12. Why are selective searches better?
+
+Because a broad search can:
+
+1. Take longer
+2. Return too many results
+3. Make the results less useful
+4. Increase the chance of search crowding
+
+For example:
+
+### Very broad
+
+```text
+Search: "A"
+```
+
+There could be millions of matches.
+
+### More specific
+
+```text
+Search: "Acme Technologies"
+```
+
+There may be only a few hundred matches.
+
+The second search is generally much more useful.
+
+---
+
+# 13. What does `IN` do?
+
+The documentation says:
+
+> `IN`: Limits the types of fields to search.
+
+This means you can tell Salesforce **what kind of fields it should search**.
+
+For example, you may want to search:
+
+```text
+Name
+```
+
+rather than searching every possible searchable field.
+
+Think of it as:
+
+> "Don't search everywhere. Search only these types of fields."
+
+---
+
+# 14. What does `LIMIT` do?
+
+`LIMIT` tells Salesforce:
+
+> **"Don't return more than this many records."**
+
+For example:
+
+```sql
+LIMIT 100
+```
+
+means:
+
+> Return a maximum of 100 records.
+
+Imagine there are:
+
+```text
+10,000 matches
+```
+
+but you only need:
+
+```text
+100
+```
+
+Then `LIMIT` can help control the result size.
+
+---
+
+# 15. What does `OFFSET` do?
+
+`OFFSET` is related to pagination.
+
+Imagine your results are:
+
+```text
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+You want to skip the first 5 and start from result 6.
+
+Conceptually:
+
+```text
+OFFSET 5
+```
+
+means:
+
+> Skip the first 5 results.
+
+So you can use it to navigate through search results.
+
+Think:
+
+```text
+Page 1
+↓
+Results 1–100
+
+Page 2
+↓
+Skip first 100
+Results 101–200
+```
+
+---
+
+# 16. What does `RETURNING` do?
+
+This is very important.
+
+`RETURNING` tells SOSL:
+
+> **Which Salesforce objects and fields should I give back to you?**
+
+Suppose you search for:
+
+```text
+Acme
+```
+
+and you want results from:
+
+```text
+Account
+Contact
+Lead
+```
+
+You can use `RETURNING` to control what information you get from those objects.
+
+Think of it as:
+
+```text
+Search = What should Salesforce look for?
+
+RETURNING = What information should Salesforce give me back?
+```
+
+---
+
+# 17. What does `WITH DATA CATEGORY` mean?
+
+This is related to Salesforce's **data categories**.
+
+Data categories are used to organize/classify certain Salesforce content.
+
+For example, you might have categories such as:
+
+```text
+Products
+   ├── Computers
+   ├── Phones
+   └── Accessories
+```
+
+`WITH DATA CATEGORY` allows SOSL searches to be restricted based on these categories.
+
+For a beginner, you can simply remember:
+
+> **It allows you to filter searches using Salesforce data categories.**
+
+---
+
+# 18. What does `WITH DivisionFilter` mean?
+
+Some Salesforce organizations use **divisions** to separate data.
+
+For example:
+
+```text
+Company
+│
+├── India
+├── USA
+└── Europe
+```
+
+A division filter lets you search within a particular division.
+
+So conceptually:
+
+```text
+Search Acme
+      ↓
+Only within India division
+```
+
+This is mainly relevant to organizations that use Salesforce's divisions feature.
+
+---
+
+# 19. What does `WITH NETWORK` mean?
+
+This is related to **Experience Cloud**.
+
+Experience Cloud allows organizations to create Salesforce-powered websites/portals for customers, partners, communities, etc.
+
+`WITH NETWORK` allows a search to be associated with a particular Experience Cloud site/network.
+
+For a beginner:
+
+> **It lets you specify which Experience Cloud site the search relates to.**
+
+---
+
+# 20. What does `WITH PricebookId` mean?
+
+This is related to Salesforce **Products and Price Books**.
+
+A price book is essentially a collection of products and their prices.
+
+For example:
+
+```text
+Price Book: India
+------------------
+Laptop     ₹50,000
+Monitor    ₹15,000
+Keyboard   ₹2,000
+```
+
+`WITH PricebookId` allows a search to specify which price book is relevant.
+
+You don't need to worry about this when learning basic SOSL.
+
+---
+
+# 21. What does "Sharing is applied after the result set is returned" mean?
+
+This sentence can sound scary:
+
+> "Sharing is applied after the result set is returned from the search stack."
+
+In simple terms:
+
+Salesforce has to search its index and find potential matches first.
+
+Then Salesforce applies the organization's **record access/security rules** to determine what the user is actually allowed to see.
+
+Imagine:
+
+```text
+Search index
+     ↓
+Find matching records
+     ↓
+Apply Salesforce access rules
+     ↓
+Show records user is allowed to access
+```
+
+So you should think of Salesforce security as still being relevant.
+
+---
+
+# 22. What does "text, email, and phone fields" mean?
+
+SOSL isn't limited to normal text.
+
+It can search things such as:
+
+### Text
+
+```text
+Company = "Acme Technologies"
+```
+
+### Email
+
+```text
+john@acme.com
+```
+
+### Phone
+
+```text
+9876543210
+```
+
+So SOSL is useful for finding information based on these types of values.
+
+---
+
+# 23. What does "custom objects" mean?
+
+Salesforce provides standard objects such as:
+
+```text
+Account
+Contact
+Lead
+Opportunity
+```
+
+But companies can also create their own objects.
+
+For example:
+
+```text
+Employee__c
+Project__c
+Invoice__c
+Customer_Feedback__c
+```
+
+These are **custom objects**.
+
+The documentation is saying SOSL can also search supported searchable fields in custom objects that you have access to.
+
+---
+
+# 24. Where can you use SOSL?
+
+The documentation lists several places.
+
+The idea is similar to SOQL.
+
+### Apex
+
+You can use SOSL from Salesforce's Apex programming language.
+
+### REST API
+
+External applications can send SOSL searches to Salesforce.
+
+### SOAP API
+
+Another API mechanism for interacting with Salesforce.
+
+### Visualforce
+
+SOSL can be used in Visualforce controllers/getter methods.
+
+### Other Salesforce development tools
+
+It can also be used through certain development tools.
+
+The important point is:
+
+> **SOSL is not a separate application. It's a query language that can be used through different Salesforce technologies.**
+
+---
+
+# 25. What does the "relationship queries" note mean?
+
+The documentation says:
+
+> If your org has relationship queries enabled, SOSL supports SOQL relationship queries.
+
+Don't worry about this initially.
+
+It basically means Salesforce can allow you to use certain **relationship-based querying capabilities** alongside SOSL.
+
+You should learn basic SOSL first before worrying about this.
+
+---
+
+# 26. When should I use SOSL?
+
+The documentation gives four major situations.
+
+Let's translate them.
+
+### Situation 1: You don't know where the data is
+
+You know:
+
+```text
+Search term = "Acme"
+```
+
+But you don't know whether it's in:
+
+```text
+Account
+Contact
+Lead
+Opportunity
+```
+
+Use SOSL.
+
+---
+
+### Situation 2: You want to search multiple objects
+
+For example:
+
+```text
+Search "Acme"
+
+Account
+Contact
+Lead
+```
+
+SOSL is designed for this.
+
+---
+
+### Situation 3: You need text searching
+
+You want to search for a particular word or term.
+
+For example:
+
+```text
+"Salesforce"
+```
+
+SOSL is useful.
+
+---
+
+### Situation 4: Certain languages
+
+Salesforce has specialized search/tokenization capabilities for:
+
+* Chinese
+* Japanese
+* Korean
+* Thai
+
+This helps Salesforce identify meaningful search terms in languages where normal space-based word separation isn't always sufficient.
+
+---
+
+# 27. SOQL vs SOSL — the easiest example
+
+Imagine your Salesforce contains:
+
+```text
+Account
+    Acme Corporation
+
+Contact
+    John from Acme
+
+Lead
+    Acme Industries
+```
+
+### You know the data is in Account
+
+Ask:
+
+> "Find the Account named Acme Corporation."
+
+Use **SOQL**:
+
+```sql
+SELECT Id, Name
+FROM Account
+WHERE Name = 'Acme Corporation'
+```
+
+---
+
+### You don't know where Acme appears
+
+Ask:
+
+> "Search Salesforce for Acme."
+
+Use **SOSL**.
+
+Conceptually:
+
+```text
+Search "Acme"
+     ↓
+Account
+Contact
+Lead
+     ↓
+Return matching information
+```
+
+That's the core difference.
+
+---
+
+# 28. A very simple SOSL mental model
+
+Think of SOSL as:
+
+```text
+                 SOSL
+                  │
+            "Search Salesforce"
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+   What to search      Where to search
+        │                   │
+      "Acme"        Account / Contact /
+                    Lead / etc.
+        │                   │
+        └─────────┬─────────┘
+                  ↓
+             Search Index
+                  ↓
+            Matching records
+                  ↓
+              RETURNING
+                  ↓
+             Results
+```
+
+---
+
+# 29. What are the important clauses to remember?
+
+For beginner-level SOSL, focus on these:
+
+| Clause                | Simple meaning                        |
+| --------------------- | ------------------------------------- |
+| `IN`                  | Where/type of field to search         |
+| `RETURNING`           | Which objects/fields to give back     |
+| `LIMIT`               | Maximum number of results             |
+| `OFFSET`              | Skip results; useful for pagination   |
+| `WITH DATA CATEGORY`  | Filter using data categories          |
+| `WITH DivisionFilter` | Filter by Salesforce division         |
+| `WITH NETWORK`        | Specify Experience Cloud site/network |
+| `WITH PricebookId`    | Specify a price book                  |
+
+You don't need to memorize all of them immediately.
+
+Start with:
+
+**Search → `IN` → `RETURNING` → `LIMIT`**
+
+---
+
+# 30. The entire Salesforce documentation in one sentence
+
+The whole passage is basically saying:
+
+> **SOSL is Salesforce's search engine query language: use it when you want to search for a specific text/email/phone term across one or more Salesforce objects, especially when you don't know exactly which object or field contains the information.**
+
+And the most important comparison is:
+
+```text
+SOQL
+"I know where the data is."
+        ↓
+Query a specific object
+        ↓
+Get specific records
+
+
+SOSL
+"I know what I'm looking for."
+        ↓
+Search Salesforce's index
+        ↓
+Find matches across objects
+```
+
+**If you're learning for an interview or Salesforce developer role, remember this line:**
+
+> **SOQL retrieves structured data from known objects; SOSL performs text-based searches across multiple objects when the location of the data is unknown.**
+
+
+Absolutely. This section is **not teaching a new SOSL feature**. It is teaching you **how to read Salesforce's SOSL syntax documentation**.
+
+Think of it as a **legend/key for the symbols used in the documentation**.
+
+---
+
+# 1. Why does Salesforce have "Typographical Conventions"?
+
+When Salesforce shows syntax like:
+
+```text
+FIND fieldname IN objectname [LIMIT n]
+```
+
+you need to know:
+
+* Which words should you type exactly?
+* Which words should you replace with your own values?
+* Which parts are optional?
+* Which parts can be repeated?
+* What does `|` mean?
+
+This section explains those rules.
+
+---
+
+# 2. Courier font = type it exactly
+
+Example:
+
+```text
+FIND Name IN Account
+```
+
+The words shown normally/monospaced like this are actual SOSL keywords or values that the documentation expects you to type as shown.
+
+For example:
+
+```text
+FIND
+IN
+Account
+```
+
+If the documentation says:
+
+```text
+FIND Name IN Account
+```
+
+you can use exactly that.
+
+### Think:
+
+> **Courier/code text = type this literally.**
+
+---
+
+# 3. Italics = replace it with your own value
+
+This is very important.
+
+Suppose Salesforce documentation says:
+
+```text
+FIND fieldname IN objectname
+```
+
+Here:
+
+```text
+fieldname
+objectname
+```
+
+are placeholders.
+
+You **don't literally type**:
+
+```text
+FIND fieldname IN objectname
+```
+
+Instead, you replace them.
+
+For example:
+
+```text
+FIND Name IN Account
+```
+
+Here:
+
+```text
+fieldname → Name
+objectname → Account
+```
+
+So:
+
+```text
+FIND fieldname IN objectname
+```
+
+is like a template.
+
+### Think:
+
+> **Italic text = "You put your own value here."**
+
+---
+
+# 4. The `|` pipe means OR
+
+This is probably the easiest symbol.
+
+Suppose Salesforce documentation says:
+
+```text
+TRACKING | VIEWSTAT
+```
+
+The `|` means:
+
+> **Choose one of these.**
+
+So you can use:
+
+```text
+TRACKING
+```
+
+OR:
+
+```text
+VIEWSTAT
+```
+
+You don't type the pipe character.
+
+---
+
+### Simple example
+
+Imagine documentation says:
+
+```text
+ASC | DESC
+```
+
+That means:
+
+```text
+ASC
+```
+
+**OR**
+
+```text
+DESC
+```
+
+For example:
+
+```sql
+ORDER BY Name ASC
+```
+
+or:
+
+```sql
+ORDER BY Name DESC
+```
+
+Not:
+
+```sql
+ORDER BY Name ASC | DESC
+```
+
+The `|` is just documentation notation.
+
+---
+
+# 5. Square brackets `[ ]` mean OPTIONAL
+
+This is one of the most important conventions.
+
+Suppose Salesforce writes:
+
+```text
+FIND Name IN Account [LIMIT n]
+```
+
+The square brackets mean:
+
+> **You don't have to use this part.**
+
+So this is valid:
+
+```text
+FIND Name IN Account
+```
+
+And this could also be valid:
+
+```text
+FIND Name IN Account LIMIT 10
+```
+
+The important thing:
+
+### Don't type the square brackets!
+
+The documentation:
+
+```text
+[LIMIT n]
+```
+
+means:
+
+```text
+LIMIT n
+```
+
+if you want to use it.
+
+---
+
+# 6. Think of `[ ]` as "optional"
+
+You can remember:
+
+```text
+[ something ]
+```
+
+means:
+
+> "You may use this, but you don't have to."
+
+For example:
+
+```text
+SELECT Id, Name
+FROM Account
+[WHERE Industry = 'Technology']
+```
+
+The `WHERE` portion would be optional in this hypothetical syntax.
+
+Without it:
+
+```sql
+SELECT Id, Name
+FROM Account
+```
+
+With it:
+
+```sql
+SELECT Id, Name
+FROM Account
+WHERE Industry = 'Technology'
+```
+
+---
+
+# 7. Nested `[ ]` means "optional inside optional"
+
+This is the slightly confusing part.
+
+Salesforce gives an example like:
+
+```text
+[ORDER BY fieldname [ASC | DESC] [NULLS {FIRST | LAST}]]
+```
+
+Let's simplify it.
+
+The outer brackets:
+
+```text
+[ORDER BY ...]
+```
+
+mean:
+
+> `ORDER BY` itself is optional.
+
+Inside it, you have:
+
+```text
+[ASC | DESC]
+```
+
+which means:
+
+> If you're using `ORDER BY`, you may optionally specify `ASC` or `DESC`.
+
+Then:
+
+```text
+[NULLS ...]
+```
+
+means:
+
+> You may optionally specify how NULL values should be handled.
+
+So there is a dependency.
+
+You can't use:
+
+```text
+ASC
+```
+
+by itself.
+
+You first need:
+
+```text
+ORDER BY
+```
+
+---
+
+# 8. Visualizing nested optional parts
+
+Think of it like boxes:
+
+```text
+[ ORDER BY fieldname
+    [ ASC | DESC ]
+    [ NULLS FIRST | LAST ]
+]
+```
+
+The outer box:
+
+```text
+ORDER BY
+```
+
+is optional.
+
+The inner boxes are also optional, but **they depend on the outer box**.
+
+So:
+
+### Valid conceptually
+
+```text
+ORDER BY Name
+```
+
+### Also valid
+
+```text
+ORDER BY Name ASC
+```
+
+### Also valid
+
+```text
+ORDER BY Name DESC
+```
+
+### The important rule
+
+You can't take something from inside the optional box and use it without its parent.
+
+---
+
+# 9. What does `[...]` mean?
+
+This looks confusing because it's also square brackets.
+
+The documentation says:
+
+```text
+[...]
+```
+
+with an ellipsis `...` means:
+
+> **The preceding element can be repeated.**
+
+Let's make this easier.
+
+Suppose documentation says:
+
+```text
+[FIELD ...]
+```
+
+The idea is:
+
+> You can have the field more than once, up to whatever limit Salesforce specifies.
+
+---
+
+# 10. What does `[,...]` mean?
+
+This means:
+
+> **The preceding item can be repeated, and repeated items must be separated by commas.**
+
+For example, imagine documentation gives:
+
+```text
+[TRACKING | VIEWSTAT][,...]
+```
+
+This means you can have:
+
+```text
+TRACKING
+```
+
+or:
+
+```text
+VIEWSTAT
+```
+
+or both:
+
+```text
+TRACKING, VIEWSTAT
+```
+
+---
+
+# 11. That's exactly what the UPDATE example is showing
+
+Salesforce gives these examples:
+
+### Option 1
+
+```text
+UPDATE TRACKING
+```
+
+Meaning:
+
+> Use `TRACKING`.
+
+---
+
+### Option 2
+
+```text
+UPDATE VIEWSTAT
+```
+
+Meaning:
+
+> Use `VIEWSTAT`.
+
+---
+
+### Option 3
+
+```text
+UPDATE TRACKING, VIEWSTAT
+```
+
+Meaning:
+
+> Use both.
+
+The comma is required when you use multiple choices.
+
+---
+
+# 12. Let's decode the complicated notation
+
+The documentation has:
+
+```text
+UPDATE [TRACKING | VIEWSTAT][,...]
+```
+
+Let's read this like a normal sentence.
+
+### `[TRACKING | VIEWSTAT]`
+
+Means:
+
+> Choose `TRACKING` or `VIEWSTAT`.
+
+### `[,...]`
+
+Means:
+
+> You can repeat the choice, separating multiple choices with commas.
+
+Therefore:
+
+```text
+UPDATE TRACKING
+```
+
+is allowed.
+
+```text
+UPDATE VIEWSTAT
+```
+
+is allowed.
+
+And:
+
+```text
+UPDATE TRACKING, VIEWSTAT
+```
+
+is allowed.
+
+---
+
+# 13. A real-world analogy
+
+Imagine a form saying:
+
+```text
+Choose [Pizza | Burger][,...]
+```
+
+The notation means you can choose:
+
+```text
+Pizza
+```
+
+or:
+
+```text
+Burger
+```
+
+or:
+
+```text
+Pizza, Burger
+```
+
+The documentation is basically giving you a **formula for constructing valid commands**.
+
+---
+
+# 14. Important: These symbols aren't usually typed
+
+This is one of the biggest things to understand.
+
+When Salesforce documentation says:
+
+```text
+[LIMIT n]
+```
+
+you don't type:
+
+```text
+[LIMIT 10]
+```
+
+You type:
+
+```text
+LIMIT 10
+```
+
+When it says:
+
+```text
+ASC | DESC
+```
+
+you don't type:
+
+```text
+ASC | DESC
+```
+
+You choose one:
+
+```text
+ASC
+```
+
+or:
+
+```text
+DESC
+```
+
+When it says:
+
+```text
+fieldname
+```
+
+you replace it with an actual field:
+
+```text
+Name
+```
+
+---
+
+# 15. Let's create a cheat sheet
+
+| Documentation symbol | Meaning             | What you actually do                |
+| -------------------- | ------------------- | ----------------------------------- |
+| `FIND`               | Literal keyword     | Type `FIND`                         |
+| `fieldname`          | Placeholder         | Replace with actual field           |
+| `objectname`         | Placeholder         | Replace with actual object          |
+| `\|`                 | OR / choose one     | Pick one option                     |
+| `[ ]`                | Optional            | You may leave it out                |
+| `...`                | Can repeat          | Repeat the preceding element        |
+| `[...]`              | Repetition notation | Element can appear multiple times   |
+| `[,...]`             | Repeat with commas  | Separate repeated elements with `,` |
+
+---
+
+# 16. Let's practice reading syntax
+
+Suppose Salesforce gives you:
+
+```text
+FIND fieldname IN objectname [LIMIT n]
+```
+
+Don't panic.
+
+Read it piece by piece.
+
+### `FIND`
+
+Literal.
+
+Type:
+
+```text
+FIND
+```
+
+### `fieldname`
+
+Placeholder.
+
+Replace it with something like:
+
+```text
+Name
+```
+
+### `IN`
+
+Literal.
+
+Type:
+
+```text
+IN
+```
+
+### `objectname`
+
+Placeholder.
+
+Replace it with:
+
+```text
+Account
+```
+
+### `[LIMIT n]`
+
+Optional.
+
+If you want a limit, replace `n` with a number.
+
+For example:
+
+```text
+LIMIT 100
+```
+
+So the final query might look like:
+
+```text
+FIND Name IN Account LIMIT 100
+```
+
+---
+
+# 17. Another example
+
+Suppose the documentation says:
+
+```text
+ORDER BY fieldname [ASC | DESC]
+```
+
+Translate it into English:
+
+> `ORDER BY` is required.
+> `fieldname` must be replaced with an actual field.
+> `ASC` or `DESC` is optional.
+
+So you could write:
+
+```sql
+ORDER BY Name
+```
+
+or:
+
+```sql
+ORDER BY Name ASC
+```
+
+or:
+
+```sql
+ORDER BY Name DESC
+```
+
+You **don't** write:
+
+```sql
+ORDER BY fieldname [ASC | DESC]
+```
+
+That's documentation syntax, not your actual query.
+
+---
+
+# 18. The most important thing to remember
+
+When reading Salesforce documentation, mentally translate:
+
+```text
+CAPITAL / code-like words
+        ↓
+TYPE EXACTLY
+
+italic words
+        ↓
+REPLACE WITH YOUR VALUE
+
+[ something ]
+        ↓
+OPTIONAL
+
+A | B
+        ↓
+A OR B
+
+[,...]
+        ↓
+CAN REPEAT, SEPARATED BY COMMAS
+```
+
+### In one simple example:
+
+Documentation:
+
+```text
+FIND fieldname IN objectname [LIMIT n]
+```
+
+Your actual SOSL:
+
+```text
+FIND Name IN Account LIMIT 10
+```
+
+Because:
+
+```text
+fieldname  → Name
+objectname → Account
+n          → 10
+[LIMIT n]  → optional, but we chose to use it
+```
+
+So this section is basically teaching you **how to read the "grammar" of Salesforce's SOSL documentation**, not introducing another search feature.
+
+
+Yes. This section is explaining **why SOSL may not return every record that matches your search**.
+
+The easiest way to understand it is:
+
+> **SOSL has limits on how many matching records it examines and returns. If too many records match, the record you're looking for might get left out.**
+
+Let's break it down.
+
+---
+
+# 1. Imagine SOSL as a filter
+
+Suppose Salesforce contains **millions of records**.
+
+You search:
+
+```text
+Industrial
+```
+
+Maybe Salesforce finds:
+
+```text
+10,000 matching records
+```
+
+But Salesforce doesn't process all 10,000 in the same way.
+
+There are limits.
+
+Think of it like this:
+
+```text
+Millions of Salesforce records
+          ↓
+       Search term
+       "Industrial"
+          ↓
+   Search engine limit
+          ↓
+   Matching records
+          ↓
+   Permission filtering
+          ↓
+    Your final results
+```
+
+Because of these limits, **a record that actually matches your search may never make it into your results**.
+
+---
+
+# 2. The first important limit: 2,000 records
+
+Salesforce says:
+
+> The search engine looks for matches across a maximum of **2,000 records**.
+
+So imagine:
+
+```text
+Search: Industrial
+
+100,000 matching records
+          ↓
+      2,000 limit
+          ↓
+Only some records continue
+```
+
+This means Salesforce doesn't necessarily analyze all 100,000 matching records.
+
+It works with a limited set.
+
+### Important consequence
+
+Suppose the record you want is #8,500 among the potential matches.
+
+It could be excluded before Salesforce gets to the stage where it would normally show it to you.
+
+---
+
+# 3. Why can this happen?
+
+Imagine you have:
+
+```text
+Search term: Industrial
+
+10,000 matching records
+```
+
+But the search engine can only process:
+
+```text
+2,000
+```
+
+So:
+
+```text
+10,000 matches
+     ↓
+Only 2,000 considered
+     ↓
+Your desired record might
+not be among those 2,000
+```
+
+That's what Salesforce means when it says:
+
+> "Sometimes, these limits cause a matching record to be excluded from a user's results."
+
+---
+
+# 4. Now comes the confusing part: 250 records
+
+Salesforce then says:
+
+> If you query **one object only**, a maximum of **250 records** are returned.
+
+For example, suppose you're searching only:
+
+```text
+Account
+```
+
+and Salesforce finds thousands of matching Accounts.
+
+The normal limit is:
+
+```text
+250 records
+```
+
+So:
+
+```text
+Search Account
+      ↓
+Many matches
+      ↓
+Maximum 250 returned
+```
+
+---
+
+# 5. But there's an important exception
+
+Salesforce says:
+
+> To return up to 2,000 results, include either the `WHERE` clause or `ORDER BY` clause.
+
+So under the documented behavior, adding a `WHERE` or `ORDER BY` can change the applicable result limit.
+
+The key thing to remember isn't the exact implementation detail; it's:
+
+> **The number of results you can get depends on how the SOSL query is structured.**
+
+---
+
+# 6. What happens when searching multiple objects?
+
+This is where the formula comes in.
+
+Salesforce says:
+
+> Each object returns up to the minimum of `2,000/n` and `250`.
+
+Here:
+
+```text
+n = number of objects you're searching
+```
+
+Don't worry — let's calculate it.
+
+---
+
+# 7. Searching 1 object
+
+Suppose:
+
+```text
+n = 1
+```
+
+Then:
+
+```text
+2,000 / 1 = 2,000
+```
+
+Compare:
+
+```text
+2,000
+250
+```
+
+The normal per-object limit is **250** unless the query qualifies for the higher limit described above.
+
+---
+
+# 8. Searching 2 objects
+
+Suppose you're searching:
+
+```text
+Account
+Contact
+```
+
+That's:
+
+```text
+n = 2
+```
+
+Calculate:
+
+```text
+2,000 / 2 = 1,000
+```
+
+Now compare:
+
+```text
+1,000
+250
+```
+
+The smaller number is:
+
+```text
+250
+```
+
+So each object can return up to **250** records.
+
+Conceptually:
+
+```text
+Account  → up to 250
+Contact  → up to 250
+
+Total    → up to 500
+```
+
+---
+
+# 9. Searching 10 objects
+
+Now suppose:
+
+```text
+n = 10
+```
+
+Calculate:
+
+```text
+2,000 / 10 = 200
+```
+
+Compare:
+
+```text
+200
+250
+```
+
+The smaller number is:
+
+```text
+200
+```
+
+So each object can return up to **200 records**.
+
+Conceptually:
+
+```text
+Object 1 → 200
+Object 2 → 200
+Object 3 → 200
+...
+Object 10 → 200
+```
+
+That's:
+
+```text
+200 × 10 = 2,000
+```
+
+So the 2,000-record limit is distributed across the objects.
+
+---
+
+# 10. The formula to remember
+
+For multiple objects:
+
+```text
+Per-object limit =
+MIN(2,000 ÷ number of objects, 250)
+```
+
+For example:
+
+| Objects searched | 2,000 ÷ objects | Compare with 250 | Approx. max per object |
+| ---------------: | --------------: | ---------------: | ---------------------: |
+|                1 |           2,000 |              250 |                   250* |
+|                2 |           1,000 |              250 |                    250 |
+|                4 |             500 |              250 |                    250 |
+|                8 |             250 |              250 |                    250 |
+|               10 |             200 |              250 |                    200 |
+|               20 |             100 |              250 |                    100 |
+
+*The documentation notes that a `WHERE` or `ORDER BY` clause can allow up to 2,000 results in the one-object case.
+
+---
+
+# 11. Why does Salesforce do this?
+
+Imagine you search 10 objects at once.
+
+Without a limit, one object might produce thousands of matches and overwhelm the search process.
+
+Salesforce wants to distribute the search capacity across the objects.
+
+Think of a bucket with space for:
+
+```text
+2,000 records
+```
+
+If you're searching:
+
+```text
+10 objects
+```
+
+Salesforce roughly divides the available space:
+
+```text
+2,000 ÷ 10 = 200
+```
+
+So each object gets up to:
+
+```text
+200
+```
+
+---
+
+# 12. The Joe Smith example
+
+Now let's understand the example in plain English.
+
+Joe works at Acme.
+
+He wants to find:
+
+> **Industrial Computing**
+
+He searches:
+
+```text
+Industrial
+```
+
+But `Industrial` is a very common term.
+
+Suppose Salesforce finds a huge number of records containing:
+
+```text
+Industrial
+```
+
+There are so many matches that the SOSL limits become important.
+
+Unfortunately, Joe's desired record:
+
+```text
+Industrial Computing
+```
+
+doesn't make it through the search limits.
+
+So Joe doesn't see it.
+
+### Important:
+
+The record **does exist**.
+
+The search term **does match**.
+
+But the record was excluded because of the search-result limits.
+
+---
+
+# 13. Then Joe searches more specifically
+
+Instead of:
+
+```text
+Industrial
+```
+
+Joe searches:
+
+```text
+Industrial Computing San Francisco
+```
+
+This is much more specific.
+
+Now instead of potentially millions of records matching a common term, Salesforce can find a much smaller and more relevant group.
+
+Conceptually:
+
+```text
+Industrial
+     ↓
+Many thousands of matches
+     ↓
+Limit kicks in
+     ↓
+Desired record might be excluded
+```
+
+But:
+
+```text
+Industrial Computing San Francisco
+     ↓
+Much smaller/more relevant set
+     ↓
+Limit
+     ↓
+Desired record is more likely to be included
+```
+
+That's the main lesson of the example.
+
+---
+
+# 14. More specific search = better chance of finding what you want
+
+Compare:
+
+### Broad search
+
+```text
+Industrial
+```
+
+Potential matches:
+
+```text
+50,000
+```
+
+### Specific search
+
+```text
+Industrial Computing San Francisco
+```
+
+Potential matches:
+
+```text
+20
+```
+
+The second search is much more likely to include the exact record you're looking for.
+
+So Salesforce is basically telling you:
+
+> **Don't make SOSL searches unnecessarily broad.**
+
+---
+
+# 15. What does "global search" mean here?
+
+Joe initially performs a **global search**.
+
+That means Salesforce searches across multiple types of objects.
+
+For example:
+
+```text
+Account
+Contact
+Lead
+Opportunity
+...
+```
+
+Instead of saying:
+
+> Search only Accounts.
+
+That's why the limits are distributed across multiple object types.
+
+---
+
+# 16. What if Joe searches only one object?
+
+Suppose Joe knows:
+
+> "The record I'm looking for is definitely an Account."
+
+Instead of searching globally across:
+
+```text
+Account
+Contact
+Lead
+Opportunity
+```
+
+he searches only:
+
+```text
+Account
+```
+
+Now the search limit applies only to the Account object.
+
+This can increase the chance that the desired Account appears in the results.
+
+### Important principle:
+
+> **If you know where the data is, narrowing the search to that object can help.**
+
+This is one reason knowing when to use **SOQL vs SOSL** is important.
+
+---
+
+# 17. What do "admins" have to do with this?
+
+The documentation says:
+
+> Admins with the `View All Data` permission see the full set of results returned.
+
+This is talking about Salesforce permissions.
+
+Imagine Salesforce's search process finds:
+
+```text
+500 records
+```
+
+But you are a normal user who can access only:
+
+```text
+100
+```
+
+Salesforce applies your permissions.
+
+You see only records you're allowed to access.
+
+---
+
+# 18. Normal users don't see everything
+
+Think of it like this:
+
+```text
+Search engine finds
+500 records
+        ↓
+Salesforce checks permissions
+        ↓
+You have access to 120
+        ↓
+You see 120
+```
+
+Another user might have access to:
+
+```text
+300
+```
+
+So that person might see 300.
+
+Therefore:
+
+> **Two users can run the same SOSL search and get different results.**
+
+---
+
+# 19. Why can results change throughout the day?
+
+The documentation says results can change as records are:
+
+* added
+* removed
+* indexed
+* changed
+
+Imagine you search at:
+
+```text
+10:00 AM
+```
+
+and there are:
+
+```text
+10,000 matching records
+```
+
+Later, new records are added.
+
+Now there might be:
+
+```text
+12,000 matching records
+```
+
+Because of the search limits, the set of records that makes it through the search process can change.
+
+So the results aren't necessarily permanently fixed.
+
+---
+
+# 20. Very important distinction: matching vs returned
+
+This is the key idea behind the entire section.
+
+A record can:
+
+### Match the search
+
+```text
+Industrial Computing
+```
+
+but still:
+
+### Not be returned
+
+because:
+
+```text
+Too many matching records
+        ↓
+Search limit
+        ↓
+Record excluded
+```
+
+So:
+
+> **"The record matches" does NOT necessarily mean "the record will appear in the SOSL results."**
+
+That's what Salesforce is warning you about.
+
+---
+
+# 21. A simple analogy: a classroom
+
+Imagine 10,000 students want to enter a classroom.
+
+But the classroom can accept only:
+
+```text
+250 students
+```
+
+All 10,000 students may qualify to enter.
+
+But only 250 can actually get inside.
+
+Similarly:
+
+```text
+10,000 matching records
+        ↓
+SOSL limits
+        ↓
+Limited records returned
+```
+
+The records that don't make it through aren't necessarily wrong or invalid.
+
+They were simply outside the applicable search-result limit.
+
+---
+
+# 22. The entire process
+
+Here's the easiest mental model:
+
+```text
+             Your SOSL search
+                    │
+                    ▼
+          Search Salesforce index
+                    │
+                    ▼
+       Find matching records
+                    │
+                    ▼
+       ┌─────────────────────┐
+       │ Search-result limits│
+       │      apply          │
+       └─────────────────────┘
+                    │
+                    ▼
+          Limited result set
+                    │
+                    ▼
+        Apply user permissions
+                    │
+                    ▼
+         Records you can see
+```
+
+---
+
+# 23. How should you write better SOSL searches?
+
+Based on this documentation, there are three practical lessons.
+
+### ① Make your search specific
+
+Instead of:
+
+```text
+Industrial
+```
+
+use something more specific:
+
+```text
+Industrial Computing San Francisco
+```
+
+when you know those details.
+
+---
+
+### ② Search fewer objects when possible
+
+If you know the data is in `Account`, don't unnecessarily search every object.
+
+Conceptually:
+
+```text
+Search everything
+       ↓
+Many objects
+       ↓
+More competition for result limits
+```
+
+versus:
+
+```text
+Search Account
+       ↓
+Only one object
+       ↓
+More focused search
+```
+
+---
+
+### ③ Remember that permissions affect the final results
+
+Two users can run the same search and see different records because their Salesforce access is different.
+
+---
+
+# 24. SOQL vs SOSL connection
+
+This section also reinforces something from your previous question.
+
+If you know:
+
+> "The record is in Account and I know the field."
+
+SOQL can be very appropriate:
+
+```sql id="f88g0c"
+SELECT Id, Name
+FROM Account
+WHERE Name = 'Industrial Computing'
+```
+
+You're directly asking Salesforce for a specific Account.
+
+But if you say:
+
+> "I don't know which object contains 'Industrial Computing'. Search Salesforce for it."
+
+That's where SOSL is useful.
+
+---
+
+# 25. Final cheat sheet
+
+| Concept                        | Simple meaning                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| **2,000 limit**                | Search processing is limited to a maximum of 2,000 records at the relevant stage                  |
+| **250 limit**                  | A normal per-object result limit in the documented scenario                                       |
+| **2,000 / n**                  | When searching multiple objects, the 2,000 capacity is distributed based on the number of objects |
+| **n**                          | Number of objects being searched                                                                  |
+| **Search crowding/truncation** | Too many matches can cause some matching records not to appear                                    |
+| **Global search**              | Search across multiple object types                                                               |
+| **Selective search**           | A more specific search that produces fewer matches                                                |
+| **Sharing/security**           | Users see only records they're allowed to access                                                  |
+| **View All Data**              | Users with this permission can see the full result set returned by the search                     |
+| **Pagination**                 | Getting results across multiple pages/batches                                                     |
+
+### The one thing I would memorize:
+
+> **SOSL searches can have more matches than the number of records Salesforce actually analyzes or returns. Therefore, a record can match your search but still not appear in the results. Make searches more specific and narrow the objects searched when you can.**
+
+Think of an **external object** as Salesforce data that actually lives **outside Salesforce**, but Salesforce can access it through **Salesforce Connect**.
+
+For example:
+
+```text
+Salesforce
+   │
+   └── External Object
+          │
+          └── Data actually stored
+              in another system
+              (database/API/etc.)
+```
+
+Because Salesforce doesn't fully control that external data, **SOSL has some extra restrictions**.
+
+## 1. Search must be enabled in two places
+
+For an external object to participate in SOSL searches:
+
+```text
+External Object
+      +
+External Data Source
+      ↓
+Search enabled
+```
+
+Both need to allow searching.
+
+There's one important catch: **when the external data is synced, the external object's search setting is changed to match the data source's setting.**
+
+So if the data source says:
+
+> "Don't make this searchable"
+
+the external object will also become non-searchable after synchronization.
+
+---
+
+## 2. Only certain fields can be searched
+
+SOSL can't search every type of field on an external object.
+
+It can search:
+
+* Text
+* Text Area
+* Long Text Area
+
+For example:
+
+```text
+Name              → searchable
+Description       → searchable
+LongDescription   → searchable
+```
+
+But if the external object has **none of these searchable fields**, SOSL won't find any records from that object.
+
+Think of it as:
+
+> **No searchable fields = nothing for SOSL to search.**
+
+---
+
+## 3. Some normal Salesforce search operators don't work
+
+External objects don't support:
+
+```text
+INCLUDES
+LIKE
+EXCLUDES
+toLabel()
+```
+
+The important idea is:
+
+> **You can't assume every SOSL feature that works with normal Salesforce objects will work with external objects.**
+
+This is because the actual searching may need to be performed by the external system.
+
+---
+
+## 4. Salesforce Knowledge features don't work either
+
+Some SOSL clauses specifically related to Salesforce Knowledge aren't supported for external objects.
+
+For example:
+
+```text
+UPDATE TRACKING
+UPDATE VIEWSTAT
+WITH DATA CATEGORY
+```
+
+You can think of these as:
+
+> **Features designed for Salesforce's own Knowledge/searchable content, not external data.**
+
+---
+
+## 5. You must explicitly ask for external objects in `RETURNING`
+
+This is an important practical rule.
+
+Suppose you write:
+
+```text
+FIND {MyProspect}
+```
+
+Salesforce won't automatically include your external objects in the returned results.
+
+You need to explicitly mention them:
+
+```text
+FIND {MyProspect}
+RETURNING MyExternalObject, MyOtherExternalObject
+```
+
+Think of `RETURNING` as saying:
+
+> **"These are the objects whose matching records I actually want back."**
+
+So for external objects:
+
+**Mention them explicitly in `RETURNING`.**
+
+---
+
+## 6. Search text has a 100-character limit
+
+The search text you send must be:
+
+> **100 characters or fewer.**
+
+So don't send an extremely long search phrase.
+
+Think:
+
+```text
+Short search phrase → ✅
+Very long search phrase → ❌
+```
+
+---
+
+# 7. Special case: OData adapters
+
+This applies specifically when Salesforce Connect uses **OData 2.0 or OData 4.0**.
+
+Normally, you might expect something like:
+
+```text
+FIND {MyProspect OR "John Smith"}
+```
+
+to mean:
+
+> Find MyProspect **OR** John Smith.
+
+But with these OData adapters, Salesforce doesn't interpret the logical `OR` itself in the normal way.
+
+Instead, it sends the search as essentially **one complete phrase** to the external system.
+
+So:
+
+```text
+MyProspect OR John Smith
+```
+
+is treated roughly as:
+
+> Search for the phrase `"MyProspect OR John Smith"`.
+
+### Why?
+
+Because the external system is responsible for handling the search.
+
+So:
+
+```text
+Salesforce
+    ↓
+Sends search phrase
+    ↓
+External system
+    ↓
+Performs search
+```
+
+There's less SOSL processing happening inside Salesforce.
+
+Also, the search is **case-sensitive**, and most ASCII punctuation is removed before the search is sent, except hyphens.
+
+---
+
+# 8. Special case: custom adapters
+
+If you're using a **custom Salesforce Connect adapter**, there are two additional restrictions.
+
+### `convertCurrency()` isn't supported
+
+You can't use the `convertCurrency()` function in SOSL queries against external objects.
+
+### `WITH` clauses aren't supported
+
+SOSL `WITH` clauses aren't available for external-object searches through custom adapters.
+
+So, again, the takeaway is:
+
+> **External-object SOSL has fewer features than normal Salesforce-object SOSL.**
+
+---
+
+# The big picture
+
+You can remember the entire section with this mental model:
+
+```text
+              External Object
+                    │
+        Data lives outside Salesforce
+                    │
+                    ▼
+          SOSL has restrictions
+                    │
+       ┌────────────┴────────────┐
+       │                         │
+ Searchable fields          Query features
+       │                         │
+ Text/Text Area/          Some operators &
+ Long Text Area           clauses unavailable
+       │
+       ▼
+ Must explicitly include
+ in RETURNING
+```
+
+### The main idea
+
+> **SOSL can search external objects, but external objects have fewer search capabilities than normal Salesforce objects because the data is managed outside Salesforce.**
+
+If you're learning this for practical Salesforce development, the most important rules to remember are:
+
+**Enable search → use searchable text fields → explicitly include the external object in `RETURNING` → don't assume all normal SOSL operators/clauses are supported.**
+Think of **SOSL syntax as a recipe**: `FIND` tells Salesforce what you're looking for, and the optional clauses tell Salesforce **where to look, what to return, how to filter it, and how to format it**.
+
+### 1. The basic structure
+
+```sql
+FIND {SearchQuery}
+[ IN SearchGroup ]
+[ RETURNING FieldSpec ]
+[ WITH ... ]
+[ LIMIT n ]
+```
+
+The important idea is that **`FIND` must come first**. Everything after it is optional, and the clauses generally follow a specific order.
+
+---
+
+### 2. `FIND` — what are you searching for?
+
+```sql
+FIND {John Smith}
+```
+
+This is the actual search text.
+
+* `{ }` are required around the search text.
+* If the search string becomes **very long**, Salesforce can stop returning results.
+* There is also a practical limit on very large search strings where logical operators such as `AND` may no longer behave as expected.
+
+**Think:** 🔎 *“What should Salesforce search for?”*
+
+---
+
+### 3. `IN` — where/what kind of fields should be searched?
+
+```sql
+IN NAME FIELDS
+```
+
+You can choose things like:
+
+* `ALL FIELDS`
+* `NAME FIELDS`
+* `EMAIL FIELDS`
+* `PHONE FIELDS`
+* `SIDEBAR FIELDS`
+
+If you don't specify one, Salesforce normally uses **`ALL FIELDS`**.
+
+Example:
+
+```sql
+FIND {john@example.com} IN EMAIL FIELDS
+```
+
+**Think:** *“Which type of fields should Salesforce look inside?”*
+
+---
+
+### 4. `RETURNING` — what should I get back?
+
+This is probably the most important clause after `FIND`.
+
+```sql
+RETURNING Account(Name, Industry), Contact(Name, Email)
+```
+
+It means:
+
+> Search Salesforce, and if matches are found in Account or Contact, give me these fields.
+
+You can also put filtering inside the object specification using `WHERE`, and control things such as ordering and pagination.
+
+For example:
+
+```sql
+FIND {John}
+RETURNING Contact(Name, Email WHERE Email != null)
+```
+
+So:
+
+* `FIND` = **search for what?**
+* `RETURNING` = **give me what information?**
+
+If you don't specify `RETURNING`, Salesforce can return the IDs of the objects it found.
+
+**Important:** In **Apex**, `RETURNING` is required.
+
+---
+
+### 5. `WHERE` — further filter the returned records
+
+`WHERE` is used inside `RETURNING`.
+
+```sql
+FIND {John}
+RETURNING Contact(Name, Email WHERE Department = 'Sales')
+```
+
+This is different from the main search.
+
+The search says:
+
+> Find records matching "John."
+
+The `WHERE` says:
+
+> From those results, only give me Contacts whose Department is Sales.
+
+**Think:** `FIND` finds candidates → `WHERE` narrows them down.
+
+---
+
+### 6. `LIMIT` — don't return too many
+
+```sql
+LIMIT 100
+```
+
+Means:
+
+> Return at most 100 rows.
+
+SOSL can return up to **2,000 rows** with current API versions.
+
+So:
+
+```sql
+FIND {John} RETURNING Contact(Name) LIMIT 50
+```
+
+means "give me no more than 50 matching rows."
+
+---
+
+### 7. `OFFSET` — skip some results
+
+Useful when displaying results page by page.
+
+```sql
+OFFSET 50
+```
+
+Means:
+
+> Skip the first 50 results.
+
+So you can use it for things like:
+
+* page 1 → records 1–50
+* page 2 → records 51–100
+* page 3 → records 101–150
+
+**Think:** `LIMIT` = *how many?*
+`OFFSET` = *start from where?*
+
+---
+
+### 8. `ORDER BY` — control the order
+
+```sql
+RETURNING Contact(Name, CreatedDate ORDER BY CreatedDate DESC)
+```
+
+This controls how the returned records are arranged.
+
+For example:
+
+```text
+Newest
+  ↓
+Contact A
+Contact B
+Contact C
+```
+
+instead of Salesforce returning them in whatever order it otherwise uses.
+
+---
+
+### 9. `WITH ...` — add special search behavior
+
+There are several `WITH` options, but don't think of them as one single feature.
+
+They're basically **extra instructions for the search**.
+
+Examples:
+
+```sql
+WITH DATA CATEGORY ...
+```
+
+→ filter Knowledge content by category.
+
+```sql
+WITH NETWORK ...
+```
+
+→ restrict results to a particular community/network.
+
+```sql
+WITH PricebookId ...
+```
+
+→ restrict product searches to a price book.
+
+```sql
+WITH SNIPPET
+```
+
+→ return a small piece of matching Knowledge article text.
+
+```sql
+WITH METADATA
+```
+
+→ request metadata along with results.
+
+So the mental model is:
+
+> **`WITH` = “Also apply this special search rule.”**
+
+---
+
+### 10. `toLabel()` — show translated values
+
+```sql
+toLabel(Status)
+```
+
+This asks Salesforce to return the field's value according to the **user's language/translation**.
+
+Useful when your Salesforce org supports multiple languages.
+
+---
+
+### 11. `convertCurrency()` — convert money
+
+If your Salesforce org uses multiple currencies:
+
+```sql
+convertCurrency(Amount)
+```
+
+means:
+
+> Convert the currency value into the current user's currency.
+
+---
+
+### 12. `FORMAT()` — make values look user-friendly
+
+`FORMAT()` can apply localized formatting to things such as:
+
+* dates
+* times
+* numbers
+* currencies
+
+So instead of thinking about raw database-style values, think:
+
+> **“Display this value in a format appropriate for the user.”**
+
+---
+
+### 13. `UPDATE TRACKING` / `VIEWSTAT`
+
+These are mainly related to **Salesforce Knowledge**.
+
+They allow SOSL to update tracking information when Knowledge articles are searched or viewed.
+
+You generally don't need to worry about these when learning basic SOSL.
+
+---
+
+### 14. `SPELL_CORRECTION`
+
+This controls whether Salesforce should try to correct spelling in searches.
+
+```sql
+WITH SPELL_CORRECTION = true
+```
+
+By default, spell correction is enabled where supported.
+
+---
+
+## Putting it all together
+
+Here's a more realistic SOSL:
+
+```sql
+FIND {John}
+IN NAME FIELDS
+RETURNING
+    Account(Name, Industry WHERE Industry = 'Technology'
+            ORDER BY Name),
+    Contact(Name, Email WHERE Email != null
+            ORDER BY Name)
+LIMIT 100
+OFFSET 0
+```
+
+Read it like normal English:
+
+> **Search for "John" in name fields. Find matching Accounts and Contacts. For Accounts, give me Name and Industry, but only Technology companies. For Contacts, give me Name and Email, but only records having an email. Sort the results by name. Return at most 100 records, starting from the beginning.**
+
+---
+
+## The easiest way to remember SOSL
+
+| Part                | Ask yourself                                        |
+| ------------------- | --------------------------------------------------- |
+| `FIND`              | **What am I searching for?**                        |
+| `IN`                | **Which fields should I search?**                   |
+| `RETURNING`         | **Which objects/fields do I want back?**            |
+| `WHERE`             | **Which returned records should I keep?**           |
+| `ORDER BY`          | **How should they be arranged?**                    |
+| `LIMIT`             | **How many should I get?**                          |
+| `OFFSET`            | **Where should I start?**                           |
+| `WITH`              | **Do I need some special search behavior?**         |
+| `toLabel()`         | **Should values be translated?**                    |
+| `convertCurrency()` | **Should money be converted?**                      |
+| `FORMAT()`          | **Should values be displayed in localized format?** |
+
+### One important distinction
+
+Don't confuse these two:
+
+```sql
+FIND {John}
+```
+
+with
+
+```sql
+WHERE Name = 'John'
+```
+
+**`FIND` is the SOSL search mechanism** — it searches for text across the searchable data.
+
+**`WHERE` is a filter applied to the records you're returning.**
+
+That distinction makes a lot of SOSL syntax much easier to understand.
+
+
